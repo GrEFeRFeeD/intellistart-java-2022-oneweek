@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.booking;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class BookingKey {
+public class BookingKey implements Serializable {
 
   @Column(name = "candidate_slot_id")
   private Long candidateSlotId;

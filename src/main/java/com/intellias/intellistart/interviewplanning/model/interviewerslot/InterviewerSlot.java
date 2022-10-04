@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -9,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,9 +36,13 @@ public class InterviewerSlot {
   @Enumerated
   private DayOfWeek dayOfWeek;
 
-  private LocalTime from;
+  /* TODO: Persist LocalTime/Date
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date from;
 
-  private LocalTime to;
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date to;
+   */
 
   // TODO: M:N with Booking
 }
