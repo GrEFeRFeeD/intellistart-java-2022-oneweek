@@ -1,11 +1,9 @@
-package com.intellias.intellistart.interviewplanning.model.interviewer_slot;
+package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
-import com.intellias.intellistart.interviewplanning.model.day_of_week.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,22 +12,22 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+/**
+ * CandidateSlot entity.
+ */
 @Entity
-@Table(name = "interviewer_slots")
+@Table(name = "candidate_slots")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class InterviewerSlot {
+public class CandidateSlot {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "interviewer_slot_id")
+  @Column(name = "candidate_slot_id")
   private Long id;
 
-  private Integer weekNum;
-
-  @Enumerated
-  private DayOfWeek dayOfWeek;
+  private LocalDate date;
 
   private LocalTime from;
 

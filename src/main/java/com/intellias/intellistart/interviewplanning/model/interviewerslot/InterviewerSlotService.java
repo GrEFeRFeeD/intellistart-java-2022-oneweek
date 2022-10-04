@@ -1,8 +1,11 @@
-package com.intellias.intellistart.interviewplanning.model.interviewer_slot;
+package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for InterviewSlot entity.
+ */
 @Service
 public class InterviewerSlotService {
 

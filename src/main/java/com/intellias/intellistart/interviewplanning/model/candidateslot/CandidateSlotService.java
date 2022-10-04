@@ -1,8 +1,11 @@
-package com.intellias.intellistart.interviewplanning.model.candidate_slot;
+package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for CandidateSlot entity.
+ */
 @Service
 public class CandidateSlotService {
 

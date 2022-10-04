@@ -1,8 +1,10 @@
-package com.intellias.intellistart.interviewplanning.model.interviewer_slot;
+package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import javax.persistence.criteria.CriteriaBuilder.In;
 import org.springframework.data.repository.CrudRepository;
 
+/**
+ * DAO for InterviewerSlot entity.
+ */
 public interface InterviewerSlotRepository extends CrudRepository<InterviewerSlot, Long> {
 
 }

@@ -4,6 +4,9 @@ import com.intellias.intellistart.interviewplanning.model.booking.BookingService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for coordinator endpoints.
+ */
 @RestController
 public class CoordinatorController {
 
