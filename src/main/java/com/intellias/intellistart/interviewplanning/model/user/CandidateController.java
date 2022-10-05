@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CandidateController {
 
-  private CandidateSlotService candidateSlotService;
+  private final CandidateSlotService candidateSlotService;
 
   @Autowired
   public CandidateController(CandidateSlotService candidateSlotService) {
