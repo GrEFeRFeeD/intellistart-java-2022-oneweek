@@ -1,7 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 
-import com.intellias.intellistart.interviewplanning.model.role.Role;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,6 +10,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +38,8 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  private Integer bookingLimit;
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  @PrimaryKeyJoinColumn
+  private BookingLimit bookingLimit;
 
-  // TODO: 1:N with InterviewerSlot
-  // TODO: 1:N with CandidateSlot
-  // TODO: 1:N with Booking
 }

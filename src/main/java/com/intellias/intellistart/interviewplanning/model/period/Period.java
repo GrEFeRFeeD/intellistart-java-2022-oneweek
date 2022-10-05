@@ -1,8 +1,8 @@
-package com.intellias.intellistart.interviewplanning.model.candidateslot;
+package com.intellias.intellistart.interviewplanning.model.period;
 
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
-import com.intellias.intellistart.interviewplanning.model.period.Period;
-import com.intellias.intellistart.interviewplanning.model.user.User;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
@@ -13,8 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,30 +22,32 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * CandidateSlot entity.
+ * Entity for period of time.
  */
 @Entity
-@Table(name = "candidate_slots")
+@Table(name = "periods")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class CandidateSlot {
+public class Period {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "candidate_slot_id")
+  @Column(name = "period_id")
   private Long id;
 
-  private LocalDate date;
+  @Column(name = "period_from")
+  private LocalTime from;
 
-  @ManyToOne
-  @JoinColumn(name = "period_id")
-  private Period period;
+  @Column(name = "period_to")
+  private LocalTime to;
 
-  @OneToMany(mappedBy = "candidateSlot")
+  @OneToMany(mappedBy = "period")
+  private Set<InterviewerSlot> interviewerSlots = new HashSet<>();
+
+  @OneToMany(mappedBy = "period")
+  private Set<CandidateSlot> candidateSlots = new HashSet<>();
+
+  @OneToMany(mappedBy = "period")
   private Set<Booking> bookings = new HashSet<>();
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private User user;
 }
