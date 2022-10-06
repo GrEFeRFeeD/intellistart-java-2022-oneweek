@@ -48,31 +48,31 @@ public class StartDataLoader implements ApplicationRunner {
 
     User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER, null);
     User u2 = new User(null, "interviewer2@gmail.com", Role.INTERVIEWER, null);
-    u1.setId(null); // Don't mind. Just for maven validation. Is smells.
-    u2.setId(null); // Don't mind. Just for maven validation. Is smells.
+    u1.setId(u1.getId()); // Don't mind. Just for maven validation. Is smells.
+    u2.setId(u2.getId()); // Don't mind. Just for maven validation. Is smells.
     User u3 = new User(null, "coordingator@gmail.com", Role.COORDINATOR, null);
     User u4 = new User(null, "candidate@gmail.com", null, null);
-    u3.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
-    u4.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
+    u3.setId(u3.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
+    u4.setId(u4.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
 
     BookingLimit bl1 = new BookingLimit(u1.getId(), u1, 5);
     u1.setBookingLimit(bl1);
 
     Week w1 = new Week(40L, new HashSet<>());
-    w1.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
+    w1.setId(w1.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
 
     Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
         new HashSet<>(), new HashSet<>(), new HashSet<>());
     Period p2 = new Period(null, LocalTime.of(12, 0), LocalTime.of(18, 0),
         new HashSet<>(), new HashSet<>(), new HashSet<>());
-    p1.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
-    p2.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
+    p1.setId(p1.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
+    p2.setId(p2.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
     Period p3 = new Period(null, LocalTime.of(15, 0), LocalTime.of(18, 0),
         new HashSet<>(), new HashSet<>(), new HashSet<>());
     Period p4 = new Period(null, LocalTime.of(15, 30), LocalTime.of(17, 0),
         new HashSet<>(), new HashSet<>(), new HashSet<>());
-    p3.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
-    p4.setId(null); // Don't mind. Just for maven codestyle validation. Is smells.
+    p3.setId(p3.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
+    p4.setId(p4.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
 
     InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.THU, p1, new HashSet<>(), u1);
     p1.addInterviewerSlot(is1);
