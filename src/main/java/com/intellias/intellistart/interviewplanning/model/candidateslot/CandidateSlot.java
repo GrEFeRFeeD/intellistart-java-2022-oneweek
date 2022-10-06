@@ -5,6 +5,7 @@ import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -26,7 +28,8 @@ import lombok.Setter;
 @Table(name = "candidate_slots")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class CandidateSlot {
 
   @Id
@@ -46,4 +49,35 @@ public class CandidateSlot {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
+  public void addBooking(Booking booking) {
+    bookings.add(booking);
+  }
+
+  @Override
+  public String toString() {
+    return "CandidateSlot{"
+        + "id=" + id
+        + ", date=" + date
+        + ", period=" + period
+        + ", user=" + user.getId()
+        + '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CandidateSlot that = (CandidateSlot) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }
