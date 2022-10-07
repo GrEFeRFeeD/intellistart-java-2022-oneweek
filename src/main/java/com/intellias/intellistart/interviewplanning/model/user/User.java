@@ -1,7 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 
-import com.intellias.intellistart.interviewplanning.model.role.Role;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,10 +11,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * User entity.
@@ -21,7 +28,9 @@ import lombok.Setter;
 @Table(name = "users")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class User {
 
   @Id
@@ -34,9 +43,24 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  private Integer bookingLimit;
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  @PrimaryKeyJoinColumn
+  private BookingLimit bookingLimit;
 
-  // TODO: 1:N with InterviewerSlot
-  // TODO: 1:N with CandidateSlot
-  // TODO: 1:N with Booking
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    User user = (User) o;
+    return Objects.equals(id, user.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }

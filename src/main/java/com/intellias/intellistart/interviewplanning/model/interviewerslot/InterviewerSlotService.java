@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class InterviewerSlotService {
 
-  private InterviewerSlotRepository interviewerSlotRepository;
+  private final InterviewerSlotRepository interviewerSlotRepository;
 
   @Autowired
   public InterviewerSlotService(InterviewerSlotRepository interviewerSlotRepository) {

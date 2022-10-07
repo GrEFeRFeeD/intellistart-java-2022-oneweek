@@ -1,19 +1,26 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
+import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
-import java.time.LocalTime;
-import java.util.Date;
+import com.intellias.intellistart.interviewplanning.model.period.Period;
+import com.intellias.intellistart.interviewplanning.model.user.User;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -23,7 +30,8 @@ import lombok.Setter;
 @Table(name = "interviewer_slots")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class InterviewerSlot {
 
   @Id
@@ -31,18 +39,53 @@ public class InterviewerSlot {
   @Column(name = "interviewer_slot_id")
   private Long id;
 
-  private Integer weekNum;
+  @ManyToOne
+  @JoinColumn(name = "week_id")
+  private Week week;
 
   @Enumerated
   private DayOfWeek dayOfWeek;
 
-  /* TODO: Persist LocalTime/Date
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date from;
+  @ManyToOne
+  @JoinColumn(name = "period_id")
+  private Period period;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date to;
-   */
+  @OneToMany(mappedBy = "interviewerSlot")
+  private Set<Booking> bookings = new HashSet<>();
 
-  // TODO: M:N with Booking
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
+
+  public void addBooking(Booking booking) {
+    bookings.add(booking);
+  }
+
+  @Override
+  public String toString() {
+    return "InterviewerSlot{"
+        + "id=" + id
+        + ", week=" + week
+        + ", dayOfWeek=" + dayOfWeek
+        + ", period=" + period
+        + ", user=" + user.getId()
+        + '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    InterviewerSlot that = (InterviewerSlot) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }

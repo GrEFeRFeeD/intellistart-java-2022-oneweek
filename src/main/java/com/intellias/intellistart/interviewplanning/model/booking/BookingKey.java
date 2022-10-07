@@ -3,17 +3,22 @@ package com.intellias.intellistart.interviewplanning.model.booking;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Embedded entity for Booking key.
  */
 @Embeddable
-@RequiredArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class BookingKey implements Serializable {
 
   @Column(name = "candidate_slot_id")
