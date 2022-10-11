@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -24,18 +25,25 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Week {
 
   @Id
   @Column(name = "week_id")
   private Long id;
 
-  @OneToMany(mappedBy = "week")
+  @OneToMany(mappedBy = "week", fetch = FetchType.EAGER)
   private Set<InterviewerSlot> interviewerSlots = new HashSet<>();
 
   public void addInterviewerSlot(InterviewerSlot interviewerSlot) {
     interviewerSlots.add(interviewerSlot);
+  }
+
+  @Override
+  public String toString() {
+    return "Week{"
+        + "id=" + id
+        + ", interviewerSlots=" + interviewerSlots
+        + '}';
   }
 
   @Override
