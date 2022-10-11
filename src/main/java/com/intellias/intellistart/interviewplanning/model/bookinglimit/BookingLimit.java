@@ -1,11 +1,14 @@
 package com.intellias.intellistart.interviewplanning.model.bookinglimit;
 
 import com.intellias.intellistart.interviewplanning.model.user.User;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -25,23 +28,26 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BookingLimit {
 
-  @Id
-  @Column(name = "user_id")
-  private Long id;
-
-  @OneToOne
-  @MapsId
-  @JoinColumn(name = "user_id")
-  private User user;
+  @EmbeddedId
+  private BookingLimitKey id;
 
   @Column(name = "booking_limit")
   private Integer bookingLimit;
+
+  @ManyToOne
+  @MapsId("userId")
+  @JoinColumn(name = "user_id")
+  private User user;
+
+  @ManyToOne
+  @MapsId("weekId")
+  @JoinColumn(name = "week_id")
+  private Week week;
 
   @Override
   public String toString() {
     return "BookingLimit{"
         + "id=" + id
-        + ", user=" + user.getId()
         + ", bookingLimit=" + bookingLimit
         + '}';
   }

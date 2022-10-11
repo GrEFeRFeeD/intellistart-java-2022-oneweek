@@ -4,6 +4,7 @@ import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingKey;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingRepository;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitKey;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitRepository;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotRepository;
@@ -46,20 +47,19 @@ public class StartDataLoader implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
 
-    User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER, null);
-    User u2 = new User(null, "interviewer2@gmail.com", Role.INTERVIEWER, null);
+    User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER);
+    User u2 = new User(null, "interviewer2@gmail.com", Role.INTERVIEWER);
     u1.setId(u1.getId()); // Don't mind. Just for maven validation. Is smells.
     u2.setId(u2.getId()); // Don't mind. Just for maven validation. Is smells.
-    User u3 = new User(null, "coordingator@gmail.com", Role.COORDINATOR, null);
-    User u4 = new User(null, "candidate@gmail.com", null, null);
+    User u3 = new User(null, "coordingator@gmail.com", Role.COORDINATOR);
+    User u4 = new User(null, "candidate@gmail.com", null);
     u3.setId(u3.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
     u4.setId(u4.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
 
-    BookingLimit bl1 = new BookingLimit(u1.getId(), u1, 5);
-    u1.setBookingLimit(bl1);
-
     Week w1 = new Week(40L, new HashSet<>());
-    w1.setId(w1.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
+
+    BookingLimit bl1 = new BookingLimit(new BookingLimitKey(), 5, u1, w1);
+    bl1.setId(bl1.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
 
     Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
         new HashSet<>(), new HashSet<>(), new HashSet<>());
@@ -83,30 +83,51 @@ public class StartDataLoader implements ApplicationRunner {
     CandidateSlot cs1 = new CandidateSlot(null, LocalDate.of(2022, 10, 6), p3, new HashSet<>(), u4);
     p3.addCandidateSlot(cs1);
 
-    Booking b1 = new Booking(new BookingKey(), p4, "Test subject", "Test description", is1, cs1);
+    Booking b1 = new Booking(new BookingKey(), "Test subject", "Test description", is1, cs1, p4);
     is1.addBooking(b1);
     cs1.addBooking(b1);
 
-    u1 = userRepository.save(u1);
-    u2 = userRepository.save(u2);
-    u3 = userRepository.save(u3);
-    u4 = userRepository.save(u4);
+    userRepository.save(u1);
+    userRepository.save(u2);
+    userRepository.save(u3);
+    userRepository.save(u4);
 
-    bl1 = bookingLimitRepository.save(bl1);
+    weekRepository.save(w1);
 
-    w1 = weekRepository.save(w1);
+    bookingLimitRepository.save(bl1);
 
-    p1 = periodRepository.save(p1);
-    p2 = periodRepository.save(p2);
-    p3 = periodRepository.save(p3);
-    p4 = periodRepository.save(p4);
+    periodRepository.save(p1);
+    periodRepository.save(p2);
+    periodRepository.save(p3);
+    periodRepository.save(p4);
 
-    is1 = interviewerSlotRepository.save(is1);
-    is2 = interviewerSlotRepository.save(is2);
+    interviewerSlotRepository.save(is1);
+    interviewerSlotRepository.save(is2);
 
-    cs1 = candidateSlotRepository.save(cs1);
+    candidateSlotRepository.save(cs1);
 
-    b1 = bookingRepository.save(b1);
+    bookingRepository.save(b1);
+
+    u1 = userRepository.findById(u1.getId()).get();
+    u2 = userRepository.findById(u2.getId()).get();
+    u3 = userRepository.findById(u3.getId()).get();
+    u4 = userRepository.findById(u4.getId()).get();
+
+    w1 = weekRepository.findById(w1.getId()).get();
+
+    bl1 = bookingLimitRepository.findById(bl1.getId()).get();
+
+    p1 = periodRepository.findById(p1.getId()).get();
+    p2 = periodRepository.findById(p2.getId()).get();
+    p3 = periodRepository.findById(p3.getId()).get();
+    p4 = periodRepository.findById(p4.getId()).get();
+
+    is1 = interviewerSlotRepository.findById(is1.getId()).get();
+    is2 = interviewerSlotRepository.findById(is2.getId()).get();
+
+    cs1 = candidateSlotRepository.findById(cs1.getId()).get();
+
+    b1 = bookingRepository.findById(b1.getId()).get();
 
     System.out.println("====== USERS ======");
     System.out.println(u1);

@@ -65,7 +65,7 @@ public class InterviewerSlot {
   public String toString() {
     return "InterviewerSlot{"
         + "id=" + id
-        + ", week=" + week
+        + ", week=" + week.getId()
         + ", dayOfWeek=" + dayOfWeek
         + ", period=" + period
         + ", user=" + user.getId()
