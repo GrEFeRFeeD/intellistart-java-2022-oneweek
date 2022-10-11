@@ -21,6 +21,6 @@ public class UserService {
    */
   public User getCurrentUser() {
 
-    return new User(null, "testuser@example.com", null, null);
+    return new User(null, "testuser@example.com", null);
   }
 }
