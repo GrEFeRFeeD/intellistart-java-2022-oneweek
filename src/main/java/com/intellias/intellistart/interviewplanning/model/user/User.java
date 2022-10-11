@@ -43,10 +43,6 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-  @PrimaryKeyJoinColumn
-  private BookingLimit bookingLimit;
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
