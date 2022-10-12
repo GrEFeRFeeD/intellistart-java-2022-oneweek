@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.period.validation;
+package com.intellias.intellistart.interviewplanning.model.period.validation.inner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,30 +15,30 @@ class DurationValidatorTest {
   }
 
   @Test
-  void trueWhenCorrect(){
+  void falseWhenCorrect(){
     LocalTime from = LocalTime.of(8, 0);
     LocalTime to = LocalTime.of(10, 0);
-    assertTrue(validator.isCorrect(from, to));
+    assertFalse(validator.isNotCorrect(from, to));
   }
 
   @Test
-  void falseWhenIncorrectDifference(){
+  void trueWhenIncorrectDifference(){
     LocalTime from = LocalTime.of(8, 0);
     LocalTime to = LocalTime.of(9, 0);
-    assertFalse(validator.isCorrect(from, to));
+    assertTrue(validator.isNotCorrect(from, to));
   }
 
   @Test
-  void trueWhenIncorrectLogic(){
+  void falseWhenIncorrectLogic(){
     LocalTime from = LocalTime.of(3, 34, 8);
     LocalTime to = LocalTime.of(22, 33, 0);
-    assertTrue(validator.isCorrect(from, to));
+    assertFalse(validator.isNotCorrect(from, to));
   }
 
   @Test
-  void falseWhenNegativeDuration(){
+  void trueWhenNegativeDuration(){
     LocalTime from = LocalTime.of(18, 0);
     LocalTime to = LocalTime.of(15, 0);
-    assertFalse(validator.isCorrect(from, to));
+    assertTrue(validator.isNotCorrect(from, to));
   }
 }
