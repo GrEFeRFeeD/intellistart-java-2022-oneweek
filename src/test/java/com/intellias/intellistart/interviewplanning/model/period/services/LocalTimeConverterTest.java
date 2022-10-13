@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.period.time;
+package com.intellias.intellistart.interviewplanning.model.period.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.period.validation.inner;
+package com.intellias.intellistart.interviewplanning.model.period.services.validation.inner;
 
 import java.time.LocalTime;
 import lombok.NoArgsConstructor;

@@ -1,10 +1,10 @@
-package com.intellias.intellistart.interviewplanning.model.period.validation;
+package com.intellias.intellistart.interviewplanning.model.period.services.validation;
 
 import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.model.period.validation.inner.DurationValidator;
-import com.intellias.intellistart.interviewplanning.model.period.validation.inner.InnerValidator;
-import com.intellias.intellistart.interviewplanning.model.period.validation.inner.LimitsValidator;
-import com.intellias.intellistart.interviewplanning.model.period.validation.inner.RoundingValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.inner.InnerValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.inner.DurationValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.inner.LimitsValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.inner.RoundingValidator;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;

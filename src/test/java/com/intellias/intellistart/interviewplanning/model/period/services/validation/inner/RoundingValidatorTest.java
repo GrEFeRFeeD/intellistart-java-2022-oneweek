@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.period.validation.inner;
+package com.intellias.intellistart.interviewplanning.model.period.services.validation.inner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class RoundingValidatorTest {
 
-  private static RoundingValidator validator;
+   static RoundingValidator validator;
 
   @BeforeAll
   public static void initialize(){
