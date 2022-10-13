@@ -21,6 +21,7 @@ public class UserService {
    */
   public User getCurrentUser() {
 
-    return new User(null, "testuser@example.com", null);
+    User user = userRepository.findById(1L).get();
+    return user;
   }
 }
