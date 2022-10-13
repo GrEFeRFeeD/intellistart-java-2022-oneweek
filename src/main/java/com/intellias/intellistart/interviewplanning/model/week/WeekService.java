@@ -15,4 +15,5 @@ public class WeekService {
   public WeekService(WeekRepository weekRepository) {
     this.weekRepository = weekRepository;
   }
+
 }

@@ -15,4 +15,8 @@ public class PeriodService {
   public PeriodService(PeriodRepository periodRepository) {
     this.periodRepository = periodRepository;
   }
+
+  public Period getPeriod(String from, String to) {
+    return null;
+  }
 }
