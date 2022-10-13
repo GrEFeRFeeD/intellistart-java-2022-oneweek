@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
+import com.intellias.intellistart.interviewplanning.exeptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class CandidateController {
    */
   @PostMapping("/candidates/current/slots")
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<CandidateSlot> createCandidateSlot(@RequestBody CandidateSlotDto request) {
+  public ResponseEntity<CandidateSlot> createCandidateSlot(@RequestBody CandidateSlotDto request)
+      throws InvalidBoundariesException {
     CandidateSlot candidateSlot = candidateSlotService.create(request);
     return ResponseEntity.ok(candidateSlot);
   }
