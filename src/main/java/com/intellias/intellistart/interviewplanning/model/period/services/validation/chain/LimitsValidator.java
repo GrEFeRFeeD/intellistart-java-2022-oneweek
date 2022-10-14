@@ -1,8 +1,9 @@
-package com.intellias.intellistart.interviewplanning.model.period.services.validation.inner;
+package com.intellias.intellistart.interviewplanning.model.period.services.validation.chain;
 
 import java.time.LocalTime;
 
-public class LimitsValidator implements InnerValidator{
+public class LimitsValidator implements ChainValidator {
+
   public boolean isNotCorrect(LocalTime from, LocalTime to){
     return isLowerNotCorrect(from) || isUpperNotCorrect(to);
   }

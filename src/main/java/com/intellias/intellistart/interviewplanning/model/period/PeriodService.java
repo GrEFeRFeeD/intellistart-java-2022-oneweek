@@ -1,8 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
 import com.intellias.intellistart.interviewplanning.model.period.services.OverlapService;
-import com.intellias.intellistart.interviewplanning.model.period.services.LocalTimeConverter;
+import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
+import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,13 @@ import org.springframework.stereotype.Service;
 public class PeriodService {
 
   private final PeriodRepository periodRepository;
-  private final LocalTimeConverter timeConverter;
+  private final TimeConverter timeConverter;
   private final PeriodValidator periodValidator;
-
   private final OverlapService overlapService;
 
   @Autowired
   public PeriodService(PeriodRepository periodRepository,
-      LocalTimeConverter timeConverter,
+      TimeConverter timeConverter,
       PeriodValidator periodValidator,
       OverlapService overlapService) {
 
@@ -32,13 +32,27 @@ public class PeriodService {
     this.overlapService = overlapService;
   }
 
+
+/**
+ * Get period by given parameters
+ *
+ * If needed period exists obtain it,
+ * if not exists - create it
+ *
+ * @param fromString - String representation of lower time boundary
+ * @param toString - String representation of upper time boundary
+ *
+ * @throws InvalidBoundariesException when parameters are incorrect:
+ * can't be read as time
+ * wrong business logic
+ */
   public Period getPeriod(String fromString, String toString){
     LocalTime from = timeConverter.convert(fromString);
     LocalTime to = timeConverter.convert(toString);
 
     periodValidator.validate(from, to);
 
-    Optional<Period> periodOptional = periodRepository.find(from, to);
+    Optional<Period> periodOptional = periodRepository.findPeriod(from, to);
 
     if(periodOptional.isPresent()){
       return periodOptional.get();
@@ -51,7 +65,11 @@ public class PeriodService {
     return overlapService.isOverlap(period1, period2);
   }
 
+
   private Period createPeriod(LocalTime from, LocalTime to){
-    return null;
+    //TODO decide if remove double links between periods and slots
+
+    return periodRepository.save(
+        new Period(null, from, to, null, null, null));
   }
 }

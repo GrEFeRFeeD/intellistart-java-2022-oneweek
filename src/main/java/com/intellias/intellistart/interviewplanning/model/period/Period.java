@@ -49,6 +49,7 @@ public class Period {
   @OneToMany(mappedBy = "period")
   private Set<Booking> bookings = new HashSet<>();
 
+
   public void addInterviewerSlot(InterviewerSlot interviewerSlot) {
     interviewerSlots.add(interviewerSlot);
   }

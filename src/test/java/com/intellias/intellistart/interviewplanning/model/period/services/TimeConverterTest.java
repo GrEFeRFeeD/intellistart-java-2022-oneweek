@@ -7,13 +7,13 @@ import java.time.LocalTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class LocalTimeConverterTest {
+class TimeConverterTest {
 
-  private static LocalTimeConverter converter;
+  private static TimeConverter converter;
 
   @BeforeAll
   public static void initialize(){
-    converter = new LocalTimeConverter();
+    converter = new TimeConverter();
   }
 
   @Test
@@ -25,19 +25,16 @@ class LocalTimeConverterTest {
 
   @Test
   void notConvertWhenSecondsGiven() {
-    assertThrows(InvalidBoundariesException.class, () -> {
-      converter.convert("19:00:33");
-    });
+    assertThrows(InvalidBoundariesException.class, () ->
+      converter.convert("19:00:33"));
   }
 
   @Test
   void notConvertWhenInvalidHourOrMinutes(){
-    assertThrows(InvalidBoundariesException.class, () -> {
-      converter.convert("34:00");
-    });
-    assertThrows(InvalidBoundariesException.class, () -> {
-      converter.convert("11:77");
-    });
+    assertThrows(InvalidBoundariesException.class, () ->
+      converter.convert("34:00"));
+    assertThrows(InvalidBoundariesException.class, () ->
+      converter.convert("11:77"));
   }
 
   @Test

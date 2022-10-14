@@ -1,11 +1,11 @@
-package com.intellias.intellistart.interviewplanning.model.period.services.validation.inner;
+package com.intellias.intellistart.interviewplanning.model.period.services.validation.chain;
 
 import java.time.LocalTime;
 import lombok.NoArgsConstructor;
 
 
 @NoArgsConstructor
-public class RoundingValidator implements InnerValidator{
+public class RoundingValidator implements ChainValidator {
 
   public boolean isNotCorrect(LocalTime from, LocalTime to){
     return isNotCorrect(from) || isNotCorrect(to);

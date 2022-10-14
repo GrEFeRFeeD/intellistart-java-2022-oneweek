@@ -6,8 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Component;
 
+/**
+ * Converts String to LocalTime
+ */
 @Component
-public class LocalTimeConverter{
+public class TimeConverter {
 
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
