@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
+import com.intellias.intellistart.interviewplanning.exeptions.SlotIsOverlappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,9 @@ public class PeriodService {
 
   public Period getPeriod(String from, String to) {
     return null;
+  }
+
+  public boolean isOverlap(Period p1, Period p2) {
+    return false;
   }
 }
