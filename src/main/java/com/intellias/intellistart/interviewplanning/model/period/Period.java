@@ -62,6 +62,11 @@ public class Period {
     bookings.add(booking);
   }
 
+  public static Period  getPeriod(String x, String v){
+    return new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
+        new HashSet<>(), new HashSet<>(), new HashSet<>());
+  }
+
   @Override
   public String toString() {
     return "Period{"
