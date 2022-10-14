@@ -3,7 +3,9 @@ package com.intellias.intellistart.interviewplanning.model.week;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,4 +72,23 @@ public class WeekService {
     }
   }
 
+  public Week getCurrentWeek(){
+    LocalDate date = LocalDate.now();
+    return getWeekByWeekNum(getNumberOfWeek(date));
+  }
+
+  public Week getNextWeek(){
+    LocalDate date = LocalDate.now();
+    return getWeekByWeekNum(getNumberOfWeek(date) + 1L);
+  }
+
+  public Week getWeekByWeekNum(Long weekNum){
+    Optional<Week> week = weekRepository.findById(weekNum);
+    return week.orElseGet(() -> createWeek(weekNum));
+  }
+
+  public Week createWeek(Long weekNum){
+    Week newWeek = new Week(weekNum,new HashSet<>());
+    return weekRepository.save(newWeek);
+  }
 }
