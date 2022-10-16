@@ -23,11 +23,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 public class InterviewerSlotServiceTest {
   InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(InterviewerSlotRepository.class);
-  InterviewerSlotService interviewerSlotService = new InterviewerSlotService(interviewerSlotRepository);
+  InterviewerSlotService interviewerSlotService = Mockito.mock(InterviewerSlotService.class);
+  //InterviewerSlotService interviewerSlotService = new InterviewerSlotService(interviewerSlotService, interviewerSlotRepository);
 
 
   @ParameterizedTest
@@ -41,6 +43,21 @@ public class InterviewerSlotServiceTest {
 
   }
 
+  @ParameterizedTest
+  @CsvSource({"THU, true", "yy, false", ", false", "Fri, true", "SUN, true"})
+  void isCorrectDayTest(String dayOfWeek, boolean expect){
+    boolean result = InterviewerSlotService.isCorrectDay(dayOfWeek);
+    assertEquals(expect,result);
+  }
+
+
+
+  @ParameterizedTest
+  @ArgumentsSource(UserArgumentsProvider.class)
+  void isInterviewerRoleINTERVIEWER(User user,boolean expect) {
+    boolean result = InterviewerSlotService.isInterviewerRoleINTERVIEWER(user);
+    assertEquals(expect,result);
+  }
 
   static class InterviewerSlotArgumentsProvider implements ArgumentsProvider {
     @Override
@@ -52,9 +69,20 @@ public class InterviewerSlotServiceTest {
               is2)
       );
     }
-
+    }
+    static class UserArgumentsProvider implements ArgumentsProvider {
+    @Override
+    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+      return Stream.of(
+          Arguments.of(u1, true),
+          Arguments.of(u2, false),
+          Arguments.of(u3, true)
+      );
+    }
     }
   static User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER, null);
+  static User u2 = new User(null, "interviewer@gmail.com", Role.COORDINATOR, null);
+  static User u3 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER, null);
 
   static Week w1 = new Week(13L, new HashSet<>());
   static Week w2 = new Week(42L, new HashSet<>());
