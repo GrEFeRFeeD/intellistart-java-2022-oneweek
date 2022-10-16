@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,10 +63,7 @@ public class Period {
     bookings.add(booking);
   }
 
-  public static Period  getPeriod(String x, String v){
-    return new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
-        new HashSet<>(), new HashSet<>(), new HashSet<>());
-  }
+
 
   @Override
   public String toString() {

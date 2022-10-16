@@ -88,4 +88,6 @@ public class InterviewerSlot {
   public int hashCode() {
     return Objects.hash(id);
   }
+
+
 }
