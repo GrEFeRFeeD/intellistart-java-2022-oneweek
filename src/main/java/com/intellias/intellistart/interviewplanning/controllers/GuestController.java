@@ -22,12 +22,12 @@ public class GuestController {
   }
 
   @GetMapping("current")
-  public Week currentWeek(){
+  public Week currentWeek() {
     return weekService.getCurrentWeek();
   }
 
   @GetMapping("next")
-  public Week nextWeek(){
+  public Week nextWeek() {
     return weekService.getNextWeek();
   }
 }

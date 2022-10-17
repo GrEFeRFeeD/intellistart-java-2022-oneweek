@@ -22,23 +22,38 @@ public class WeekService {
     this.weekRepository = weekRepository;
   }
 
-  public long getNumberOfWeek(LocalDate date){
+  /**
+   * Method getNumberOfWeek() gets date and convert it to number of week.
+   *
+   * @param date any date
+   * @return number of week
+   */
+  public long getNumberOfWeek(LocalDate date) {
     WeekFields weekFields = WeekFields.of(Locale.getDefault());
     long sumOfWeeks = 0;
-    if(date.getYear() != 2022){
-      for(int i = 2022 ; i < date.getYear(); i++){
+    if (date.getYear() != 2022) {
+      for (int i = 2022; i < date.getYear(); i++) {
         sumOfWeeks += date.withYear(i).range(weekFields.weekOfYear()).getMaximum();
       }
     }
     return sumOfWeeks + date.get(weekFields.weekOfYear());
   }
 
-  public DayOfWeek getDayOfWeek(LocalDate date){
-    String dayOfWeek = date.getDayOfWeek().toString().substring(0,3);
+  public DayOfWeek getDayOfWeek(LocalDate date) {
+    String dayOfWeek = date.getDayOfWeek().toString().substring(0, 3);
     return DayOfWeek.valueOf(dayOfWeek);
   }
 
-  public LocalDate convertToLocalDate(long weekNum, DayOfWeek dayOfWeek){
+  /**
+   * Method convertToLocalDate() gets number of week and day of week
+   * after that convert they to date (LocalDate).
+   *
+   * @param weekNum number of week
+   *
+   * @param dayOfWeek day of week
+   * @return date
+   */
+  public LocalDate convertToLocalDate(long weekNum, DayOfWeek dayOfWeek) {
     WeekFields weekFields = WeekFields.of(Locale.getDefault());
     return LocalDate.now()
         .with(weekFields.weekBasedYear(), getYear(weekNum))
@@ -46,49 +61,49 @@ public class WeekService {
         .with(weekFields.dayOfWeek(), dayOfWeek.ordinal() + 1L);
   }
 
-  private long getYear(long weekNum){
-    return getFromWeekNum(weekNum,"year");
+  private long getYear(long weekNum) {
+    return getFromWeekNum(weekNum, "year");
   }
 
-  private long getWeek(long weekNum){
-    return getFromWeekNum(weekNum,"week");
+  private long getWeek(long weekNum) {
+    return getFromWeekNum(weekNum, "week");
   }
 
-  private long getFromWeekNum(long weekNum, String type){
+  private long getFromWeekNum(long weekNum, String type) {
     LocalDate date = LocalDate.parse("2022-01-01");
     WeekFields weekFields = WeekFields.of(Locale.getDefault());
     long newWeekNum = weekNum;
     int year = date.getYear();
     long yearWeekNum = date.range(weekFields.weekOfYear()).getMaximum();
-    while(newWeekNum > yearWeekNum){
+    while (newWeekNum > yearWeekNum) {
       year++;
       yearWeekNum = date.withYear(year).range(weekFields.weekOfYear()).getMaximum();
-      newWeekNum -= date.withYear(year-1).range(weekFields.weekOfYear()).getMaximum();
+      newWeekNum -= date.withYear(year - 1).range(weekFields.weekOfYear()).getMaximum();
     }
-    if(type.equals("year")){
+    if (type.equals("year")) {
       return year;
-    }else{
+    } else {
       return newWeekNum;
     }
   }
 
-  public Week getCurrentWeek(){
+  public Week getCurrentWeek() {
     LocalDate date = LocalDate.now();
     return getWeekByWeekNum(getNumberOfWeek(date));
   }
 
-  public Week getNextWeek(){
+  public Week getNextWeek() {
     LocalDate date = LocalDate.now();
     return getWeekByWeekNum(getNumberOfWeek(date) + 1L);
   }
 
-  public Week getWeekByWeekNum(Long weekNum){
+  public Week getWeekByWeekNum(Long weekNum) {
     Optional<Week> week = weekRepository.findById(weekNum);
     return week.orElseGet(() -> createWeek(weekNum));
   }
 
-  public Week createWeek(Long weekNum){
-    Week newWeek = new Week(weekNum,new HashSet<>());
+  public Week createWeek(Long weekNum) {
+    Week newWeek = new Week(weekNum, new HashSet<>());
     return weekRepository.save(newWeek);
   }
 }
