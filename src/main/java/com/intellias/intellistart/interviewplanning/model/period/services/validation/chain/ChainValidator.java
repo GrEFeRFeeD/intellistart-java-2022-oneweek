@@ -3,7 +3,7 @@ package com.intellias.intellistart.interviewplanning.model.period.services.valid
 import java.time.LocalTime;
 
 /**
- * Single business logic validator
+ * Single business logic validator.
  */
 public interface ChainValidator {
 

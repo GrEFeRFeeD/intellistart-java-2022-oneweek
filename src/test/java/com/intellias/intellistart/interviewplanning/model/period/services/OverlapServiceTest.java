@@ -10,75 +10,64 @@ import org.junit.jupiter.api.Test;
 class OverlapServiceTest {
 
   private static OverlapService overlapService;
-
+  private static Period tenToTwoPeriod;
   @BeforeAll
   public static void initialize(){
     overlapService = new OverlapService();
+
+    tenToTwoPeriod = new Period();
+    tenToTwoPeriod.setFrom(LocalTime.of(10, 0));
+    tenToTwoPeriod.setTo(LocalTime.of(14, 0));
   }
 
   @Test
   void overlapWhenCrossingSecondBefore(){
-    Period p1 = new Period();
-    p1.setFrom(LocalTime.of(13, 0));
-    p1.setTo(LocalTime.of(16, 30));
 
-    Period p2 = new Period();
-    p2.setFrom(LocalTime.of(12, 30));
-    p2.setTo(LocalTime.of(15, 30));
+    Period period = new Period();
+    period.setFrom(LocalTime.of(8, 30));
+    period.setTo(LocalTime.of(11, 30));
 
-    assertTrue(overlapService.isOverlap(p1, p2));
+    assertTrue(overlapService.isOverlap(tenToTwoPeriod, period));
   }
 
 
   @Test
   void overlapWhenCrossingFirstBefore(){
-    Period p1 = new Period();
-    p1.setFrom(LocalTime.of(13, 0));
-    p1.setTo(LocalTime.of(17, 30));
 
-    Period p2 = new Period();
-    p2.setFrom(LocalTime.of(16, 30));
-    p2.setTo(LocalTime.of(18, 30));
+    Period period = new Period();
+    period.setFrom(LocalTime.of(13, 30));
+    period.setTo(LocalTime.of(18, 30));
 
-    assertTrue(overlapService.isOverlap(p1, p2));
+    assertTrue(overlapService.isOverlap(tenToTwoPeriod, period));
   }
 
   @Test
   void overlapWhenInner(){
-    Period p1 = new Period();
-    p1.setFrom(LocalTime.of(13, 0));
-    p1.setTo(LocalTime.of(18, 30));
 
-    Period p2 = new Period();
-    p2.setFrom(LocalTime.of(14, 0));
-    p2.setTo(LocalTime.of(17, 30));
+    Period period = new Period();
+    period.setFrom(LocalTime.of(8, 0));
+    period.setTo(LocalTime.of(16, 30));
 
-    assertTrue(overlapService.isOverlap(p1, p2));
+    assertTrue(overlapService.isOverlap(tenToTwoPeriod, period));
   }
 
   @Test
   void noOverlapWhenBorders(){
-    Period p1 = new Period();
-    p1.setFrom(LocalTime.of(13, 0));
-    p1.setTo(LocalTime.of(15, 30));
 
-    Period p2 = new Period();
-    p2.setFrom(LocalTime.of(15, 30));
-    p2.setTo(LocalTime.of(17, 30));
+    Period period = new Period();
+    period.setFrom(LocalTime.of(14, 30));
+    period.setTo(LocalTime.of(17, 30));
 
-    assertFalse(overlapService.isOverlap(p1, p2));
+    assertFalse(overlapService.isOverlap(tenToTwoPeriod, period));
   }
 
   @Test
   void noOverlapWhenOkay(){
-    Period p1 = new Period();
-    p1.setFrom(LocalTime.of(10, 0));
-    p1.setTo(LocalTime.of(12, 0));
 
-    Period p2 = new Period();
-    p2.setFrom(LocalTime.of(15, 30));
-    p2.setTo(LocalTime.of(17, 30));
+    Period period = new Period();
+    period.setFrom(LocalTime.of(15, 30));
+    period.setTo(LocalTime.of(17, 30));
 
-    assertFalse(overlapService.isOverlap(p1, p2));
+    assertFalse(overlapService.isOverlap(tenToTwoPeriod, period));
   }
 }

@@ -1,9 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
+import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.model.period.services.OverlapService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
-import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,9 @@ public class PeriodService {
   private final PeriodValidator periodValidator;
   private final OverlapService overlapService;
 
+  /**
+   * Constructor.
+   */
   @Autowired
   public PeriodService(PeriodRepository periodRepository,
       TimeConverter timeConverter,
@@ -33,20 +36,19 @@ public class PeriodService {
   }
 
 
-/**
- * Get period by given parameters
- *
- * If needed period exists obtain it,
- * if not exists - create it
- *
- * @param fromString - String representation of lower time boundary
- * @param toString - String representation of upper time boundary
- *
- * @throws InvalidBoundariesException when parameters are incorrect:
- * can't be read as time
- * wrong business logic
- */
-  public Period getPeriod(String fromString, String toString){
+  /**
+  * Get period by given parameters.
+  * If needed period exists obtain it,
+  * if not exists - create it
+  *
+  * @param fromString - String representation of lower time boundary
+  * @param toString - String representation of upper time boundary
+  *
+  * @throws InvalidBoundariesException when parameters are incorrect:
+  *     can't be read as time
+  *     wrong business logic
+  */
+  public Period getPeriod(String fromString, String toString) {
     LocalTime from = timeConverter.convert(fromString);
     LocalTime to = timeConverter.convert(toString);
 
@@ -54,19 +56,19 @@ public class PeriodService {
 
     Optional<Period> periodOptional = periodRepository.findPeriod(from, to);
 
-    if(periodOptional.isPresent()){
+    if (periodOptional.isPresent()) {
       return periodOptional.get();
     }
 
     return createPeriod(from, to);
   }
 
-  public boolean isOverlap(Period period1, Period period2){
+  public boolean isOverlap(Period period1, Period period2) {
     return overlapService.isOverlap(period1, period2);
   }
 
 
-  private Period createPeriod(LocalTime from, LocalTime to){
+  private Period createPeriod(LocalTime from, LocalTime to) {
     //TODO decide if remove double links between periods and slots
 
     return periodRepository.save(

@@ -12,10 +12,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
- * Business logic validator class
+ * Business logic validator class.
  */
 @Component
-public class PeriodValidator{
+public class PeriodValidator {
 
   private final List<ChainValidator> validators = new ArrayList<>(Arrays.asList(
       new LimitsValidator(),
@@ -24,14 +24,14 @@ public class PeriodValidator{
   ));
 
   /**
-   * Proceed all needed business validations before creating Period object
+   * Proceed all needed business validations before creating Period object.
    *
    * @param from - lower time boundary
-   * @param to- upper time boundary
+   * @param to - upper time boundary
    */
-  public void validate(LocalTime from, LocalTime to){
-    for(ChainValidator validator: validators){
-      if (validator.isNotCorrect(from, to) ){
+  public void validate(LocalTime from, LocalTime to) {
+    for (ChainValidator validator : validators) {
+      if (validator.isNotCorrect(from, to)) {
         throw new InvalidBoundariesException();
       }
     }

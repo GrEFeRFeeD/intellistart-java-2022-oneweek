@@ -7,19 +7,20 @@ import java.time.format.DateTimeParseException;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts String to LocalTime
+ * Converts String to LocalTime.
  */
 @Component
 public class TimeConverter {
 
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-
+  /**
+   * Conversion method.
+   */
   public LocalTime convert(String source) {
-    try{
+    try {
       return LocalTime.parse(source, formatter);
-    }
-    catch (DateTimeParseException e){
+    } catch (DateTimeParseException e) {
       throw new InvalidBoundariesException();
     }
   }

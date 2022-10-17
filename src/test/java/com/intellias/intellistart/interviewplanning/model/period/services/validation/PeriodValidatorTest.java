@@ -22,7 +22,7 @@ class PeriodValidatorTest {
     LocalTime from = LocalTime.of(18, 0);
     LocalTime to = LocalTime.of(19, 30);
 
-    validator.validate(from, to);
+    assertDoesNotThrow(() -> validator.validate(from, to));
   }
 
   @Test
@@ -30,9 +30,8 @@ class PeriodValidatorTest {
     LocalTime from = LocalTime.of(9, 1);
     LocalTime to = LocalTime.of(19, 30);
 
-    assertThrows(InvalidBoundariesException.class, () -> {
-      validator.validate(from, to);
-    });
+    assertThrows(InvalidBoundariesException.class, () ->
+      validator.validate(from, to));
   }
 
   @Test
@@ -40,9 +39,8 @@ class PeriodValidatorTest {
     LocalTime from = LocalTime.of(9, 0);
     LocalTime to = LocalTime.of(10, 0);
 
-    assertThrows(InvalidBoundariesException.class, () -> {
-      validator.validate(from, to);
-    });
+    assertThrows(InvalidBoundariesException.class, () ->
+      validator.validate(from, to));
   }
 
   @Test
@@ -50,9 +48,8 @@ class PeriodValidatorTest {
     LocalTime from = LocalTime.of(9, 30);
     LocalTime to = LocalTime.of(23, 0);
 
-    assertThrows(InvalidBoundariesException.class, () -> {
-      validator.validate(from, to);
-    });
+    assertThrows(InvalidBoundariesException.class, () ->
+      validator.validate(from, to));
   }
 
   @Test
@@ -60,8 +57,7 @@ class PeriodValidatorTest {
     LocalTime from = LocalTime.of(9, 31);
     LocalTime to = LocalTime.of(3, 0);
 
-    assertThrows(InvalidBoundariesException.class, () -> {
-      validator.validate(from, to);
-    });
+    assertThrows(InvalidBoundariesException.class, () ->
+      validator.validate(from, to));
   }
 }
