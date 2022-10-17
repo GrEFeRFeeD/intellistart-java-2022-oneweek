@@ -1,11 +1,19 @@
 package com.intellias.intellistart.interviewplanning.model.week;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 class WeekServiceTest {
@@ -36,6 +44,33 @@ class WeekServiceTest {
   void convertToLocalDateTest(long numberOfWeek,DayOfWeek dayOfWeek,LocalDate expect){
     LocalDate resultDate = weekService.convertToLocalDate(numberOfWeek,dayOfWeek);
     assertEquals(expect,resultDate);
+  }
+
+ @Test
+  void createWeekTest(){
+    Week newWeek = new Week(153L,new HashSet<>());
+    weekService.createWeek(153L);
+    ArgumentCaptor<Week> weekArgumentCaptor = ArgumentCaptor.forClass(Week.class);
+    verify(weekRepository).save(weekArgumentCaptor.capture());
+    Week captureWeek = weekArgumentCaptor.getValue();
+    assertEquals(newWeek,captureWeek);
+ }
+
+ @Test
+  void getWeekByWeekNumIfNotExistTest(){
+    Week expectWeek = new Week(153L,new HashSet<>());
+    given(weekRepository.save(expectWeek)).willReturn(expectWeek);
+    Week newWeek = weekService.getWeekByWeekNum(153L);
+    verify(weekRepository).save(expectWeek);
+    assertEquals(expectWeek,newWeek);
+ }
+  @Test
+  void getWeekByWeekNumIfExistTest(){
+    Week expectedWeek = new Week(153L,new HashSet<>());
+    given(weekRepository.findById(153L)).willReturn(Optional.of(expectedWeek));
+    Week newWeek = weekService.getWeekByWeekNum(153L);
+    verify(weekRepository,never()).save(any());
+    assertEquals(expectedWeek,newWeek);
   }
 
 }
