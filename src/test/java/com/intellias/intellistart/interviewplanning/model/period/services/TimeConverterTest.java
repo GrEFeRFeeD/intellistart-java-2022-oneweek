@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.model.period.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import java.time.LocalTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class TimeConverterTest {
 
   @Test
   void convertWhenIncorrectLogic(){
-    converter.convert("19:23");
-    converter.convert("23:00");
+    assertDoesNotThrow(() -> converter.convert("19:23"));
+    assertDoesNotThrow(() -> converter.convert("23:00"));
   }
 }

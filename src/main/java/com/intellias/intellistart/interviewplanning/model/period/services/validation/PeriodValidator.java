@@ -1,9 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.period.services.validation;
 
-import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.ChainValidator;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.DurationValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.LimitsValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.PeriodChainValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.RoundingValidator;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PeriodValidator {
 
-  private final List<ChainValidator> validators = new ArrayList<>(Arrays.asList(
+  private final List<PeriodChainValidator> validators = new ArrayList<>(Arrays.asList(
       new LimitsValidator(),
       new RoundingValidator(),
       new DurationValidator()
@@ -30,7 +30,7 @@ public class PeriodValidator {
    * @param to - upper time boundary
    */
   public void validate(LocalTime from, LocalTime to) {
-    for (ChainValidator validator : validators) {
+    for (PeriodChainValidator validator : validators) {
       if (validator.isNotCorrect(from, to)) {
         throw new InvalidBoundariesException();
       }

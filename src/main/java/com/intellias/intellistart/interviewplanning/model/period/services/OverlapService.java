@@ -23,6 +23,10 @@ public class OverlapService {
         || isTimeInPeriod(from2, period1);
   }
 
+  /**
+   * Check if given time is bigger than period's start time and lower time is smaller then end
+   * period's end time.
+   */
   private boolean isTimeInPeriod(LocalTime time, Period period) {
     return time.isAfter(period.getFrom()) && period.getTo().isAfter(time);
   }

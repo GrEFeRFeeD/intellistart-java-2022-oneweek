@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.period.services;
 
-import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

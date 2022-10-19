@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
  * Validator of min duration being 1.5 hours.
  */
 @NoArgsConstructor
-public class DurationValidator implements ChainValidator {
+public class DurationValidator implements PeriodChainValidator {
 
   private static final int MIN_DURATION = 90;
 

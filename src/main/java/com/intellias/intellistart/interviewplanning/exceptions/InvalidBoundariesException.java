@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.period.exceptions;
+package com.intellias.intellistart.interviewplanning.exceptions;
 
 /**
  * Is thrown then can't obtain Period with given boundaries:

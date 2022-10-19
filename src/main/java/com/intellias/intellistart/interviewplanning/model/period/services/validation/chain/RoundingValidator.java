@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
  * Validator of period minutes being 30 or 0.
  */
 @NoArgsConstructor
-public class RoundingValidator implements ChainValidator {
+public class RoundingValidator implements PeriodChainValidator {
 
   public boolean isNotCorrect(LocalTime from, LocalTime to) {
     return isNotCorrect(from) || isNotCorrect(to);

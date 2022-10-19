@@ -5,7 +5,7 @@ import java.time.LocalTime;
 /**
  * Single business logic validator.
  */
-public interface ChainValidator {
+public interface PeriodChainValidator {
 
   boolean isNotCorrect(LocalTime from, LocalTime to);
 }

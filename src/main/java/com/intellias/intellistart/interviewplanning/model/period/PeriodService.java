@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
-import com.intellias.intellistart.interviewplanning.model.period.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.model.period.services.OverlapService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
@@ -67,7 +67,10 @@ public class PeriodService {
     return overlapService.isOverlap(period1, period2);
   }
 
-
+  /**
+   * Create period by from and to.
+   * Business logic of parameters is correct.
+   */
   private Period createPeriod(LocalTime from, LocalTime to) {
     //TODO decide if remove double links between periods and slots
 
