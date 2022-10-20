@@ -34,7 +34,25 @@ public class WeekService {
         sumOfWeeks += date.withYear(i).range(WeekFields.ISO.weekOfYear()).getMaximum();
       }
     }
-    return sumOfWeeks + date.get(WeekFields.ISO.weekOfYear());
+    long weeksOfCurrentYear = date.get(WeekFields.ISO.weekOfYear());
+    if (checkBeginOfYear(date.getYear())) {
+      weeksOfCurrentYear = weeksOfCurrentYear - 1;
+    }
+    return sumOfWeeks + weeksOfCurrentYear;
+  }
+
+  /**
+   * Method checks if the first day of year is tuesday,wednesday or thursday
+   * for right calculating of number of week.
+   *
+   * @param year current year
+   * @return true if year begins from tuesday,wednesday or thursday
+   */
+  private boolean checkBeginOfYear(int year) {
+    LocalDate date = LocalDate.of(year, 1, 1);
+    return date.getDayOfWeek().equals(java.time.DayOfWeek.TUESDAY)
+        || date.getDayOfWeek().equals(java.time.DayOfWeek.WEDNESDAY)
+        || date.getDayOfWeek().equals(java.time.DayOfWeek.THURSDAY);
   }
 
   /**
@@ -71,7 +89,9 @@ public class WeekService {
    * @return current year
    */
   private long getYear(long weekNum) {
-    return getFromWeekNum(weekNum, "year");
+    LocalDate date = LocalDate.parse("2022-01-01");
+    LocalDate currentDate = date.plusDays(weekNum * 7);
+    return currentDate.getYear();
   }
 
   /**
@@ -81,32 +101,12 @@ public class WeekService {
    * @return number of week from current year
    */
   private long getWeek(long weekNum) {
-    return getFromWeekNum(weekNum, "week");
-  }
-
-  /**
-   * Get number of week from 2022 and string which shows what return, number of week
-   * of current year or current year.
-   *
-   * @param weekNum number of week from 2022
-   * @param type  type of returning
-   * @return number of week of current year or current year
-   */
-  private long getFromWeekNum(long weekNum, String type) {
     LocalDate date = LocalDate.parse("2022-01-01");
-    long newWeekNum = weekNum;
-    int year = date.getYear();
-    long yearWeekNum = date.range(WeekFields.ISO.weekOfYear()).getMaximum();
-    while (newWeekNum > yearWeekNum) {
-      year++;
-      yearWeekNum = date.withYear(year).range(WeekFields.ISO.weekOfYear()).getMaximum();
-      newWeekNum -= date.withYear(year - 1).range(WeekFields.ISO.weekOfYear()).getMaximum();
+    long year = getYear(weekNum);
+    for (int i = 2022; i < year; i++) {
+      weekNum -=  date.withYear(i).range(WeekFields.ISO.weekOfYear()).getMaximum();
     }
-    if (type.equals("year")) {
-      return year;
-    } else {
-      return newWeekNum;
-    }
+    return weekNum;
   }
 
   /**

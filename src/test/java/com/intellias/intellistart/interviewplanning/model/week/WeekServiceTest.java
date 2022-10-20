@@ -23,7 +23,7 @@ class WeekServiceTest {
 
   @ParameterizedTest
   @CsvSource({"2022-01-01,0","2022-10-13,41","2023-01-01,52",
-              "2023-01-02,53","2023-12-31,104","2024-01-01,105"})
+              "2023-01-02,53","2023-12-31,104","2024-01-01,105","2025-01-01,157"})
   void getNumberOfWeekTest(LocalDate date,long expect){
     long result = weekService.getNumberOfWeek(date);
     assertEquals(expect,result);
