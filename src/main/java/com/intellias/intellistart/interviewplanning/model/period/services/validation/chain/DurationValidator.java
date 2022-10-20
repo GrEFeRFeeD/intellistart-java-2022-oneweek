@@ -15,6 +15,7 @@ public class DurationValidator implements PeriodChainValidator {
   /**
    * Validation method.
    */
+  @Override
   public boolean isNotCorrect(LocalTime from, LocalTime to) {
     Duration duration = Duration.between(from, to);
 

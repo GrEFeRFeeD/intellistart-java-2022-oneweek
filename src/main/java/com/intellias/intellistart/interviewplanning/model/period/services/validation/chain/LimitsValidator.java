@@ -10,14 +10,21 @@ public class LimitsValidator implements PeriodChainValidator {
   private static final short LOWER_LIMIT = 8;
   private static final short HIGHER_LIMIT = 22;
 
+  @Override
   public boolean isNotCorrect(LocalTime from, LocalTime to) {
     return isLowerNotCorrect(from) || isUpperNotCorrect(to);
   }
 
+  /**
+   * Check if LocalTime lower boundary of period is not correct.
+   */
   private boolean isLowerNotCorrect(LocalTime from) {
     return from.getHour() < LOWER_LIMIT;
   }
 
+  /**
+   * Check if LocalTime upper boundary of period is not correct.
+   */
   private boolean isUpperNotCorrect(LocalTime to) {
     int hour = to.getHour();
 

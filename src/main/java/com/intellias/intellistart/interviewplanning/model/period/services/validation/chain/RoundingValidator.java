@@ -9,11 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoundingValidator implements PeriodChainValidator {
 
+  @Override
   public boolean isNotCorrect(LocalTime from, LocalTime to) {
-    return isNotCorrect(from) || isNotCorrect(to);
+    return isNotCorrectSingle(from) || isNotCorrectSingle(to);
   }
 
-  private boolean isNotCorrect(LocalTime time) {
+  /**
+   * Check if single LocalTime has incorrect rounding.
+   */
+  private boolean isNotCorrectSingle(LocalTime time) {
     int minutes = time.getMinute();
     return minutes != 30 && minutes != 0;
   }
