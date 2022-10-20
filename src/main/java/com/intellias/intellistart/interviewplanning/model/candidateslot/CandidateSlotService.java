@@ -9,6 +9,7 @@ import com.intellias.intellistart.interviewplanning.exeptions.SlotNotFoundExcept
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class CandidateSlotService {
 
   private final CandidateSlotRepository candidateSlotRepository;
-  private final CandidateSlotDtoValidator candidateSlotDtoValidator;
+  private final CandidateSlotValidator candidateSlotValidator;
   private final PeriodService periodService;
   private final UserService userService;
 
@@ -28,30 +29,29 @@ public class CandidateSlotService {
   public CandidateSlotService(CandidateSlotRepository candidateSlotRepository,
       PeriodService periodService,
       UserService userService,
-      CandidateSlotDtoValidator candidateSlotDtoValidator) {
+      CandidateSlotValidator candidateSlotValidator) {
     this.candidateSlotRepository = candidateSlotRepository;
     this.periodService = periodService;
     this.userService = userService;
-    this.candidateSlotDtoValidator = candidateSlotDtoValidator;
+    this.candidateSlotValidator = candidateSlotValidator;
   }
 
   /**
    * Created in DB the CandidateSlot object with by given DTO.
-   * @param candidateSlotDto
+   * @param candidateSlot
    * @return
    * @throws InvalidBoundariesException
    * @throws SlotIsOverlappingException
    */
-  public CandidateSlot create(CandidateSlotDto candidateSlotDto)
+  public CandidateSlot create(CandidateSlot candidateSlot)
       throws InvalidBoundariesException, SlotIsOverlappingException {
-    candidateSlotDtoValidator.validateCreateCandidateSlotDto(candidateSlotDto);
-    CandidateSlot candidateSlot = getCandidateSlotFromDto(candidateSlotDto);
+    candidateSlotValidator.validateCreateCandidateSlot(candidateSlot);
     return candidateSlotRepository.save(candidateSlot);
   }
 
   /**
    * Update CandidateSlot object with by given DTO.
-   * @param candidateSlotDto
+   * @param candidateSlot
    * @param id
    * @return
    * @throws SlotNotFoundException
@@ -59,10 +59,9 @@ public class CandidateSlotService {
    * @throws InvalidBoundariesException
    * @throws SlotIsOverlappingException
    */
-  public CandidateSlot update(CandidateSlotDto candidateSlotDto, Long id)
+  public CandidateSlot update(CandidateSlot candidateSlot, Long id)
       throws SlotNotFoundException, SlotIsBookedException, InvalidBoundariesException, SlotIsOverlappingException {
-    candidateSlotDtoValidator.validateUpdateCandidateSlotDto(candidateSlotDto, id);
-    CandidateSlot candidateSlot = getCandidateSlotFromDto(candidateSlotDto);
+    candidateSlotValidator.validateUpdateCandidateSlot(candidateSlot, id);
     candidateSlot.setId(id);
     return candidateSlotRepository.save(candidateSlot);
   }
@@ -76,6 +75,15 @@ public class CandidateSlotService {
     List<CandidateSlot> candidateSlotList = candidateSlotRepository.getCandidateSlotsByUser(
         userService.getCurrentUser());
     return getCandidateSlotsDtoFromListOf(candidateSlotList);
+  }
+
+  public List<CandidateSlot> getCandidateSlotsByUserAndDate(CandidateSlot candidateSlot) {
+    return candidateSlotRepository.getCandidateSlotsByUserAndDate(
+        userService.getCurrentUser(), candidateSlot.getDate());
+  }
+
+  public Optional<CandidateSlot> getCandidateSlotById(Long id) {
+    return candidateSlotRepository.findById(id);
   }
 
   /**
