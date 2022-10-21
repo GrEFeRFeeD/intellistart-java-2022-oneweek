@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * Security configuration.
- *//*
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -29,24 +29,22 @@ public class SecurityConfig {
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final UserDetailsService jwtUserDetailsService;
   private final JwtRequestFilter jwtRequestFilter;
+  private final PasswordEncoder passwordEncoder;
 
   @Autowired
   public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-      JwtUserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter) {
+      UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter,
+      PasswordEncoder passwordEncoder) {
     this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     this.jwtUserDetailsService = jwtUserDetailsService;
     this.jwtRequestFilter = jwtRequestFilter;
-  }
-
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Bean
   public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
     AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-    authenticationManagerBuilder.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+    authenticationManagerBuilder.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder);
     return authenticationManagerBuilder.build();
   }
 
@@ -74,4 +72,3 @@ public class SecurityConfig {
   }
 
 }
-*/
