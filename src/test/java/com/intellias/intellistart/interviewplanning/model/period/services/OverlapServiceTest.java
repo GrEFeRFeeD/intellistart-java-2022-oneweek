@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 class OverlapServiceTest {
 
-  private static OverlapService overlapService;
+  private static OverlapService cut;
   private static Period tenToTwoPeriod;
   @BeforeAll
   public static void initialize(){
-    overlapService = new OverlapService();
+    cut = new OverlapService();
 
     tenToTwoPeriod = new Period();
     tenToTwoPeriod.setFrom(LocalTime.of(10, 0));
@@ -27,7 +27,7 @@ class OverlapServiceTest {
     period.setFrom(LocalTime.of(8, 30));
     period.setTo(LocalTime.of(11, 30));
 
-    assertTrue(overlapService.isOverlap(tenToTwoPeriod, period));
+    assertTrue(cut.isOverlap(tenToTwoPeriod, period));
   }
 
 
@@ -38,7 +38,7 @@ class OverlapServiceTest {
     period.setFrom(LocalTime.of(13, 30));
     period.setTo(LocalTime.of(18, 30));
 
-    assertTrue(overlapService.isOverlap(tenToTwoPeriod, period));
+    assertTrue(cut.isOverlap(tenToTwoPeriod, period));
   }
 
   @Test
@@ -48,7 +48,7 @@ class OverlapServiceTest {
     period.setFrom(LocalTime.of(8, 0));
     period.setTo(LocalTime.of(16, 30));
 
-    assertTrue(overlapService.isOverlap(tenToTwoPeriod, period));
+    assertTrue(cut.isOverlap(tenToTwoPeriod, period));
   }
 
   @Test
@@ -58,7 +58,7 @@ class OverlapServiceTest {
     period.setFrom(LocalTime.of(14, 30));
     period.setTo(LocalTime.of(17, 30));
 
-    assertFalse(overlapService.isOverlap(tenToTwoPeriod, period));
+    assertFalse(cut.isOverlap(tenToTwoPeriod, period));
   }
 
   @Test
@@ -68,6 +68,6 @@ class OverlapServiceTest {
     period.setFrom(LocalTime.of(15, 30));
     period.setTo(LocalTime.of(17, 30));
 
-    assertFalse(overlapService.isOverlap(tenToTwoPeriod, period));
+    assertFalse(cut.isOverlap(tenToTwoPeriod, period));
   }
 }

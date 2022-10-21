@@ -2,16 +2,16 @@ package com.intellias.intellistart.interviewplanning.model.period.services;
 
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import java.time.LocalTime;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Service to check if times of periods cross.
  */
-@Component
+@Service
 public class OverlapService {
 
   /**
-   * Check method.
+   * Check if times of periods cross. Boundaries are exclusive.
    *
    * @return true if periods overlap.
    */

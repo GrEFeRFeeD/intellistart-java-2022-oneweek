@@ -7,42 +7,43 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class DurationValidatorTest {
-  private static DurationValidator validator;
+
+  private static DurationValidator cut;
 
   @BeforeAll
   public static void initialize(){
-    validator = new DurationValidator();
+    cut = new DurationValidator();
   }
 
   @Test
-  void falseWhenCorrect(){
-    LocalTime from = LocalTime.of(8, 0);
-    LocalTime to = LocalTime.of(10, 0);
+  void trueWhenCorrect(){
+    LocalTime lower = LocalTime.of(8, 0);
+    LocalTime upper = LocalTime.of(10, 0);
 
-    assertFalse(validator.isNotCorrect(from, to));
+    assertTrue(cut.isCorrect(lower, upper));
   }
 
   @Test
-  void trueWhenIncorrectDifference(){
-    LocalTime from = LocalTime.of(8, 0);
-    LocalTime to = LocalTime.of(9, 0);
+  void falseWhenIncorrectDifference(){
+    LocalTime lower = LocalTime.of(8, 0);
+    LocalTime upper = LocalTime.of(9, 0);
 
-    assertTrue(validator.isNotCorrect(from, to));
+    assertFalse(cut.isCorrect(lower, upper));
   }
 
   @Test
-  void falseWhenIncorrectLogic(){
-    LocalTime from = LocalTime.of(3, 34, 8);
-    LocalTime to = LocalTime.of(22, 33, 0);
+  void trueWhenIncorrectLogic(){
+    LocalTime lower = LocalTime.of(3, 34, 8);
+    LocalTime upper = LocalTime.of(22, 33, 0);
 
-    assertFalse(validator.isNotCorrect(from, to));
+    assertTrue(cut.isCorrect(lower, upper));
   }
 
   @Test
-  void trueWhenNegativeDuration(){
-    LocalTime from = LocalTime.of(18, 0);
-    LocalTime to = LocalTime.of(15, 0);
+  void falseWhenNegativeDuration(){
+    LocalTime lower = LocalTime.of(18, 0);
+    LocalTime upper = LocalTime.of(15, 0);
 
-    assertTrue(validator.isNotCorrect(from, to));
+    assertFalse(cut.isCorrect(lower, upper));
   }
 }

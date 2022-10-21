@@ -5,7 +5,8 @@ import java.time.LocalTime;
 import lombok.NoArgsConstructor;
 
 /**
- * Validator of min duration being 1.5 hours.
+ * Validator of difference before upper and lower time
+ * boundaries is 90 minutes or more.
  */
 @NoArgsConstructor
 public class DurationValidator implements PeriodChainValidator {
@@ -13,16 +14,22 @@ public class DurationValidator implements PeriodChainValidator {
   private static final int MIN_DURATION = 90;
 
   /**
-   * Validation method.
+   * Validate difference before upper and lower time
+   * boundaries is 90 minutes or more.
+   *
+   * @param lowerBoundary LocalTime
+   * @param  upperBoundary LocalTime
+   *
+   * @return true if boundaries correct.
    */
   @Override
-  public boolean isNotCorrect(LocalTime from, LocalTime to) {
-    Duration duration = Duration.between(from, to);
+  public boolean isCorrect(LocalTime lowerBoundary, LocalTime upperBoundary) {
+    Duration duration = Duration.between(lowerBoundary, upperBoundary);
 
     int minutes = duration.toMinutesPart();
     int hours = duration.toHoursPart();
 
-    return hours * 60 + minutes < MIN_DURATION;
+    return hours * 60 + minutes >= MIN_DURATION;
   }
 
 }

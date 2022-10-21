@@ -9,37 +9,37 @@ import org.junit.jupiter.api.Test;
 
 class TimeConverterTest {
 
-  private static TimeConverter converter;
+  private static TimeConverter cut;
 
   @BeforeAll
   public static void initialize(){
-    converter = new TimeConverter();
+    cut = new TimeConverter();
   }
 
   @Test
   void convertWhenCorrectFormat() {
-    LocalTime got = converter.convert("19:00");
+    LocalTime actual = cut.convert("19:00");
     LocalTime expected = LocalTime.of(19, 0);
-    assertEquals(got, expected);
+    assertEquals(actual, expected);
   }
 
   @Test
   void notConvertWhenSecondsGiven() {
     assertThrows(InvalidBoundariesException.class, () ->
-      converter.convert("19:00:33"));
+      cut.convert("19:00:33"));
   }
 
   @Test
   void notConvertWhenInvalidHourOrMinutes(){
     assertThrows(InvalidBoundariesException.class, () ->
-      converter.convert("34:00"));
+      cut.convert("34:00"));
     assertThrows(InvalidBoundariesException.class, () ->
-      converter.convert("11:77"));
+      cut.convert("11:77"));
   }
 
   @Test
   void convertWhenIncorrectLogic(){
-    assertDoesNotThrow(() -> converter.convert("19:23"));
-    assertDoesNotThrow(() -> converter.convert("23:00"));
+    assertDoesNotThrow(() -> cut.convert("19:23"));
+    assertDoesNotThrow(() -> cut.convert("23:00"));
   }
 }

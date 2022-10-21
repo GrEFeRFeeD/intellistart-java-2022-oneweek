@@ -7,5 +7,5 @@ import java.time.LocalTime;
  */
 public interface PeriodChainValidator {
 
-  boolean isNotCorrect(LocalTime from, LocalTime to);
+  boolean isCorrect(LocalTime lowerBoundary, LocalTime upperBoundary);
 }

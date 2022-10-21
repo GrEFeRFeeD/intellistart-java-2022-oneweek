@@ -2,9 +2,9 @@ package com.intellias.intellistart.interviewplanning.model.period.services.valid
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.DurationValidator;
-import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.LimitsValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.ExtremeValuesValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.PeriodChainValidator;
-import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.RoundingValidator;
+import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.RoundingMinutesValidator;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,20 +18,28 @@ import org.springframework.stereotype.Component;
 public class PeriodValidator {
 
   private final List<PeriodChainValidator> validators = new ArrayList<>(Arrays.asList(
-      new LimitsValidator(),
-      new RoundingValidator(),
+      new ExtremeValuesValidator(),
+      new RoundingMinutesValidator(),
       new DurationValidator()
   ));
 
   /**
-   * Proceed all needed business validations before creating Period object.
+   * Validate lower and upper boundaries of future period.
    *
-   * @param from - lower time boundary
-   * @param to - upper time boundary
+   * <ul>
+   * <li>minimal duration validation
+   * <li>extreme values validation
+   * <li>rounding of minutes validation.
+   * </ul>
+   *
+   * @param from LocalTime, lower time boundary
+   * @param to LocalTime, upper time boundary
+   *
+   * @throws InvalidBoundariesException when validation is incorrect
    */
   public void validate(LocalTime from, LocalTime to) {
     for (PeriodChainValidator validator : validators) {
-      if (validator.isNotCorrect(from, to)) {
+      if (!validator.isCorrect(from, to)) {
         throw new InvalidBoundariesException();
       }
     }

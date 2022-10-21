@@ -59,7 +59,6 @@ public class PeriodService {
     if (periodOptional.isPresent()) {
       return periodOptional.get();
     }
-
     return createPeriod(from, to);
   }
 
@@ -71,7 +70,7 @@ public class PeriodService {
    * Create period by from and to.
    * Business logic of parameters is correct.
    */
-  private Period createPeriod(LocalTime from, LocalTime to) {
+  Period createPeriod(LocalTime from, LocalTime to) {
     //TODO decide if remove double links between periods and slots
 
     return periodRepository.save(

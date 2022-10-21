@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 class PeriodValidatorTest {
 
-  private static PeriodValidator validator;
+  private static PeriodValidator cut;
 
   @BeforeAll
   public static void initialize(){
-    validator = new PeriodValidator();
+    cut = new PeriodValidator();
   }
 
 
@@ -22,7 +22,7 @@ class PeriodValidatorTest {
     LocalTime from = LocalTime.of(18, 0);
     LocalTime to = LocalTime.of(19, 30);
 
-    assertDoesNotThrow(() -> validator.validate(from, to));
+    assertDoesNotThrow(() -> cut.validate(from, to));
   }
 
   @Test
@@ -31,7 +31,7 @@ class PeriodValidatorTest {
     LocalTime to = LocalTime.of(19, 30);
 
     assertThrows(InvalidBoundariesException.class, () ->
-      validator.validate(from, to));
+      cut.validate(from, to));
   }
 
   @Test
@@ -40,7 +40,7 @@ class PeriodValidatorTest {
     LocalTime to = LocalTime.of(10, 0);
 
     assertThrows(InvalidBoundariesException.class, () ->
-      validator.validate(from, to));
+      cut.validate(from, to));
   }
 
   @Test
@@ -49,7 +49,7 @@ class PeriodValidatorTest {
     LocalTime to = LocalTime.of(23, 0);
 
     assertThrows(InvalidBoundariesException.class, () ->
-      validator.validate(from, to));
+      cut.validate(from, to));
   }
 
   @Test
@@ -58,6 +58,6 @@ class PeriodValidatorTest {
     LocalTime to = LocalTime.of(3, 0);
 
     assertThrows(InvalidBoundariesException.class, () ->
-      validator.validate(from, to));
+      cut.validate(from, to));
   }
 }
