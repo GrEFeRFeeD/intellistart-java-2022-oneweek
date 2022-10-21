@@ -17,8 +17,5 @@ public class PeriodService {
   public PeriodService(PeriodRepository periodRepository) {
     this.periodRepository = periodRepository;
   }
-  public static Period  getPeriod(String x, String v){ //заглушка
-       return null;//new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0), null, null, null);
-  }
 
 }

@@ -59,6 +59,7 @@ public class StartDataLoader implements ApplicationRunner {
     u1.setBookingLimit(bl1);
 
     Week w1 = new Week(40L, new HashSet<>());
+    Week w2 = new Week(41L, new HashSet<>());
     w1.setId(w1.getId()); // Don't mind. Just for maven codestyle validation. Is smells.
 
     Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
@@ -95,6 +96,7 @@ public class StartDataLoader implements ApplicationRunner {
     bl1 = bookingLimitRepository.save(bl1);
 
     w1 = weekRepository.save(w1);
+    w2 = weekRepository.save(w2);
 
     p1 = periodRepository.save(p1);
     p2 = periodRepository.save(p2);
@@ -108,29 +110,31 @@ public class StartDataLoader implements ApplicationRunner {
 
     b1 = bookingRepository.save(b1);
 
-    System.out.println("====== USERS ======");
-    System.out.println(u1);
-    System.out.println(u2);
-    System.out.println(u3);
-    System.out.println(u4);
-    System.out.println("====== BOOKING_LIMITS ======");
-    System.out.println(bl1);
-    System.out.println("====== WEEKS ======");
-    System.out.println(w1);
-    System.out.println("====== PERIODS ======");
-    System.out.println(p1);
-    System.out.println(p2);
-    System.out.println(p3);
-    System.out.println(p4);
-    System.out.println("====== INTERVIEWER_SLOTS ======");
-    System.out.println(is1);
-    System.out.println(is2);
-    System.out.println("====== CANDIDATE_SLOTS ======");
-    System.out.println(cs1);
-    System.out.println("====== BOOKINGS ======");
-    System.out.println(b1);
-    System.out.println("==================");
-    System.out.println("If don't want to see these messages, than go and comment this class: "
-        + this.getClass());
+//    System.out.println("====== USERS ======");
+//    System.out.println(u1);
+//    System.out.println(u2);
+//    System.out.println(u3);
+//    System.out.println(u4);
+//    System.out.println("====== BOOKING_LIMITS ======");
+//    System.out.println(bl1);
+//    System.out.println("====== WEEKS ======");
+//    System.out.println(w1);
+//    System.out.println("====== PERIODS ======");
+//    System.out.println(p1);
+//    System.out.println(p2);
+//    System.out.println(p3);
+//    System.out.println(p4);
+//    System.out.println("====== INTERVIEWER_SLOTS ======");
+//    System.out.println(is1);
+//    System.out.println(is2);
+//    System.out.println("====== CANDIDATE_SLOTS ======");
+//    System.out.println(cs1);
+//    System.out.println("====== BOOKINGS ======");
+//    System.out.println(b1);
+//    System.out.println("==================");
+//    System.out.println("If don't want to see these messages, than go and comment this class: "
+//        + this.getClass());
+
+   // System.out.println(weekRepository.findAll());
   }
 }
