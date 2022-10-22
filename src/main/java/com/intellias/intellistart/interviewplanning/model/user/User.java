@@ -38,6 +38,7 @@ public class User {
   @Column(name = "user_id")
   private Long id;
 
+  @Column(unique = true)
   private String email;
 
   @Enumerated(EnumType.STRING)

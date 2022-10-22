@@ -31,8 +31,24 @@ public class JwtUserDetailsService implements UserDetailsService {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * Wrapper method of loadUserByUsername for loading user by email and name.
+   *
+   * @param email email of certain user
+   * @param name name of certain user
+   * @return standard loaded UserDetails object
+   */
+  public UserDetails loadUserByEmailAndName(String email, String name) {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) loadUserByUsername(email);
+    jwtUserDetails.setName(name);
+
+    return jwtUserDetails;
+  }
+
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
     User user = userRepository.findByEmail(email);
 
     Set<GrantedAuthority> authorities = new HashSet<>();
@@ -41,9 +57,7 @@ public class JwtUserDetailsService implements UserDetailsService {
       authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
     }
 
-    return new org.springframework.security.core.userdetails.User(email,
-        passwordEncoder().encode(email),
-        authorities);
+    return new JwtUserDetails(email, null, passwordEncoder().encode(email), authorities);
   }
 
   // TODO: DELETE

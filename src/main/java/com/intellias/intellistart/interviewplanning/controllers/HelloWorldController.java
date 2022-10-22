@@ -2,9 +2,12 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
+import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,10 +30,11 @@ public class HelloWorldController {
    * Say hello to world.
    */
   @RequestMapping({"/hello"})
-  public String firstPage() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User daoUser = userRepository.findByEmail(authentication.getName());
-    return userRepository.findAll().toString();
+  public String firstPage(Authentication authentication) {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+
+    return "CURRENT USER = " + jwtUserDetails.getName() + " AND " + jwtUserDetails.getEmail();
   }
 
   /**

@@ -44,6 +44,16 @@ public class JwtTokenUtil implements Serializable {
   }
 
   /**
+   * Extracts name from token.
+   *
+   * @param token token to get name from
+   * @return name
+   */
+  public String getNameFromToken(String token) {
+    return getClaimFromToken(token, (claims -> claims.get("name", String.class)));
+  }
+
+  /**
    * Extracts certain claim from token by given function.
    *
    * @param token          token to get claim from
@@ -72,15 +82,28 @@ public class JwtTokenUtil implements Serializable {
   }
 
   /**
-   * Generates token for given UserDetails user. Username, authorities, issued date and expiration
-   * date values will be signed with secret.
+   * Generates token for given UserDetails user.
+   * Username, authorities, issued date and expiration date values will be signed with secret.
+   * Name field will be set null.
    *
    * @param userDetails user object to get username from
    * @return generated JSON Web Token
    */
   public String generateToken(UserDetails userDetails) {
+    return generateToken(userDetails, null);
+  }
+
+  /**
+   * Generates token for given UserDetails user.
+   * Username, name, authorities, issued date and expiration date values will be signed with secret.
+   *
+   * @param userDetails user object to get username from
+   * @return generated JSON Web Token
+   */
+  public String generateToken(UserDetails userDetails, String name) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("authorities", userDetails.getAuthorities());
+    claims.put("name", name);
 
     return Jwts.builder()
         .setClaims(claims)

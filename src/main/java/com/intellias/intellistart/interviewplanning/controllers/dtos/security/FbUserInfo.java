@@ -16,6 +16,7 @@ import lombok.Setter;
 public class FbUserInfo {
 
   private String email;
+  private String name;
 
   @JsonAlias("user_id")
   private String userId;

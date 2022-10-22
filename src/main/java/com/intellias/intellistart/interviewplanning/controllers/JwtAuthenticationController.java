@@ -5,7 +5,9 @@ import com.intellias.intellistart.interviewplanning.controllers.dtos.security.Jw
 import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDto;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
+import com.intellias.intellistart.interviewplanning.utils.FacebookUtil.FacebookScopes;
 import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,14 +53,17 @@ public class JwtAuthenticationController {
   public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
       throws Exception {
 
-    String email = facebookUtil.getEmail(authenticationRequest.getFacebookToken());
+    Map<FacebookScopes, String> userScopes = facebookUtil
+        .getScope(authenticationRequest.getFacebookToken());
+    String email = userScopes.get(FacebookScopes.EMAIL);
+    String name = userScopes.get(FacebookScopes.NAME);
 
     authenticate(email);
 
     final UserDetails userDetails = userDetailsService
-        .loadUserByUsername(email);
+        .loadUserByEmailAndName(email, name);
 
-    final String token = jwtTokenUtil.generateToken(userDetails);
+    final String token = jwtTokenUtil.generateToken(userDetails, name);
 
     return ResponseEntity.ok(new JwtResponse(token));
   }
