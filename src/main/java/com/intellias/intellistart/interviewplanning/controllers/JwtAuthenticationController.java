@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dtos.security.JwtRequest;
 import com.intellias.intellistart.interviewplanning.controllers.dtos.security.JwtResponse;
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDTO;
+import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDto;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
 import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
@@ -19,54 +19,65 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for authentication and authenticated requests.
+ */
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
 
-	private AuthenticationManager authenticationManager;
-	private JwtTokenUtil jwtTokenUtil;
-	private JwtUserDetailsService userDetailsService;
-	private FacebookUtil facebookUtil;
+  private final AuthenticationManager authenticationManager;
+  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtUserDetailsService userDetailsService;
+  private final FacebookUtil facebookUtil;
 
-	@Autowired
-	public JwtAuthenticationController(AuthenticationManager authenticationManager,
-			JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService,
-			FacebookUtil facebookUtil) {
-		this.authenticationManager = authenticationManager;
-		this.jwtTokenUtil = jwtTokenUtil;
-		this.userDetailsService = userDetailsService;
-		this.facebookUtil = facebookUtil;
-	}
+  /**
+   * Constructor.
+   */
+  @Autowired
+  public JwtAuthenticationController(AuthenticationManager authenticationManager,
+      JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService,
+      FacebookUtil facebookUtil) {
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenUtil = jwtTokenUtil;
+    this.userDetailsService = userDetailsService;
+    this.facebookUtil = facebookUtil;
+  }
 
-	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+  /**
+   * Authenticate.
+   */
+  @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+  public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
+      throws Exception {
 
-		String email = facebookUtil.getEmail(authenticationRequest.getFacebookToken());
+    String email = facebookUtil.getEmail(authenticationRequest.getFacebookToken());
 
-		authenticate(email);
+    authenticate(email);
 
-		final UserDetails userDetails = userDetailsService
-				.loadUserByUsername(email);
+    final UserDetails userDetails = userDetailsService
+        .loadUserByUsername(email);
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
+    final String token = jwtTokenUtil.generateToken(userDetails);
 
-		return ResponseEntity.ok(new JwtResponse(token));
-	}
-	
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<?> saveUser(@RequestBody UserDTO user) throws Exception {
-		System.out.println("ENTERED CONTROLLER");
-		return ResponseEntity.ok(userDetailsService.save(user));
-	}
+    return ResponseEntity.ok(new JwtResponse(token));
+  }
 
-	private void authenticate(String username) throws Exception {
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, username));
-			System.out.println("PASSED authentication");
-		} catch (DisabledException e) {
-			throw new Exception("USER_DISABLED", e);
-		} catch (BadCredentialsException e) {
-			throw new Exception("INVALID_CREDENTIALS", e);
-		}
-	}
+  @RequestMapping(value = "/register", method = RequestMethod.POST)
+  public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
+    System.out.println("ENTERED CONTROLLER");
+    return ResponseEntity.ok(userDetailsService.save(user));
+  }
+
+  private void authenticate(String username) throws Exception {
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(username, username));
+      System.out.println("PASSED authentication");
+    } catch (DisabledException e) {
+      throw new Exception("USER_DISABLED", e);
+    } catch (BadCredentialsException e) {
+      throw new Exception("INVALID_CREDENTIALS", e);
+    }
+  }
 }

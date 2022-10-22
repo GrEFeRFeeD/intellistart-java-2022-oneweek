@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.security;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDTO;
+import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDto;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
@@ -17,35 +17,44 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Custom UserDetailsService that implement work with JWT.
+ */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-	@Autowired
-	private UserRepository userRepository;
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+  @Autowired
+  private UserRepository userRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user = userRepository.findByEmail(email);
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-		Set<GrantedAuthority> authorities = new HashSet<>();
+  @Override
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    User user = userRepository.findByEmail(email);
 
-		if (user != null && user.getRole() != null) {
-			authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
-		}
+    Set<GrantedAuthority> authorities = new HashSet<>();
 
-		return new org.springframework.security.core.userdetails.User(email, passwordEncoder().encode(email),
-				authorities);
-	}
+    if (user != null && user.getRole() != null) {
+      authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
+    }
 
-	// TODO: DELETE
-	public User save(UserDTO user) {
-		User newUser = new User();
-		newUser.setEmail(user.getUsername());
-		newUser.setRole(Role.valueOf(user.getRole()));
-		return userRepository.save(newUser);
-	}
+    return new org.springframework.security.core.userdetails.User(email,
+        passwordEncoder().encode(email),
+        authorities);
+  }
+
+  // TODO: DELETE
+
+  /**
+   * Be.
+   */
+  public User save(UserDto user) {
+    User newUser = new User();
+    newUser.setEmail(user.getUsername());
+    newUser.setRole(Role.valueOf(user.getRole()));
+    return userRepository.save(newUser);
+  }
 }

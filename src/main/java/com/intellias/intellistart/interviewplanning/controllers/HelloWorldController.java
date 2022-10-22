@@ -9,28 +9,45 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO: REMOVE
+/**
+ * Test controller.
+ */
 @RestController
 public class HelloWorldController {
 
-	@Autowired
-	UserRepository userRepository;
+  private final UserRepository userRepository;
 
-	@RequestMapping({ "/hello" })
-	public String firstPage() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User daoUser = userRepository.findByEmail(authentication.getName());
-		return userRepository.findAll().toString();
-	}
+  @Autowired
+  public HelloWorldController(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-	@GetMapping("/test")
-	public String getRoles() {
+  /**
+   * Say hello to world.
+   */
+  @RequestMapping({"/hello"})
+  public String firstPage() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    User daoUser = userRepository.findByEmail(authentication.getName());
+    return userRepository.findAll().toString();
+  }
 
-		return "Welcome, ROLE_TEST role owner!";
-	}
+  /**
+   * Testing ROLE_TEST role.
+   */
+  @GetMapping("/test")
+  public String getRoles() {
 
-	@GetMapping("/testa")
-	public String getRolesA() {
+    return "Welcome, ROLE_TEST role owner!";
+  }
 
-		return "Welcome, TEST authority owner!";
-	}
+  /**
+   * Testing TEST authority.
+   */
+  @GetMapping("/testa")
+  public String getRolesA() {
+
+    return "Welcome, TEST authority owner!";
+  }
 }

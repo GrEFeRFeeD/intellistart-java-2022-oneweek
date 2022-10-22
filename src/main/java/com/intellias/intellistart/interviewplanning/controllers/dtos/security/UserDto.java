@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO object for User.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class FBUserInfo {
+public class UserDto {
 
-  private String email;
-  private String user_id;
+  private String username;
+  private String role;
+
 }

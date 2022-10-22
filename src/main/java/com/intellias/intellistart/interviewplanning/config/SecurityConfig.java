@@ -31,6 +31,9 @@ public class SecurityConfig {
   private final JwtRequestFilter jwtRequestFilter;
   private final PasswordEncoder passwordEncoder;
 
+  /**
+   * Constructor.
+   */
   @Autowired
   public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
       UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter,
@@ -41,13 +44,21 @@ public class SecurityConfig {
     this.passwordEncoder = passwordEncoder;
   }
 
+  /**
+   * Defining the custom UserDetailsService and password encoder.
+   */
   @Bean
   public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
-    AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-    authenticationManagerBuilder.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder);
+    AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(
+        AuthenticationManagerBuilder.class);
+    authenticationManagerBuilder.userDetailsService(jwtUserDetailsService)
+        .passwordEncoder(passwordEncoder);
     return authenticationManagerBuilder.build();
   }
 
+  /**
+   * Configuring requests security.
+   */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
