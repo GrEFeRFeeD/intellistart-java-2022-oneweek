@@ -54,7 +54,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     Set<GrantedAuthority> authorities = new HashSet<>();
 
     if (user != null && user.getRole() != null) {
-      authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
+      authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().toString()));
     }
 
     return new JwtUserDetails(email, null, passwordEncoder().encode(email), authorities);

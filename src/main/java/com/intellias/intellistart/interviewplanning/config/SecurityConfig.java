@@ -66,7 +66,7 @@ public class SecurityConfig {
     http.csrf().disable()
         // dont authenticate this particular request
         .authorizeRequests().antMatchers("/authenticate", "/register").permitAll()
-        .antMatchers("/test").hasRole("TEST")
+        .antMatchers("/test").hasRole("INTERVIEWER")
         .antMatchers("/testa").hasAuthority("TEST")
         // all other requests need to be authenticated
         .anyRequest().authenticated().and()
@@ -74,10 +74,10 @@ public class SecurityConfig {
         // store user's state.
         .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
         .and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-    // Add a filter to validate the tokens with every request
-    http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        // Add a filter to validate the tokens with every request
+        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
