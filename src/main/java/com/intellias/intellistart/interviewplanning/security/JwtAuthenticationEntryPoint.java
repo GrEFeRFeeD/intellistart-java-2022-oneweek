@@ -1,12 +1,22 @@
 package com.intellias.intellistart.interviewplanning.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 /**
  * Entry point for handling unauthorized operations.
@@ -14,10 +24,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 
+  private final HandlerExceptionResolver resolver;
+
+  @Autowired
+  public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+    this.resolver = resolver;
+  }
+
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException {
 
-    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+    resolver.resolveException(request, response, null,
+        new SecurityException(SecurityExceptionProfile.UNAUTHENTICATED));
   }
 }

@@ -3,6 +3,8 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import com.intellias.intellistart.interviewplanning.controllers.dtos.security.JwtRequest;
 import com.intellias.intellistart.interviewplanning.controllers.dtos.security.JwtResponse;
 import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDto;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil.FacebookScopes;
@@ -69,20 +71,17 @@ public class JwtAuthenticationController {
   }
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
+  public ResponseEntity<?> saveUser(@RequestBody UserDto user) {
     System.out.println("ENTERED CONTROLLER");
     return ResponseEntity.ok(userDetailsService.save(user));
   }
 
-  private void authenticate(String username) throws Exception {
+  private void authenticate(String username) {
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(username, username));
-      System.out.println("PASSED authentication");
-    } catch (DisabledException e) {
-      throw new Exception("USER_DISABLED", e);
     } catch (BadCredentialsException e) {
-      throw new Exception("INVALID_CREDENTIALS", e);
+      throw new SecurityException(SecurityExceptionProfile.BAD_CREDENTIALS);
     }
   }
 }

@@ -1,7 +1,12 @@
 package com.intellias.intellistart.interviewplanning.security;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -36,20 +41,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     String email = null;
     String jwtToken = null;
     String name = null;
-    // JWT Token is in the form "Bearer token". Remove Bearer word and get
-    // only the Token
-    if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+    // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
+    if (requestTokenHeader != null) {
+        if (!requestTokenHeader.startsWith("Bearer ")) {
+          throw new SecurityException(SecurityExceptionProfile.BAD_TOKEN);
+        }
+
       jwtToken = requestTokenHeader.substring(7);
       try {
         email = jwtTokenUtil.getEmailFromToken(jwtToken);
         name = jwtTokenUtil.getNameFromToken(jwtToken);
       } catch (IllegalArgumentException e) {
         System.out.println("Unable to get JWT Token");
+      } catch (UnsupportedJwtException e) {
+        throw new SecurityException(SecurityExceptionProfile.UNSUPPORTED_TOKEN);
+      } catch (MalformedJwtException e) {
+        throw new SecurityException(SecurityExceptionProfile.MALFORMED_TOKEN);
+      }  catch (SignatureException e) {
+        throw new SecurityException(SecurityExceptionProfile.BAD_TOKEN_SIGNATURE);
       } catch (ExpiredJwtException e) {
-        System.out.println("JWT Token has expired");
+        throw new SecurityException(SecurityExceptionProfile.EXPIRED_TOKEN);
       }
-    } else {
-      logger.warn("JWT Token does not begin with Bearer String");
     }
 
     // Once we get the token validate it.

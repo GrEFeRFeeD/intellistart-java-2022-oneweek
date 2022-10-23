@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.config;
 
+import com.intellias.intellistart.interviewplanning.security.FilterChainExceptionHandler;
 import com.intellias.intellistart.interviewplanning.security.JwtAuthenticationEntryPoint;
 import com.intellias.intellistart.interviewplanning.security.JwtRequestFilter;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
@@ -29,6 +30,7 @@ public class SecurityConfig {
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final UserDetailsService jwtUserDetailsService;
   private final JwtRequestFilter jwtRequestFilter;
+  private final FilterChainExceptionHandler filterChainExceptionHandler;
   private final PasswordEncoder passwordEncoder;
 
   /**
@@ -37,10 +39,11 @@ public class SecurityConfig {
   @Autowired
   public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
       UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter,
-      PasswordEncoder passwordEncoder) {
+      FilterChainExceptionHandler filterChainExceptionHandler, PasswordEncoder passwordEncoder) {
     this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     this.jwtUserDetailsService = jwtUserDetailsService;
     this.jwtRequestFilter = jwtRequestFilter;
+    this.filterChainExceptionHandler = filterChainExceptionHandler;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -77,7 +80,9 @@ public class SecurityConfig {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         // Add a filter to validate the tokens with every request
-        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+        // ExceptionHandler filter
+        .addFilterBefore(filterChainExceptionHandler, JwtRequestFilter.class);
 
     return http.build();
   }
