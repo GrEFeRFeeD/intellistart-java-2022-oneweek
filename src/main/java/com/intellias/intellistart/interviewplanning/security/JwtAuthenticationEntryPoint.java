@@ -22,7 +22,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
   private final HandlerExceptionResolver resolver;
 
   @Autowired
-  public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+  public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver")
+      HandlerExceptionResolver resolver) {
+
     this.resolver = resolver;
   }
 

@@ -43,9 +43,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     String name = null;
     // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
     if (requestTokenHeader != null) {
-        if (!requestTokenHeader.startsWith("Bearer ")) {
-          throw new SecurityException(SecurityExceptionProfile.BAD_TOKEN);
-        }
+      if (!requestTokenHeader.startsWith("Bearer ")) {
+        throw new SecurityException(SecurityExceptionProfile.BAD_TOKEN);
+      }
 
       jwtToken = requestTokenHeader.substring(7);
       try {
@@ -57,7 +57,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         throw new SecurityException(SecurityExceptionProfile.UNSUPPORTED_TOKEN);
       } catch (MalformedJwtException e) {
         throw new SecurityException(SecurityExceptionProfile.MALFORMED_TOKEN);
-      }  catch (SignatureException e) {
+      } catch (SignatureException e) {
         throw new SecurityException(SecurityExceptionProfile.BAD_TOKEN_SIGNATURE);
       } catch (ExpiredJwtException e) {
         throw new SecurityException(SecurityExceptionProfile.EXPIRED_TOKEN);

@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+/**
+ * Handler for SecurityExceptions at FilterChain level that resolving errors through
+ * delegating handling to controller level exception handler.
+ */
 @Component
 public class FilterChainExceptionHandler extends OncePerRequestFilter {
 
@@ -19,7 +23,9 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
   private final HandlerExceptionResolver resolver;
 
   @Autowired
-  public FilterChainExceptionHandler(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+  public FilterChainExceptionHandler(@Qualifier("handlerExceptionResolver")
+      HandlerExceptionResolver resolver) {
+
     this.resolver = resolver;
   }
 
