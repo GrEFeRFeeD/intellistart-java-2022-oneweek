@@ -14,5 +14,5 @@ import lombok.Setter;
 @Setter
 public class JwtResponse implements Serializable {
 
-  private final String jwttoken;
+  private final String jwt;
 }

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -70,6 +69,7 @@ public class JwtAuthenticationController {
     return ResponseEntity.ok(new JwtResponse(token));
   }
 
+  // TODO: remove
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> saveUser(@RequestBody UserDto user) {
     System.out.println("ENTERED CONTROLLER");

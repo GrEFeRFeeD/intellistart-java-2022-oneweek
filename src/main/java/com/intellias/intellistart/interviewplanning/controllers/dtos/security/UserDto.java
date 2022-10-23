@@ -8,6 +8,7 @@ import lombok.Setter;
 /**
  * DTO object for User.
  */
+// TODO: remove
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

@@ -1,18 +1,13 @@
 package com.intellias.intellistart.interviewplanning.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
