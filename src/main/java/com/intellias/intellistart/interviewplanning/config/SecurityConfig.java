@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.config;
 
 import com.intellias.intellistart.interviewplanning.security.FilterChainExceptionHandler;
+import com.intellias.intellistart.interviewplanning.security.JwtAccessDeniedHandler;
 import com.intellias.intellistart.interviewplanning.security.JwtAuthenticationEntryPoint;
 import com.intellias.intellistart.interviewplanning.security.JwtRequestFilter;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
@@ -28,6 +29,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+  private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
   private final UserDetailsService jwtUserDetailsService;
   private final JwtRequestFilter jwtRequestFilter;
   private final FilterChainExceptionHandler filterChainExceptionHandler;
@@ -38,9 +40,11 @@ public class SecurityConfig {
    */
   @Autowired
   public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-      UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter,
-      FilterChainExceptionHandler filterChainExceptionHandler, PasswordEncoder passwordEncoder) {
+      JwtAccessDeniedHandler jwtAccessDeniedHandler, UserDetailsService jwtUserDetailsService,
+      JwtRequestFilter jwtRequestFilter, FilterChainExceptionHandler filterChainExceptionHandler,
+      PasswordEncoder passwordEncoder) {
     this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+    this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     this.jwtUserDetailsService = jwtUserDetailsService;
     this.jwtRequestFilter = jwtRequestFilter;
     this.filterChainExceptionHandler = filterChainExceptionHandler;
@@ -76,6 +80,8 @@ public class SecurityConfig {
         // make sure we use stateless session; session won't be used to
         // store user's state.
         .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        .and()
+        .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
         .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()

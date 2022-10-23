@@ -30,7 +30,10 @@ public class SecurityException extends RuntimeException{
         HttpStatus.UNAUTHORIZED),
 
     BAD_CREDENTIALS("bad_credentials",
-        "Incorrect credentials.", HttpStatus.UNAUTHORIZED);
+        "Incorrect credentials.", HttpStatus.UNAUTHORIZED),
+
+    ACCESS_DENIED("access_denied_exception",
+        "You are not allowed to perform this action.", HttpStatus.FORBIDDEN);
 
     private final String exceptionName;
     private final String exceptionMessage;
