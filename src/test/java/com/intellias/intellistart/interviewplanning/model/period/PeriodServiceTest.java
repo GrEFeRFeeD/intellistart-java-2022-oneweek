@@ -127,10 +127,12 @@ class PeriodServiceTest {
     Mockito.when(converter.convert(fromStr)).thenReturn(from);
     Mockito.when(converter.convert(toStr)).thenReturn(to);
 
-    Mockito.when(repository.findPeriod(from, to)).thenReturn(Optional.empty());
+    Mockito.when(repository.findPeriodByFromAndTo(from, to)).thenReturn(Optional.empty());
 
-    Period actual = createPeriod(from, to);
-    Mockito.when(cut.createPeriod(from, to)).thenReturn(actual);
+    Period createdPeriod = createPeriod(from, to);
+    Mockito.when(cut.createPeriod(from, to)).thenReturn(createdPeriod);
+
+    Period actual = cut.getPeriod(fromStr, toStr);
 
     assertEquals(actual, expected);
   }
@@ -145,8 +147,10 @@ class PeriodServiceTest {
     Mockito.when(converter.convert(fromStr)).thenReturn(from);
     Mockito.when(converter.convert(toStr)).thenReturn(to);
 
-    Period actual = createPeriod(from, to);
-    Mockito.when(repository.findPeriod(from, to)).thenReturn(Optional.of(actual));
+    Period foundPeriod = createPeriod(from, to);
+    Mockito.when(repository.findPeriodByFromAndTo(from, to)).thenReturn(Optional.of(foundPeriod));
+
+    Period actual = cut.getPeriod(fromStr, toStr);
 
     assertEquals(actual, expected);
   }

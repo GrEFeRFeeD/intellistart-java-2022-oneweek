@@ -54,7 +54,7 @@ public class PeriodService {
 
     periodValidator.validate(from, to);
 
-    Optional<Period> periodOptional = periodRepository.findPeriod(from, to);
+    Optional<Period> periodOptional = periodRepository.findPeriodByFromAndTo(from, to);
 
     if (periodOptional.isPresent()) {
       return periodOptional.get();
