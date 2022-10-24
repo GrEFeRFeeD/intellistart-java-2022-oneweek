@@ -2,8 +2,6 @@ package com.intellias.intellistart.interviewplanning.exceptions.handlers;
 
 import com.intellias.intellistart.interviewplanning.exceptions.ExceptionResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

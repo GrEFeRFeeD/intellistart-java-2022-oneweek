@@ -1,12 +1,13 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
+import com.intellias.intellistart.interviewplanning.controllers.dtos.JwtRequest;
+import com.intellias.intellistart.interviewplanning.controllers.dtos.JwtResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil.FacebookScopes;
 import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,17 +51,17 @@ public class JwtAuthenticationController {
    * Method that mappings the authentication request through generating
    * JWT by Facebook Token.
    *
-   * @param facebookToken gained by user oauth2 token
+   * @param jwtRequest object with facebookToken field - gained by user oauth2 token
    * @return JWT
    */
   @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
   public ResponseEntity<?> createAuthenticationToken(
-      @RequestBody String facebookToken) {
+      @RequestBody JwtRequest jwtRequest) {
 
     Map<FacebookScopes, String> userScopes;
     try {
       userScopes = facebookUtil
-          .getScope(facebookToken);
+          .getScope(jwtRequest.getFacebookToken());
     } catch (RestClientException e) {
       throw new SecurityException(SecurityExceptionProfile.BAD_FACEBOOK_TOKEN);
     }
@@ -73,9 +74,9 @@ public class JwtAuthenticationController {
     final UserDetails userDetails = userDetailsService
         .loadUserByEmailAndName(email, name);
 
-    final String token = jwtTokenUtil.generateToken(userDetails, name);
+    JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userDetails, name));
 
-    return ResponseEntity.ok(token);
+    return ResponseEntity.ok(jwtResponse);
   }
 
   private void authenticate(String username) {
