@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
  * DAO for CandidateSlot entity.
  */
 public interface CandidateSlotRepository extends CrudRepository<CandidateSlot, Long> {
-  List<CandidateSlot> getCandidateSlotsByUser(User user);
+  List<CandidateSlot> findByUser(User user);
 
-  List<CandidateSlot> getCandidateSlotsByUserAndDate(User user, LocalDate date);
+  List<CandidateSlot> findByUserAndDate(User user, LocalDate date);
 }

@@ -27,6 +27,8 @@ public class CandidateSlotDto {
 
   /**
    * Create CandidateSlotDto object from CandidateSlot.
+   *
+   * @param candidateSlot - The object for which a DTO is created.
    */
   public CandidateSlotDto(CandidateSlot candidateSlot) {
     this.setDate(candidateSlot.getDate());

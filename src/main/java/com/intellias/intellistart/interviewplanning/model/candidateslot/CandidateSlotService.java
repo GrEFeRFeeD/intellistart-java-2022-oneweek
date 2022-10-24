@@ -58,7 +58,7 @@ public class CandidateSlotService {
    * @return List<CandidateSlot> - the list of slots of current candidate.
    */
   public List<CandidateSlot> getAllSlotsOfCandidate() {
-    return candidateSlotRepository.getCandidateSlotsByUser(
+    return candidateSlotRepository.findByUser(
         userService.getCurrentUser());
   }
 
@@ -70,7 +70,7 @@ public class CandidateSlotService {
    * @return List<CandidateSlot> - Slots that were found in the database by given parameters.
    */
   public List<CandidateSlot> getCandidateSlotsByUserAndDate(LocalDate date) {
-    return candidateSlotRepository.getCandidateSlotsByUserAndDate(
+    return candidateSlotRepository.findByUserAndDate(
         userService.getCurrentUser(), date);
   }
 
