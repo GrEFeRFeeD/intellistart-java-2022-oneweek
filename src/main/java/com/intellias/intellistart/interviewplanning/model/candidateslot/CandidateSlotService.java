@@ -29,13 +29,22 @@ public class CandidateSlotService {
 
   /**
    * Created in DB the CandidateSlot object.
+   *
+   * @param candidateSlot - The object to be saved in the database.
+   *
+   * @return CandidateSlot - An object that was successfully saved in the database.
    */
   public CandidateSlot create(CandidateSlot candidateSlot) {
     return candidateSlotRepository.save(candidateSlot);
   }
 
   /**
-   * Update CandidateSlot object with by given DTO.
+   * Updated in DB the CandidateSlot object.
+   *
+   * @param candidateSlot - Updated slot data.
+   * @param id - The id of the slot that we are going to update.
+   *
+   * @return CandidateSlot - An object that was successfully updated in the database.
    */
   public CandidateSlot update(CandidateSlot candidateSlot, Long id) {
     candidateSlot.setId(id);
@@ -44,24 +53,46 @@ public class CandidateSlotService {
 
 
   /**
-   * Returned CandidateSlots of current Candidate
+   * Returned slots of current Candidate.
+   *
+   * @return List<CandidateSlot> - the list of slots of current candidate.
    */
   public List<CandidateSlot> getAllSlotsOfCandidate() {
     return candidateSlotRepository.getCandidateSlotsByUser(
         userService.getCurrentUser());
   }
 
-  public List<CandidateSlot> getCandidateSlotsByUserAndDate(CandidateSlot candidateSlot) {
+  /**
+   * Returned slots of current Candidate by date.
+   *
+   * @param date - date on which the database will be searched.
+   *
+   * @return List<CandidateSlot> - Slots that were found in the database by given parameters.
+   */
+  public List<CandidateSlot> getCandidateSlotsByUserAndDate(LocalDate date) {
     return candidateSlotRepository.getCandidateSlotsByUserAndDate(
-        userService.getCurrentUser(), candidateSlot.getDate());
+        userService.getCurrentUser(), date);
   }
 
+  /**
+   * Returned slot of current Candidate by id.
+   *
+   * @param id - The slot number to search for in the database.
+   *
+   * @return Optional<CandidateSlot> - Optional object of find slot by id.
+   */
   public Optional<CandidateSlot> getCandidateSlotById(Long id) {
     return candidateSlotRepository.findById(id);
   }
 
   /**
-   * Created CandidateSlot object by given parameters
+   * Created CandidateSlot object by given parameters.
+   *
+   * @param date - slot date.
+   * @param from - the time from which the slot will start.
+   * @param to - the time by which the slot will end.
+   *
+   * @return CandidateSlot - created object by parameters.
    */
   public CandidateSlot createCandidateSlot(LocalDate date, String from, String to) {
     CandidateSlot candidateSlot = new CandidateSlot();

@@ -33,7 +33,6 @@ public class CandidateSlotValidator {
   public void validateCreateCandidateSlot(CandidateSlot candidateSlot)
       throws InvalidBoundariesException, SlotIsOverlappingException {
     validateSlotInFuture(candidateSlot);
-    validateUserOnCandidate(candidateSlot);
     validateOverlapping(candidateSlot);
   }
 
@@ -53,17 +52,10 @@ public class CandidateSlotValidator {
     }
   }
 
-  private void validateUserOnCandidate(CandidateSlot candidateSlot)
-      throws InvalidBoundariesException {
-    if (candidateSlot.getUser().getRole()!=Role.CANDIDATE) {
-      throw new InvalidBoundariesException();
-    }
-  }
-
   private void validateOverlapping(CandidateSlot candidateSlot) throws SlotIsOverlappingException {
     Period period = candidateSlot.getPeriod();
     List<CandidateSlot> candidateSlotList =
-        candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot);
+        candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate());
     if (!candidateSlotList.isEmpty()){
       for (CandidateSlot item : candidateSlotList) {
         if (periodService.isOverlap(period, item.getPeriod())) {
