@@ -8,7 +8,7 @@ import com.intellias.intellistart.interviewplanning.exeptions.SlotIsOverlappingE
 import com.intellias.intellistart.interviewplanning.exeptions.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
-import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotValidator;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.validation.CandidateSlotValidator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
