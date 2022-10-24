@@ -1,14 +1,12 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.JwtRequest;
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.JwtResponse;
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDto;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil.FacebookScopes;
 import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 
 /**
  * Controller for authentication and authenticated requests.
@@ -48,14 +47,24 @@ public class JwtAuthenticationController {
   }
 
   /**
-   * Authenticate.
+   * Method that mappings the authentication request through generating
+   * JWT by Facebook Token.
+   *
+   * @param facebookToken gained by user oauth2 token
+   * @return JWT
    */
   @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-  public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
-      throws Exception {
+  public ResponseEntity<?> createAuthenticationToken(
+      @RequestBody String facebookToken) {
 
-    Map<FacebookScopes, String> userScopes = facebookUtil
-        .getScope(authenticationRequest.getFacebookToken());
+    Map<FacebookScopes, String> userScopes;
+    try {
+      userScopes = facebookUtil
+          .getScope(facebookToken);
+    } catch (RestClientException e) {
+      throw new SecurityException(SecurityExceptionProfile.BAD_FACEBOOK_TOKEN);
+    }
+
     String email = userScopes.get(FacebookScopes.EMAIL);
     String name = userScopes.get(FacebookScopes.NAME);
 
@@ -66,14 +75,7 @@ public class JwtAuthenticationController {
 
     final String token = jwtTokenUtil.generateToken(userDetails, name);
 
-    return ResponseEntity.ok(new JwtResponse(token));
-  }
-
-  // TODO: remove
-  @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> saveUser(@RequestBody UserDto user) {
-    System.out.println("ENTERED CONTROLLER");
-    return ResponseEntity.ok(userDetailsService.save(user));
+    return ResponseEntity.ok(token);
   }
 
   private void authenticate(String username) {

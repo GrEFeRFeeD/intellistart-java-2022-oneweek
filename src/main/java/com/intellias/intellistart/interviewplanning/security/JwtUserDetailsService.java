@@ -1,7 +1,5 @@
 package com.intellias.intellistart.interviewplanning.security;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.UserDto;
-import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
 import java.util.HashSet;
@@ -58,17 +56,5 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     return new JwtUserDetails(email, null, passwordEncoder().encode(email), authorities);
-  }
-
-  // TODO: DELETE
-
-  /**
-   * Be.
-   */
-  public User save(UserDto user) {
-    User newUser = new User();
-    newUser.setEmail(user.getUsername());
-    newUser.setRole(Role.valueOf(user.getRole()));
-    return userRepository.save(newUser);
   }
 }

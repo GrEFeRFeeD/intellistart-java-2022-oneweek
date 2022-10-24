@@ -20,6 +20,9 @@ public class SecurityException extends RuntimeException {
     UNAUTHENTICATED("not_authenticated_exception",
         "You are not authenticated to perform this action.", HttpStatus.UNAUTHORIZED),
 
+    BAD_FACEBOOK_TOKEN("bad_facebook_token_exception",
+        "Invalid OAuth access token - cannot parse access token.", HttpStatus.UNAUTHORIZED),
+
     BAD_TOKEN("bad_token_exception",
         "Token does not start with 'Bearer'.", HttpStatus.UNAUTHORIZED),
 

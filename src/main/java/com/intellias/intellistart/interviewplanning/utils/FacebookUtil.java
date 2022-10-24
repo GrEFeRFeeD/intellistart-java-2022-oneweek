@@ -1,10 +1,12 @@
 package com.intellias.intellistart.interviewplanning.utils;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.FbMarker;
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.FbUser;
-import com.intellias.intellistart.interviewplanning.controllers.dtos.security.FbUserInfo;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +21,78 @@ public class FacebookUtil {
       + "client_id=%s&client_secret=%s&grant_type=client_credentials";
   private static final String checkMarkerUri = "https://graph.facebook.com/debug_token?input_token=%s&access_token=%s";
   private static final String userUri = "https://graph.facebook.com/%s?fields=name,email&access_token=%s";
+
+   /**
+   * DTO object for Facebook Marker.
+   */
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  @Setter
+  static class FbMarker {
+
+    @JsonAlias("access_token")
+    private String accessToken;
+
+    @JsonAlias("token_type")
+    private String tokenType;
+  }
+
+  /**
+   * Inner DTO class for facebook check token information.
+   */
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  @Setter
+  static class TokenData {
+
+    @JsonAlias("app_id")
+    private String appId;
+    private String type;
+    private String application;
+
+    @JsonAlias("data_access_expires_at")
+    private long dataAccessExpiresAt;
+
+    @JsonAlias("expires_at")
+    private long expiresAt;
+
+    @JsonAlias("is_valid")
+    private boolean isValid;
+    private String[] scopes;
+
+    @JsonAlias("user_id")
+    private String userId;
+  }
+
+  /**
+   * DTO object for facebook check token information.
+   */
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  @Setter
+  static class FbTokenInfo {
+
+    private TokenData data;
+  }
+
+  /**
+   * DTO object for Facebook User Information.
+   */
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  @Setter
+  static class FbUserInfo {
+
+    private String email;
+    private String name;
+
+    @JsonAlias("user_id")
+    private String userId;
+  }
 
   @Value("${spring.security.oauth2.client.registration.facebook.clientId}")
   private String clientId;
@@ -46,23 +120,23 @@ public class FacebookUtil {
    * @param token user facebook token
    * @return user information object
    */
-  public FbUser getFbUser(String token) {
+  public FbTokenInfo getFbTokenInfo(String token) {
 
     String uri = String.format(checkMarkerUri, token, getMarker());
     RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(uri, FbUser.class);
+    return restTemplate.getForObject(uri, FbTokenInfo.class);
   }
 
   /**
-   * Gets user name and email from Facebook by Facebook User Token.
+   * Gets username and email from Facebook by Facebook User Token.
    *
    * @param token user facebook token
    * @return user email
    */
-  public Map<FacebookScopes, String> getScope(String token)  {
+  public Map<FacebookScopes, String> getScope(String token) {
 
-    FbUser fbUser = getFbUser(token);
-    String userId = fbUser.getData().getUserId();
+    FbTokenInfo fbTokenInfo = getFbTokenInfo(token);
+    String userId = fbTokenInfo.getData().getUserId();
     String uri = String.format(userUri, userId, token);
     RestTemplate restTemplate = new RestTemplate();
     FbUserInfo fbUserInfo = restTemplate.getForObject(uri, FbUserInfo.class);
