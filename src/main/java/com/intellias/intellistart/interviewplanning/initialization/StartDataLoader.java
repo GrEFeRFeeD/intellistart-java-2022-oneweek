@@ -58,6 +58,7 @@ public class StartDataLoader implements ApplicationRunner {
     BookingLimit bl1 = new BookingLimit(u1.getId(), u1, 5);
     u1.setBookingLimit(bl1);
 
+
     Week w1 = new Week(40L, new HashSet<>());
     Week w2 = new Week(41L, new HashSet<>());
     w1.setId(w1.getId()); // Don't mind. Just for maven codestyle validation. Is smells.

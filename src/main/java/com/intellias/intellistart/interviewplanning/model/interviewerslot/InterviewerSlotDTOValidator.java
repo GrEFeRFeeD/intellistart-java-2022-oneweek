@@ -3,28 +3,29 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getInterviewerSlots;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getPeriodById;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getUserById;
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getWeekById;
+
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
+import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
+import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 
-@NonNull
 public class InterviewerSlotDTOValidator {
+
 
   /**
    * Validate interviewerSlotDTO for User, DayOfWeek, Period.
@@ -41,7 +42,7 @@ public class InterviewerSlotDTOValidator {
    */
   public static InterviewerSlot interviewerSlotValidateDTO(InterviewerSlotDTO interviewerSlotDTO)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
-      SlotIsOverlappingException {
+      SlotIsOverlappingException, CannotEditThisWeekException {
 
     Optional<User> userOptional = getUserById(interviewerSlotDTO.getInterviewerId());
     User user;
@@ -57,6 +58,7 @@ public class InterviewerSlotDTOValidator {
       throw new InvalidDayOfWeekException();
 
 
+    //TODO replace with method from period service
     Period period = getPeriodById(1L).get();
     //PeriodService.getPeriod(interviewerSlotDTO.getFrom(), interviewerSlotDTO.getTo());
 
@@ -68,8 +70,12 @@ public class InterviewerSlotDTOValidator {
     if(isSlotOverlapping(period, week, user, dayOfWeek))
       throw new SlotIsOverlappingException();
 
+    InterviewerSlot interviewerSlot = new InterviewerSlot(null, week, dayOfWeek, period, null, user);
 
-    return new InterviewerSlot(null, week, dayOfWeek, period, null, user);
+    if(!canEditThisWeek(interviewerSlot))
+      throw new CannotEditThisWeekException();
+
+    return interviewerSlot;
   }
 
   /**
@@ -98,16 +104,19 @@ public class InterviewerSlotDTOValidator {
    * @return boolean
    */
   public static boolean canEditThisWeek(InterviewerSlot interviewerSlot){
-    Week currentWeek = new Week(40L, new HashSet<>());//WeekService.getCurrentWeek();
-    System.out.println(interviewerSlot.getWeek().getId() + "  iii " + currentWeek.getId());
+
+    Week currentWeek = WeekService.getCurrentWeek();
     if(interviewerSlot.getWeek().getId() <= currentWeek.getId())
       return false;
 
     LocalDate currentDate = LocalDate.now();
     DayOfWeek currentDayOfWeek = WeekService.getDayOfWeek(currentDate);
 
-    return !(currentDayOfWeek.equals(DayOfWeek.SAT) ||
+    if(interviewerSlot.getWeek().getId() == currentWeek.getId() + 1)
+      return !(currentDayOfWeek.equals(DayOfWeek.SAT) ||
           currentDayOfWeek.equals(DayOfWeek.SUN));
+
+    return true;
   }
 
   /**
@@ -124,18 +133,16 @@ public class InterviewerSlotDTOValidator {
    * @return boolean
    */
   public static boolean isSlotOverlapping(Period period,Week week, User user, DayOfWeek dayOfWeek){
-    List<InterviewerSlot> allPeriods = getInterviewerSlots(user, week, dayOfWeek);
+    List<InterviewerSlot> allSlots = getInterviewerSlots(user, week, dayOfWeek);
 
-    for(InterviewerSlot interviewerSlot : allPeriods){
+    for(InterviewerSlot interviewerSlot : allSlots){
       System.out.println(interviewerSlot.getUser() + " " + interviewerSlot.getDayOfWeek() +
           " " + interviewerSlot.getWeek().getId());
-//        if(PeriodService.isOverlap(tempPeriod, period)){
+      //TODO use with ready period service
+//        if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){
 //          return true;
 //        }
-
     }
     return false;
   }
-
-
 }

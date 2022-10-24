@@ -3,7 +3,6 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getSlotById;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.interviewerSlotValidation;
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.validateBeforeUpdate;
 
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
@@ -43,12 +42,11 @@ public class InterviewerController {
   @PostMapping("/interviewers/{interviewerId}/slots")
   public ResponseEntity<InterviewerSlotDTO> createInterviewerSlot(
       @RequestBody InterviewerSlotDTO interviewerSlotDTO, @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException, SlotIsOverlappingException {
+      throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException, SlotIsOverlappingException, CannotEditThisWeekException {
     interviewerSlotDTO.setInterviewerId(interviewerId);
 
-
     InterviewerSlot interviewerSlot = interviewerSlotValidation(interviewerSlotDTO);
-    System.out.println(interviewerSlotDTO);
+
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlotRepository.save(interviewerSlot);
 
@@ -67,16 +65,14 @@ public class InterviewerController {
 
       if(interviewerSlotOptional.isPresent()) {
         Long id = interviewerSlotOptional.get().getId();
+
         interviewerSlotDTO.setInterviewerId(interviewerId);
 
         InterviewerSlot interviewerSlotNew = interviewerSlotValidation(interviewerSlotDTO);
         interviewerSlotNew.setId(id);
 
-        validateBeforeUpdate(interviewerSlotNew);
-
-        System.out.println(interviewerSlotDTO);
-
         interviewerSlotRepository.save(interviewerSlotNew);
+        interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
 
         return new ResponseEntity<>(interviewerSlotDTO, HttpStatus.OK);
       }
@@ -84,10 +80,21 @@ public class InterviewerController {
         //return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+
+    //TODO delete this test request
   @GetMapping("/interviewers/{interviewerId}/slots/{slotId}")
-  public void getSlot(@PathVariable("interviewerId") Long interviewerId,
+  public ResponseEntity<String> getSlot(@PathVariable("interviewerId") Long interviewerId,
       @PathVariable("slotId") Long slotId) {
     Optional<InterviewerSlot> interviewerSlotOptional = getSlotById(slotId);
-    interviewerSlotOptional.ifPresent(System.out::println);
+    if(interviewerSlotOptional.isPresent()){
+      InterviewerSlot interviewerSlot = interviewerSlotOptional.get();
+      String x = interviewerSlot.getUser() + " ans " +
+          interviewerSlot.getDayOfWeek() + " and " +
+          interviewerSlot.getPeriod() + " i " +
+          interviewerSlot.getWeek().getId();
+      System.out.println(x);
+      return new ResponseEntity<>(x, HttpStatus.OK);
+    }
+    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 }

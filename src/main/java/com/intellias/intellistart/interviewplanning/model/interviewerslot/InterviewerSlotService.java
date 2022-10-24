@@ -24,6 +24,7 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -65,22 +66,15 @@ public class InterviewerSlotService {
    */
   public static InterviewerSlot interviewerSlotValidation(InterviewerSlotDTO interviewerSlotDTO)
       throws InvalidDayOfWeekException, SlotIsOverlappingException,
-      InvalidBoundariesException, InvalidInterviewerException
-      {
+      InvalidBoundariesException, InvalidInterviewerException, CannotEditThisWeekException {
           return interviewerSlotValidateDTO(interviewerSlotDTO);
-  }
-
-  public static void validateBeforeUpdate(InterviewerSlot interviewerSlot)
-      throws CannotEditThisWeekException, SlotIsOverlappingException {
-    if(!canEditThisWeek(interviewerSlot))
-      throw new CannotEditThisWeekException();
-    if(isSlotOverlapping(interviewerSlot.getPeriod(), interviewerSlot.getWeek(),
-        interviewerSlot.getUser(), interviewerSlot.getDayOfWeek()))
-      throw new SlotIsOverlappingException();
   }
 
   public static Optional<InterviewerSlot> getSlotById(Long id){
     return interviewerSlotRepository.findById(id);
+  }
+  public static Optional<InterviewerSlot> getSlotByIdOne(){
+    return interviewerSlotRepository.findById(1L);
   }
   public static Optional<User> getUserById(Long id){
     return userRepository.findById(id);
@@ -88,9 +82,16 @@ public class InterviewerSlotService {
   public static Optional<Period> getPeriodById(Long id){
     return periodRepository.findById(id);
   }
-  public static Week getWeekById(Long id){
-    return WeekService.getWeekByWeekNum(id);
-  }
+
+  /**
+   * Get user, week, dayOfWeek.
+   * Than make a select in InterviewerSlotRepository
+   * where user, week and dayOfWeek are the match with parameters
+   * @param user - current user
+   * @param week - week from DTO
+   * @param dayOfWeek - day from DTO
+   * @return List<InterviewerSlot>
+   */
   public static List<InterviewerSlot> getInterviewerSlots(User user, Week week, DayOfWeek dayOfWeek){
     return interviewerSlotRepository.getInterviewerSlotsByUserAndWeekAndDayOfWeek(user, week, dayOfWeek);
   }
