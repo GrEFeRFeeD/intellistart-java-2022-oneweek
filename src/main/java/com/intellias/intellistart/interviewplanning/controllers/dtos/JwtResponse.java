@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DAO for JWT.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

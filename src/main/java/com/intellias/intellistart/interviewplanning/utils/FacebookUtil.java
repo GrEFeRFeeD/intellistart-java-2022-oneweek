@@ -22,7 +22,7 @@ public class FacebookUtil {
   private static final String checkMarkerUri = "https://graph.facebook.com/debug_token?input_token=%s&access_token=%s";
   private static final String userUri = "https://graph.facebook.com/%s?fields=name,email&access_token=%s";
 
-   /**
+  /**
    * DTO object for Facebook Marker.
    */
   @NoArgsConstructor
