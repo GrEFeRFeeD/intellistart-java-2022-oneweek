@@ -12,6 +12,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Validator for CandidateSlot.
+ */
 @Service
 public class CandidateSlotValidator {
   private final CandidateSlotService candidateSlotService;
@@ -52,7 +55,8 @@ public class CandidateSlotValidator {
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   public void validateUpdateCandidateSlot(CandidateSlot candidateSlot, Long id)
-      throws InvalidBoundariesException, SlotNotFoundException, SlotIsBookedException, SlotIsOverlappingException {
+      throws InvalidBoundariesException, SlotNotFoundException, SlotIsBookedException,
+      SlotIsOverlappingException {
     validateSlotIsBookingAndTheSlotExists(id);
     validateCreateCandidateSlot(candidateSlot);
   }
@@ -73,7 +77,7 @@ public class CandidateSlotValidator {
   /**
    * Validate that the slot does not overlap with other slots.
    *
-   * @param candidateSlot- the slot that we will validate.
+   * @param candidateSlot - the slot that we validate.
    *
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
@@ -81,7 +85,7 @@ public class CandidateSlotValidator {
     Period period = candidateSlot.getPeriod();
     List<CandidateSlot> candidateSlotList =
         candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate());
-    if (!candidateSlotList.isEmpty()){
+    if (!candidateSlotList.isEmpty()) {
       for (CandidateSlot item : candidateSlotList) {
         if (periodService.isOverlap(period, item.getPeriod())) {
           throw new SlotIsOverlappingException();

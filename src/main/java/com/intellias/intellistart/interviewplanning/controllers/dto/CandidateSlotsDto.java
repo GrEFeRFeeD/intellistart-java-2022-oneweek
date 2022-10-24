@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO for list of CandidateSlotsDto
+ * DTO for list of CandidateSlotsDto.
  */
 @Getter
 @Setter

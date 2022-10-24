@@ -18,6 +18,9 @@ public class CandidateSlotService {
   private final PeriodService periodService;
   private final UserService userService;
 
+  /**
+   * Constructor.
+   */
   @Autowired
   public CandidateSlotService(CandidateSlotRepository candidateSlotRepository,
       PeriodService periodService,
@@ -55,7 +58,7 @@ public class CandidateSlotService {
   /**
    * Returned slots of current Candidate.
    *
-   * @return List<CandidateSlot> - the list of slots of current candidate.
+   * @return List of CandidateSlot - the list of slots of current candidate.
    */
   public List<CandidateSlot> getAllSlotsOfCandidate() {
     return candidateSlotRepository.findByUser(
@@ -67,7 +70,7 @@ public class CandidateSlotService {
    *
    * @param date - date on which the database will be searched.
    *
-   * @return List<CandidateSlot> - Slots that were found in the database by given parameters.
+   * @return List of CandidateSlot - Slots that were found in the database by given parameters.
    */
   public List<CandidateSlot> getCandidateSlotsByUserAndDate(LocalDate date) {
     return candidateSlotRepository.findByUserAndDate(
@@ -79,7 +82,7 @@ public class CandidateSlotService {
    *
    * @param id - The slot number to search for in the database.
    *
-   * @return Optional<CandidateSlot> - Optional object of find slot by id.
+   * @return Optional of CandidateSlot - Optional object of find slot by id.
    */
   public Optional<CandidateSlot> getCandidateSlotById(Long id) {
     return candidateSlotRepository.findById(id);

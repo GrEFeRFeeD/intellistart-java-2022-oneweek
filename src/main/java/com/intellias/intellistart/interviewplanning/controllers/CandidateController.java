@@ -30,7 +30,7 @@ public class CandidateController {
 
   @Autowired
   public CandidateController(CandidateSlotService candidateSlotService,
-  CandidateSlotValidator candidateSlotValidator) {
+      CandidateSlotValidator candidateSlotValidator) {
     this.candidateSlotService = candidateSlotService;
     this.candidateSlotValidator = candidateSlotValidator;
   }
@@ -83,7 +83,7 @@ public class CandidateController {
   }
 
   /**
-   * GET request for getting all slots of current Candidate
+   * GET request for getting all slots of current Candidate.
    *
    * @return ResponseEntity - Response of the list of slots converted to a DTO.
    */

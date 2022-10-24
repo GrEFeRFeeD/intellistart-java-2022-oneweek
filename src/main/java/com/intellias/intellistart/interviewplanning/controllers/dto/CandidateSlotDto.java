@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * DTO for CandidateSlot
+ * DTO for CandidateSlot.
  */
 @Getter
 @Setter
