@@ -7,7 +7,6 @@ import com.intellias.intellistart.interviewplanning.exeptions.SlotNotFoundExcept
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +19,7 @@ public class CandidateSlotValidator {
   private final PeriodService periodService;
 
   @Autowired
-  public CandidateSlotValidator(UserService userService,
-      CandidateSlotService candidateSlotService,
+  public CandidateSlotValidator(CandidateSlotService candidateSlotService,
       PeriodService periodService) {
     this.candidateSlotService = candidateSlotService;
     this.periodService = periodService;
@@ -31,9 +29,6 @@ public class CandidateSlotValidator {
    * Validate CandidateSlot object for what the slot should be in the future,
    * that the slot was created by the candidate,
    * whether the slot is not overlapping
-   * @param candidateSlot
-   * @throws InvalidBoundariesException
-   * @throws SlotIsOverlappingException
    */
   public void validateCreateCandidateSlot(CandidateSlot candidateSlot)
       throws InvalidBoundariesException, SlotIsOverlappingException {
@@ -45,12 +40,6 @@ public class CandidateSlotValidator {
   /**
    * Validate CandidateSlot object for all slot creation checks,
    * whether the slot exists, whether the slot is not booking
-   * @param candidateSlot
-   * @param id
-   * @throws InvalidBoundariesException
-   * @throws SlotNotFoundException
-   * @throws SlotIsBookedException
-   * @throws SlotIsOverlappingException
    */
   public void validateUpdateCandidateSlot(CandidateSlot candidateSlot, Long id)
       throws InvalidBoundariesException, SlotNotFoundException, SlotIsBookedException, SlotIsOverlappingException {
