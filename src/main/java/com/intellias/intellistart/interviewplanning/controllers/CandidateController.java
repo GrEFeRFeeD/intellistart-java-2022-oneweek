@@ -36,7 +36,16 @@ public class CandidateController {
   }
 
   /**
-   * POST request for adding a new CandidateSlot
+   * POST request for adding a new CandidateSlot.
+   * First we do the conversion, then we pass it to the validation,
+   * and then we send it to the service for saving.
+   *
+   * @param request - Request body of POST mapping.
+   *
+   * @return ResponseEntity - Response of the saved object converted to a DTO.
+   *
+   * @throws InvalidBoundariesException - when parameters are incorrect.
+   * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots")
   public ResponseEntity<CandidateSlotDto> createCandidateSlot(@RequestBody CandidateSlotDto request)
@@ -48,7 +57,19 @@ public class CandidateController {
   }
 
   /**
-   * POST request for editing the CandidateSlot
+   * POST request for editing the CandidateSlot.
+   * First we do the conversion, then we pass it to the validation,
+   * and then we send it to the service for updating.
+   *
+   * @param request - Request body of POST mapping.
+   * @param id - Parameter from the request mapping. This is the slot id for update.
+   *
+   * @return ResponseEntity - Response of the updated object converted to a DTO.
+   *
+   * @throws SlotNotFoundException - when updated slot id not found.
+   * @throws SlotIsBookedException - when updated slot is booked.
+   * @throws InvalidBoundariesException - when parameters are incorrect.
+   * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots/{slotId}")
   public ResponseEntity<CandidateSlot> updateCandidateSlot(@RequestBody CandidateSlotDto request,
@@ -62,7 +83,9 @@ public class CandidateController {
   }
 
   /**
-   * GET request for getting all slots of Candidate
+   * GET request for getting all slots of current Candidate
+   *
+   * @return ResponseEntity - Response of the list of slots converted to a DTO.
    */
   @GetMapping("/candidates/current/slots")
   public ResponseEntity<CandidateSlotsDto> getAllSlotsOfCandidate() {
@@ -70,13 +93,24 @@ public class CandidateController {
     return ResponseEntity.ok(getCandidateSlotsDtoFromListOf(candidateSlots));
   }
 
+  /**
+   * Converts the candidate slot from the DTO.
+   *
+   * @param candidateSlotDto - DTO of Candidate slot.
+   *
+   * @return CandidateSlot object by given DTO.
+   */
   private CandidateSlot getCandidateSlotFromDto(CandidateSlotDto candidateSlotDto) {
     return candidateSlotService.createCandidateSlot(candidateSlotDto.getDate(),
         candidateSlotDto.getFrom(), candidateSlotDto.getTo());
   }
 
   /**
-   * Created the list of CandidateSlotDto object by given list of CandidateSlot.o
+   * Created the list of CandidateSlotDto object by given list of CandidateSlot.
+   *
+   * @param candidateSlotList - List of candidates to convert.
+   *
+   * @return candidateSlotsDto - List of DTO by given list of CandidateSlot.
    */
   private CandidateSlotsDto getCandidateSlotsDtoFromListOf(List<CandidateSlot> candidateSlotList) {
     List<CandidateSlotDto> candidateSlotDtoList = candidateSlotList
