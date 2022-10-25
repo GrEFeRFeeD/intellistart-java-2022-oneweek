@@ -5,9 +5,9 @@ import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWee
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.Optional;
@@ -52,8 +52,8 @@ public class InterviewerController {
   public ResponseEntity<InterviewerSlotDto> createInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException
-      , SlotIsOverlappingException, CannotEditThisWeekException {
+      throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException,
+      SlotIsOverlappingException, CannotEditThisWeekException {
     interviewerSlotDto.setInterviewerId(interviewerId);
     InterviewerSlot interviewerSlot = interviewerSlotService.interviewerSlotValidation(
         interviewerSlotDto);
@@ -81,21 +81,17 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId,
       @PathVariable("slotId") Long slotId)
       throws InvalidDayOfWeekException, InvalidBoundariesException,
-      InvalidInterviewerException, SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException {
-
+      InvalidInterviewerException, SlotIsOverlappingException,
+      CannotEditThisWeekException, SlotIsNotFoundException {
     Optional<InterviewerSlot> interviewerSlotOptional = interviewerSlotService.getSlotById(slotId);
     if (interviewerSlotOptional.isPresent()) {
       Long id = interviewerSlotOptional.get().getId();
-
       interviewerSlotDto.setInterviewerId(interviewerId);
-
       InterviewerSlot interviewerSlotNew = interviewerSlotService.interviewerSlotValidation(
           interviewerSlotDto);
       interviewerSlotNew.setId(id);
-
       interviewerSlotRepository.save(interviewerSlotNew);
       interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
-
       return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
     }
     throw new SlotIsNotFoundException();

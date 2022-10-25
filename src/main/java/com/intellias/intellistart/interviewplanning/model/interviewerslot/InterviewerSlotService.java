@@ -27,7 +27,8 @@ public class InterviewerSlotService {
   private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
   /**
-   * Constructor for InterviewerSlotService
+   * Constructor for InterviewerSlotService.
+   *
    * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
    * @param interviewerSlotRepository - interviewerSlotRepository
    * @param periodRepository - periodRepository
