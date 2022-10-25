@@ -30,10 +30,6 @@ public class Booking {
   @EmbeddedId
   private BookingKey id;
 
-  @ManyToOne
-  @JoinColumn(name = "period_id")
-  private Period period;
-
   private String subject;
 
   private String description;
@@ -41,14 +37,18 @@ public class Booking {
   @ManyToOne
   @MapsId("interviewerSlotId")
   @JoinColumn(name = "interviewer_slot_id")
-  @JsonIgnore
   private InterviewerSlot interviewerSlot;
 
   @ManyToOne
   @MapsId("candidateSlotId")
   @JoinColumn(name = "candidate_slot_id")
-  @JsonIgnore
   private CandidateSlot candidateSlot;
+
+  @ManyToOne
+  @MapsId("periodId")
+  @JoinColumn(name = "period_id")
+  private Period period;
+
 
   @Override
   public String toString() {
