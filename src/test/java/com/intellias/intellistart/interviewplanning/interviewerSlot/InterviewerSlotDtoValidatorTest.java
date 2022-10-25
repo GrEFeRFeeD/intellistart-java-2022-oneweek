@@ -57,7 +57,7 @@ public class InterviewerSlotDtoValidatorTest {
   @ParameterizedTest
   @ArgumentsSource(UserArgumentsProvider.class)
   void isInterviewerRoleINTERVIEWER(User user, boolean expect) {
-    boolean actual = interviewerSlotDTOValidator.isInterviewerRoleINTERVIEWER(user);
+    boolean actual = interviewerSlotDTOValidator.isInterviewerRoleInterviewer(user);
     assertEquals(expect, actual);
   }
 
