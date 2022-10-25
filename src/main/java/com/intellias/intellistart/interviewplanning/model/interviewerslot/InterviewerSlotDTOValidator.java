@@ -30,6 +30,7 @@ public class InterviewerSlotDTOValidator {
 
   private final PeriodService periodService;
   private final UserService userService;
+  private final WeekService weekService;
   private final InterviewerSlotRepository interviewerSlotRepository;
 
   /**
@@ -37,10 +38,11 @@ public class InterviewerSlotDTOValidator {
    */
   @Autowired
   public InterviewerSlotDTOValidator(PeriodService periodService,
-      UserService userService,
+      UserService userService, WeekService weekService,
       InterviewerSlotRepository interviewerSlotRepository) {
     this.periodService = periodService;
     this.userService = userService;
+    this.weekService = weekService;
     this.interviewerSlotRepository = interviewerSlotRepository;
   }
 
@@ -80,7 +82,7 @@ public class InterviewerSlotDTOValidator {
     //PeriodService.getPeriod(interviewerSlotDTO.getFrom(), interviewerSlotDTO.getTo());
 
 
-    Week week = WeekService.getWeekByWeekNum(interviewerSlotDTO.getWeek());
+    Week week = weekService.getWeekByWeekNum(interviewerSlotDTO.getWeek());
 
     DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDTO.getDayOfWeek());
 
@@ -122,12 +124,12 @@ public class InterviewerSlotDTOValidator {
    */
   public boolean canEditThisWeek(InterviewerSlot interviewerSlot){
 
-    Week currentWeek = WeekService.getCurrentWeek();
+    Week currentWeek = weekService.getCurrentWeek();
     if(interviewerSlot.getWeek().getId() <= currentWeek.getId())
       return false;
 
     LocalDate currentDate = LocalDate.now();
-    DayOfWeek currentDayOfWeek = WeekService.getDayOfWeek(currentDate);
+    DayOfWeek currentDayOfWeek = weekService.getDayOfWeek(currentDate);
 
     if(interviewerSlot.getWeek().getId() == currentWeek.getId() + 1)
       return !(currentDayOfWeek.equals(DayOfWeek.SAT) ||

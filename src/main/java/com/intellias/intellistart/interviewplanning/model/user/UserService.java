@@ -1,14 +1,11 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Service for User entity.
  */
-@Service
 public class UserService {
 
   private final UserRepository userRepository;
@@ -23,12 +20,13 @@ public class UserService {
    *
    * @return currently just newUser() without relationships.
    */
-  public  User getCurrentUser() {
+  public User getCurrentUser() {
+
     User user = userRepository.findById(1L).get();
     return user;
   }
 
-  public  Optional<User> getUserById(Long id){
+  public Optional<User> getUserById(Long id){
     return userRepository.findById(id);
   }
 

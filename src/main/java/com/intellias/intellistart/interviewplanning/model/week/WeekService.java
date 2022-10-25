@@ -28,7 +28,7 @@ public class WeekService {
    * @param date any date
    * @return number of week
    */
-  public static long getNumberOfWeek(LocalDate date) {
+  public  long getNumberOfWeek(LocalDate date) {
     long sumOfWeeks = 0;
     if (date.getYear() != 2022) {
       for (int i = 2022; i < date.getYear(); i++) {
@@ -49,7 +49,7 @@ public class WeekService {
    * @param year current year
    * @return true if year begins from tuesday,wednesday or thursday
    */
-  private static boolean checkBeginOfYear(int year) {
+  private  boolean checkBeginOfYear(int year) {
     LocalDate date = LocalDate.of(year, 1, 1);
     return date.getDayOfWeek().equals(java.time.DayOfWeek.TUESDAY)
         || date.getDayOfWeek().equals(java.time.DayOfWeek.WEDNESDAY)
@@ -62,7 +62,7 @@ public class WeekService {
    * @param date any date
    * @return day of week
    */
-  public static DayOfWeek getDayOfWeek(LocalDate date) {
+  public DayOfWeek getDayOfWeek(LocalDate date) {
     String dayOfWeek = date.getDayOfWeek().toString().substring(0, 3);
     return DayOfWeek.valueOf(dayOfWeek);
   }
@@ -115,7 +115,7 @@ public class WeekService {
    *
    * @return Week object
    */
-  public static Week getCurrentWeek() {
+  public Week getCurrentWeek() {
     LocalDate date = LocalDate.now();
     return getWeekByWeekNum(getNumberOfWeek(date));
   }
@@ -138,7 +138,7 @@ public class WeekService {
    * @param weekNum number of week
    * @return object Week
    */
-  public static Week getWeekByWeekNum(Long weekNum) {
+  public Week getWeekByWeekNum(Long weekNum) {
     Optional<Week> week = weekRepository.findById(weekNum);
     return week.orElseGet(() -> createWeek(weekNum));
   }
@@ -149,7 +149,7 @@ public class WeekService {
    * @param weekNum number of week
    * @return object Week
    */
-  public static Week createWeek(Long weekNum) {
+  public Week createWeek(Long weekNum) {
     Week newWeek = new Week(weekNum, new HashSet<>());
     return weekRepository.save(newWeek);
   }
