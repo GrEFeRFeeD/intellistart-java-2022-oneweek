@@ -5,7 +5,8 @@ package com.intellias.intellistart.interviewplanning.exceptions;
  *    can't convert to LocalTime,
  *    invalid business logic.
  */
- 
+public class InvalidBoundariesException extends IllegalArgumentException {
+
   public InvalidBoundariesException() {
     super();
   }
