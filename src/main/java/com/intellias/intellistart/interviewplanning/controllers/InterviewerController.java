@@ -1,8 +1,8 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getSlotById;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.interviewerSlotValidation;
+import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getSlotById;
 
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
@@ -79,22 +79,4 @@ public class InterviewerController {
         throw new SlotIsNotFoundException();
         //return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-
-    //TODO delete this test request
-  @GetMapping("/interviewers/{interviewerId}/slots/{slotId}")
-  public ResponseEntity<String> getSlot(@PathVariable("interviewerId") Long interviewerId,
-      @PathVariable("slotId") Long slotId) {
-    Optional<InterviewerSlot> interviewerSlotOptional = getSlotById(slotId);
-    if(interviewerSlotOptional.isPresent()){
-      InterviewerSlot interviewerSlot = interviewerSlotOptional.get();
-      String x = interviewerSlot.getUser() + " ans " +
-          interviewerSlot.getDayOfWeek() + " and " +
-          interviewerSlot.getPeriod() + " i " +
-          interviewerSlot.getWeek().getId();
-      System.out.println(x);
-      return new ResponseEntity<>(x, HttpStatus.OK);
-    }
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-  }
 }

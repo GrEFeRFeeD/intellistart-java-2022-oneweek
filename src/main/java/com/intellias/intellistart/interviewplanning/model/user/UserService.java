@@ -1,5 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-  private final UserRepository userRepository;
+  private static UserRepository userRepository;
 
   @Autowired
   public UserService(UserRepository userRepository) {
@@ -26,5 +28,8 @@ public class UserService {
     return user;
   }
 
+  public static Optional<User> getUserById(Long id){
+    return userRepository.findById(id);
+  }
 
 }

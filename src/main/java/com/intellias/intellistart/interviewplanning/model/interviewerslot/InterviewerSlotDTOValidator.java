@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getInterviewerSlots;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getPeriodById;
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getUserById;
+import static com.intellias.intellistart.interviewplanning.model.user.UserService.getUserById;
 
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
@@ -133,15 +133,18 @@ public class InterviewerSlotDTOValidator {
    * @return boolean
    */
   public static boolean isSlotOverlapping(Period period,Week week, User user, DayOfWeek dayOfWeek){
-    List<InterviewerSlot> allSlots = getInterviewerSlots(user, week, dayOfWeek);
+    List<InterviewerSlot> interviewerSlotsList = getInterviewerSlots(user, week, dayOfWeek);
 
-    for(InterviewerSlot interviewerSlot : allSlots){
+
+    if (!interviewerSlotsList.isEmpty()) {
+    for(InterviewerSlot interviewerSlot : interviewerSlotsList) {
       System.out.println(interviewerSlot.getUser() + " " + interviewerSlot.getDayOfWeek() +
           " " + interviewerSlot.getWeek().getId());
       //TODO use with ready period service
 //        if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){
 //          return true;
 //        }
+    }
     }
     return false;
   }

@@ -1,8 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator.canEditThisWeek;
 import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator.interviewerSlotValidateDTO;
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator.isSlotOverlapping;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
@@ -13,21 +11,14 @@ import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlapping
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
-import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
-import com.intellias.intellistart.interviewplanning.model.week.WeekService;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 
 /**
@@ -70,14 +61,11 @@ public class InterviewerSlotService {
           return interviewerSlotValidateDTO(interviewerSlotDTO);
   }
 
-  public static Optional<InterviewerSlot> getSlotById(Long id){
-    return interviewerSlotRepository.findById(id);
-  }
   public static Optional<InterviewerSlot> getSlotByIdOne(){
     return interviewerSlotRepository.findById(1L);
   }
-  public static Optional<User> getUserById(Long id){
-    return userRepository.findById(id);
+  public static InterviewerSlot createInterviewerSlot(User user, Week week, DayOfWeek dayOfWeek, Period period){
+    return interviewerSlotRepository.save(new InterviewerSlot(null, week, dayOfWeek, period, null, user));
   }
   public static Optional<Period> getPeriodById(Long id){
     return periodRepository.findById(id);
@@ -96,5 +84,8 @@ public class InterviewerSlotService {
     return interviewerSlotRepository.getInterviewerSlotsByUserAndWeekAndDayOfWeek(user, week, dayOfWeek);
   }
 
+  public static Optional<InterviewerSlot> getSlotById(Long id){
+    return interviewerSlotRepository.findById(id);
+  }
 
 }
