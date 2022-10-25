@@ -12,6 +12,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -20,8 +21,14 @@ import org.mockito.Mockito;
 
 class WeekServiceTest {
 
-  WeekRepository weekRepository = Mockito.mock(WeekRepository.class);
-  WeekService cut = new WeekService(weekRepository);
+  private static WeekRepository weekRepository ;
+  private static WeekService cut;
+
+  @BeforeEach
+  void initialize(){
+    weekRepository = Mockito.mock(WeekRepository.class);
+    cut = new WeekService(weekRepository);
+  }
 
   @ParameterizedTest
   @CsvSource({"2022-01-01,0","2022-10-13,41","2023-01-01,52",
