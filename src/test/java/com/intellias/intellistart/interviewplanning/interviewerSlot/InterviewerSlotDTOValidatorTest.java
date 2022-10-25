@@ -29,23 +29,20 @@ import org.mockito.Mockito;
 
 public class InterviewerSlotDTOValidatorTest {
 
-  static InterviewerSlotDTOValidator interviewerSlotDTOValidator;
-  static InterviewerSlotService interviewerSlotService;
+   InterviewerSlotDTOValidator interviewerSlotDTOValidator;
+   InterviewerSlotService interviewerSlotService;
 
-  static InterviewerSlotRepository interviewerSlotRepository;
-  static UserRepository userRepository;
-  static PeriodRepository periodRepository;
-  static WeekRepository weekRepository;
+   InterviewerSlotRepository interviewerSlotRepository;
+   PeriodRepository periodRepository;
 
-  @BeforeAll
-  static void initialize(){
+  void initialize(){
 
     Mockito.mock(UserRepository.class);
     Mockito.mock(InterviewerSlotRepository.class);
     Mockito.mock(PeriodRepository.class);
     Mockito.mock(WeekRepository.class);
-    interviewerSlotService = new InterviewerSlotService(
-        interviewerSlotRepository, userRepository,periodRepository, weekRepository
+    this.interviewerSlotService = new InterviewerSlotService(
+        interviewerSlotDTOValidator, interviewerSlotRepository,periodRepository
     );
   }
 
@@ -53,7 +50,7 @@ public class InterviewerSlotDTOValidatorTest {
   @ParameterizedTest
   @CsvSource({"THU, true", "yy, false", ", false", "Fri, true", "SUN, true"})
   void isCorrectDayTest(String dayOfWeek, boolean expect){
-    boolean actual = InterviewerSlotDTOValidator.isCorrectDay(dayOfWeek);
+    boolean actual = interviewerSlotDTOValidator.isCorrectDay(dayOfWeek);
     assertEquals(expect,actual);
   }
 
@@ -61,7 +58,7 @@ public class InterviewerSlotDTOValidatorTest {
   @ParameterizedTest
   @ArgumentsSource(UserArgumentsProvider.class)
   void isInterviewerRoleINTERVIEWER(User user,boolean expect) {
-    boolean actual = InterviewerSlotDTOValidator.isInterviewerRoleINTERVIEWER(user);
+    boolean actual = interviewerSlotDTOValidator.isInterviewerRoleINTERVIEWER(user);
     assertEquals(expect,actual);
   }
 
@@ -77,10 +74,10 @@ public class InterviewerSlotDTOValidatorTest {
     }
   }
 
-  static User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER, null);
+  static User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER);
 
-  static User u2 = new User(null, "interviewer2@gmail.com", Role.COORDINATOR, null);
-  static User u3 = new User(null, "interviewer3@gmail.com", Role.INTERVIEWER, null);
+  static User u2 = new User(null, "interviewer2@gmail.com", Role.COORDINATOR);
+  static User u3 = new User(null, "interviewer3@gmail.com", Role.INTERVIEWER);
 
 
   static Week w1 = new Week(45L, new HashSet<>());

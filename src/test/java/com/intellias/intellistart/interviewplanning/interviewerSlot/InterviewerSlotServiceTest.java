@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -29,12 +30,11 @@ public class InterviewerSlotServiceTest {
 
 
   static InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(InterviewerSlotRepository.class);
-  static UserRepository userRepository =  Mockito.mock(UserRepository.class);
   static PeriodRepository periodRepository =  Mockito.mock(PeriodRepository.class);
-  static WeekRepository weekRepository  = Mockito.mock(WeekRepository.class);
+  static InterviewerSlotDTOValidator interviewerSlotDTOValidator;
 
    InterviewerSlotService cut = new InterviewerSlotService(
-        interviewerSlotRepository, userRepository,periodRepository, weekRepository
+       interviewerSlotDTOValidator, interviewerSlotRepository, periodRepository
     );
 
 
@@ -49,21 +49,9 @@ public class InterviewerSlotServiceTest {
     verify(interviewerSlotRepository).save(slotArgumentCaptor.capture());
     InterviewerSlot actual = slotArgumentCaptor.getValue();
     assertEquals(expected, actual);
-
   }
 
-  @Test
-  void getListOfInterviewerSlotsTest(){
-    List<InterviewerSlot> expected = new ArrayList<>();
-    expected.add(is1);
-    Mockito.when(interviewerSlotRepository.getInterviewerSlotsByUserAndWeekAndDayOfWeek(is1.getUser(),
-        is1.getWeek(), is1.getDayOfWeek())).thenReturn(expected);
-    List<InterviewerSlot> actual = cut.getInterviewerSlots(is1.getUser(),
-        is1.getWeek(), is1.getDayOfWeek());
-    Assertions.assertEquals(actual, expected);
-  }
-
-  User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER, null);
+  User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);
   Week w1 = new Week(50L, new HashSet<>());
   Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
       new HashSet<>(), new HashSet<>(), new HashSet<>());

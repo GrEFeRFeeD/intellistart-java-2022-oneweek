@@ -10,10 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -35,6 +37,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -52,11 +56,11 @@ public class InterviewerControllerTest {
 
   //@MockBean
   static InterviewerSlotService interviewerSlotService;
+  @MockBean
+  static InterviewerSlotDTOValidator interviewerSlotDTOValidator;
 
   static InterviewerSlotRepository interviewerSlotRepository;
-  static UserRepository userRepository;
   static PeriodRepository periodRepository;
-  static WeekRepository weekRepository;
 
   @AllArgsConstructor
   @Getter
@@ -70,13 +74,10 @@ public class InterviewerControllerTest {
 
   @BeforeAll
   static void initialize(){
-
-    userRepository = Mockito.mock(UserRepository.class);
     interviewerSlotRepository = Mockito.mock(InterviewerSlotRepository.class);
     periodRepository =  Mockito.mock(PeriodRepository.class);
-    weekRepository = Mockito.mock(WeekRepository.class);
     interviewerSlotService = new InterviewerSlotService(
-        interviewerSlotRepository, userRepository,periodRepository, weekRepository
+        interviewerSlotDTOValidator, interviewerSlotRepository, periodRepository
     );
   }
   @Test
@@ -125,7 +126,7 @@ public class InterviewerControllerTest {
     Period p1 = new Period(1L, LocalTime.of(10, 0), LocalTime.of(20, 0),
         new HashSet<>(), new HashSet<>(), new HashSet<>());
     Week w1 = new Week(50L, new HashSet<>());
-    User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER, null);
+    User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);
     InterviewerSlot interviewerSlot1 = (new InterviewerSlot(1L, w1, DayOfWeek.TUE, p1, null, u1));
 
 
@@ -137,7 +138,7 @@ public class InterviewerControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.interviewerId", Matchers.is(1)));
 
-    InterviewerSlot interviewerSlot2 = InterviewerSlotService.getSlotByIdOne().get();
+    InterviewerSlot interviewerSlot2 = interviewerSlotService.getSlotByIdOne().get();
 
     assertThat(interviewerSlot1.getWeek().getId(), not(equalTo(interviewerSlot2.getWeek().getId())));
     assertThat(interviewerSlot1.getDayOfWeek(), not(equalTo(interviewerSlot2.getDayOfWeek())));

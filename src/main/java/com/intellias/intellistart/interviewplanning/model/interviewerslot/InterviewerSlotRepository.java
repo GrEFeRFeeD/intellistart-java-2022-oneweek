@@ -13,5 +13,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface InterviewerSlotRepository extends CrudRepository<InterviewerSlot, Long> {
 
-  List<InterviewerSlot> getInterviewerSlotsByUserAndWeekAndDayOfWeek(User user ,Week week, DayOfWeek dayOfWeek);
+  List<InterviewerSlot> getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(Long userId ,Long weekId, DayOfWeek dayOfWeek);
 }

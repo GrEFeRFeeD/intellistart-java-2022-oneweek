@@ -17,5 +17,8 @@ public class PeriodService {
   public PeriodService(PeriodRepository periodRepository) {
     this.periodRepository = periodRepository;
   }
+  public Period getPeriodById(Long id){
+    return periodRepository.findById(id).get();
+  }
 
 }

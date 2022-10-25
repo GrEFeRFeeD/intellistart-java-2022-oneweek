@@ -137,7 +137,7 @@ public class StartDataLoader implements ApplicationRunner {
     System.out.println("====== BOOKING_LIMITS ======");
     System.out.println(bl1);
     System.out.println("====== WEEKS ======");
-    System.out.println(w1);
+    //System.out.println(w1);
     System.out.println("====== PERIODS ======");
     System.out.println(p1);
     System.out.println(p2);

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-  private static UserRepository userRepository;
+  private final UserRepository userRepository;
 
   @Autowired
   public UserService(UserRepository userRepository) {
@@ -28,7 +28,7 @@ public class UserService {
     return user;
   }
 
-  public static Optional<User> getUserById(Long id){
+  public  Optional<User> getUserById(Long id){
     return userRepository.findById(id);
   }
 

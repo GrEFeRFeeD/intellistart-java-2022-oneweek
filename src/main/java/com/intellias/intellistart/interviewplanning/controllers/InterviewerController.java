@@ -1,9 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.interviewerSlotValidation;
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService.getSlotById;
-
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
@@ -19,7 +17,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,11 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterviewerController {
 
   private final InterviewerSlotRepository interviewerSlotRepository;
+  private final InterviewerSlotService interviewerSlotService;
 
   @Autowired
   public InterviewerController(
-      InterviewerSlotRepository interviewerSlotRepository) {
+      InterviewerSlotRepository interviewerSlotRepository, InterviewerSlotService interviewerSlotService) {
     this.interviewerSlotRepository = interviewerSlotRepository;
+    this.interviewerSlotService = interviewerSlotService;
   }
 
   @PostMapping("/interviewers/{interviewerId}/slots")
@@ -45,7 +44,7 @@ public class InterviewerController {
       throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException, SlotIsOverlappingException, CannotEditThisWeekException {
     interviewerSlotDTO.setInterviewerId(interviewerId);
 
-    InterviewerSlot interviewerSlot = interviewerSlotValidation(interviewerSlotDTO);
+    InterviewerSlot interviewerSlot = interviewerSlotService.interviewerSlotValidation(interviewerSlotDTO);
 
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlotRepository.save(interviewerSlot);
@@ -61,14 +60,14 @@ public class InterviewerController {
       throws InvalidDayOfWeekException, InvalidBoundariesException,
       InvalidInterviewerException, SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException {
 
-      Optional<InterviewerSlot> interviewerSlotOptional = getSlotById(slotId);
+      Optional<InterviewerSlot> interviewerSlotOptional = interviewerSlotService.getSlotById(slotId);
 
       if(interviewerSlotOptional.isPresent()) {
         Long id = interviewerSlotOptional.get().getId();
 
         interviewerSlotDTO.setInterviewerId(interviewerId);
 
-        InterviewerSlot interviewerSlotNew = interviewerSlotValidation(interviewerSlotDTO);
+        InterviewerSlot interviewerSlotNew = interviewerSlotService.interviewerSlotValidation(interviewerSlotDTO);
         interviewerSlotNew.setId(id);
 
         interviewerSlotRepository.save(interviewerSlotNew);

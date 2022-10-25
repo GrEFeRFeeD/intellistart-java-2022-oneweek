@@ -1,7 +1,5 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import static com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator.interviewerSlotValidateDTO;
-
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
@@ -12,10 +10,7 @@ import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.user.User;
-import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
-import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,21 +22,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class InterviewerSlotService {
 
-  private static  InterviewerSlotRepository interviewerSlotRepository;
-  private static  UserRepository userRepository;
-  private static PeriodRepository periodRepository;
-  private static WeekRepository weekRepository;
+  private final InterviewerSlotRepository interviewerSlotRepository;
+  private final PeriodRepository periodRepository;
+  private final  InterviewerSlotDTOValidator interviewerSlotDTOValidator;
 
 
 
   @Autowired
   public InterviewerSlotService(
-      InterviewerSlotRepository interviewerSlotRepository, UserRepository userRepository,
-      PeriodRepository periodRepository, WeekRepository weekRepository) {
-    InterviewerSlotService.interviewerSlotRepository = interviewerSlotRepository;
-    InterviewerSlotService.userRepository = userRepository;
-    InterviewerSlotService.periodRepository = periodRepository;
-    InterviewerSlotService.weekRepository = weekRepository;
+      InterviewerSlotDTOValidator interviewerSlotDTOValidator,
+      InterviewerSlotRepository interviewerSlotRepository,
+      PeriodRepository periodRepository) {
+    this.interviewerSlotDTOValidator = interviewerSlotDTOValidator;
+    this.periodRepository = periodRepository;
+    this.interviewerSlotRepository = interviewerSlotRepository;
   }
 
   /**
@@ -55,36 +49,25 @@ public class InterviewerSlotService {
    * @throws InvalidBoundariesException
    * @throws InvalidInterviewerException
    */
-  public static InterviewerSlot interviewerSlotValidation(InterviewerSlotDTO interviewerSlotDTO)
+  public InterviewerSlot interviewerSlotValidation(InterviewerSlotDTO interviewerSlotDTO)
       throws InvalidDayOfWeekException, SlotIsOverlappingException,
       InvalidBoundariesException, InvalidInterviewerException, CannotEditThisWeekException {
-          return interviewerSlotValidateDTO(interviewerSlotDTO);
+          return interviewerSlotDTOValidator.interviewerSlotValidateDTO(interviewerSlotDTO);
   }
 
-  public static Optional<InterviewerSlot> getSlotByIdOne(){
+  public  Optional<InterviewerSlot> getSlotByIdOne(){
     return interviewerSlotRepository.findById(1L);
   }
-  public static InterviewerSlot createInterviewerSlot(User user, Week week, DayOfWeek dayOfWeek, Period period){
+  public  InterviewerSlot createInterviewerSlot(User user, Week week, DayOfWeek dayOfWeek, Period period){
     return interviewerSlotRepository.save(new InterviewerSlot(null, week, dayOfWeek, period, null, user));
   }
-  public static Optional<Period> getPeriodById(Long id){
+  public  Optional<Period> getPeriodById(Long id){
     return periodRepository.findById(id);
   }
 
-  /**
-   * Get user, week, dayOfWeek.
-   * Than make a select in InterviewerSlotRepository
-   * where user, week and dayOfWeek are the match with parameters
-   * @param user - current user
-   * @param week - week from DTO
-   * @param dayOfWeek - day from DTO
-   * @return List<InterviewerSlot>
-   */
-  public static List<InterviewerSlot> getInterviewerSlots(User user, Week week, DayOfWeek dayOfWeek){
-    return interviewerSlotRepository.getInterviewerSlotsByUserAndWeekAndDayOfWeek(user, week, dayOfWeek);
-  }
 
-  public static Optional<InterviewerSlot> getSlotById(Long id){
+
+  public Optional<InterviewerSlot> getSlotById(Long id){
     return interviewerSlotRepository.findById(id);
   }
 

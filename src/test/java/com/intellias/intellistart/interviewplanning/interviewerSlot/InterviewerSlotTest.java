@@ -50,7 +50,7 @@ public class InterviewerSlotTest {
 
   }
 
-  static User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER, null);
+  static User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);
   static Period p1 = new Period(1L, LocalTime.of(10, 0), LocalTime.of(20, 0),
       new HashSet<>(), new HashSet<>(), new HashSet<>());
   static Week w1 = new Week(45L, new HashSet<>());
