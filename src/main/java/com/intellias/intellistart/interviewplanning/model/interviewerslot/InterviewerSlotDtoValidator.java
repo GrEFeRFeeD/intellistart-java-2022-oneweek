@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 
-import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
+import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
@@ -19,14 +19,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 @Component
 @Service
-public class InterviewerSlotDTOValidator {
+public class InterviewerSlotDtoValidator {
 
   private final PeriodService periodService;
   private final UserService userService;
@@ -37,7 +36,7 @@ public class InterviewerSlotDTOValidator {
    * Constructor.
    */
   @Autowired
-  public InterviewerSlotDTOValidator(PeriodService periodService,
+  public InterviewerSlotDtoValidator(PeriodService periodService,
       UserService userService, WeekService weekService,
       InterviewerSlotRepository interviewerSlotRepository) {
     this.periodService = periodService;
@@ -47,122 +46,129 @@ public class InterviewerSlotDTOValidator {
   }
 
   /**
-   * Validate interviewerSlotDTO for User, DayOfWeek, Period.
-   * If interviewerSlotDTO is correct returns InterviewerSlot.
-   * If not - throws one of the exceptions.
+   * Validate interviewerSlotDTO for User, DayOfWeek, Period. If interviewerSlotDTO is correct
+   * returns InterviewerSlot. If not - throws one of the exceptions.
+   *
    * @param interviewerSlotDTO from Controller's request
-   *
-   * @throws InvalidDayOfWeekException
-   * @throws InvalidInterviewerException
-   * @throws SlotIsOverlappingException
-   * @throws InvalidBoundariesException
-   *
-   * return InterviewerSlot
+   * @throws InvalidDayOfWeekException - invalid day of week
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws SlotIsOverlappingException - slot is overlapping exception
+   * @throws InvalidBoundariesException - invalid boundaries exception
+   * @return InterviewerSlot
    */
-  public InterviewerSlot interviewerSlotValidateDTO(InterviewerSlotDTO interviewerSlotDTO)
+  public InterviewerSlot interviewerSlotValidateDTO(InterviewerSlotDto interviewerSlotDTO)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException {
 
     Optional<User> userOptional = userService.getUserById(interviewerSlotDTO.getInterviewerId());
     User user;
-      if (userOptional.isPresent()) {
-        user = userOptional.get();
-      } else
-        throw new InvalidInterviewerException();
-
-    if(!isInterviewerRoleINTERVIEWER(user))
+    if (userOptional.isPresent()) {
+      user = userOptional.get();
+    } else {
       throw new InvalidInterviewerException();
+    }
 
-    if (!isCorrectDay(interviewerSlotDTO.getDayOfWeek()))
+    if (!isInterviewerRoleINTERVIEWER(user)) {
+      throw new InvalidInterviewerException();
+    }
+
+    if (!isCorrectDay(interviewerSlotDTO.getDayOfWeek())) {
       throw new InvalidDayOfWeekException();
-
+    }
 
     //TODO replace with method from period service
     Period period = periodService.getPeriodById(1L);
     //PeriodService.getPeriod(interviewerSlotDTO.getFrom(), interviewerSlotDTO.getTo());
 
-
     Week week = weekService.getWeekByWeekNum(interviewerSlotDTO.getWeek());
 
     DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDTO.getDayOfWeek());
 
-    if(isSlotOverlapping(period, week, user, dayOfWeek))
+    if (isSlotOverlapping(period, week, user, dayOfWeek)) {
       throw new SlotIsOverlappingException();
+    }
 
-    InterviewerSlot interviewerSlot = new InterviewerSlot(null, week, dayOfWeek, period, null, user);
+    InterviewerSlot interviewerSlot = new InterviewerSlot(null, week, dayOfWeek, period, null,
+        user);
 
-    if(!canEditThisWeek(interviewerSlot))
+    if (!canEditThisWeek(interviewerSlot)) {
       throw new CannotEditThisWeekException();
+    }
 
     return interviewerSlot;
   }
 
   /**
    * Get User and check if User's role is INTERVIEWER.
+   *
    * @param user Interviewer
    * @return boolean
    */
-  public boolean isInterviewerRoleINTERVIEWER(User user){
+  public boolean isInterviewerRoleINTERVIEWER(User user) {
     return user.getRole().equals(Role.INTERVIEWER);
   }
 
   /**
    * Get DayOfWeek in String and check if it is one of Enums DayOfWeek.
+   *
    * @param dayOfWeek dayOfWeek from interviewerSlotDTO
    * @return boolean
    */
-  public boolean isCorrectDay(String dayOfWeek){
+  public boolean isCorrectDay(String dayOfWeek) {
     return ObjectUtils.containsConstant(DayOfWeek.values(), dayOfWeek);
   }
 
   /**
-   * Returns true if week from InterviewerSlot is in the future and is not before this week's Friday 00:00.
-   * Get InterviewerSlot, then check if it's week is not in the past or if it's week is current week
-   * Finally, check if dayOfWeek is not Saturday or Sunday.
+   * Returns true if week from InterviewerSlot is in the future and is not before this week's Friday
+   * 00:00. Get InterviewerSlot, then check if it's week is not in the past or if it's week is
+   * current week Finally, check if dayOfWeek is not Saturday or Sunday.
+   *
    * @param interviewerSlot from Controller's request
    * @return boolean
    */
-  public boolean canEditThisWeek(InterviewerSlot interviewerSlot){
+  public boolean canEditThisWeek(InterviewerSlot interviewerSlot) {
 
     Week currentWeek = weekService.getCurrentWeek();
-    if(interviewerSlot.getWeek().getId() <= currentWeek.getId())
+    if (interviewerSlot.getWeek().getId() <= currentWeek.getId()) {
       return false;
+    }
 
     LocalDate currentDate = LocalDate.now();
     DayOfWeek currentDayOfWeek = weekService.getDayOfWeek(currentDate);
 
-    if(interviewerSlot.getWeek().getId() == currentWeek.getId() + 1)
+    if (interviewerSlot.getWeek().getId() == currentWeek.getId() + 1) {
       return !(currentDayOfWeek.equals(DayOfWeek.SAT) ||
           currentDayOfWeek.equals(DayOfWeek.SUN));
+    }
 
     return true;
   }
 
   /**
-   * Returns true if new Period is not overlapping any other Period
-   * of this User on this Week and this DayOfWeek
-   *
+   * Returns true if new Period is not overlapping any other Period of this User on this Week and
+   * this DayOfWeek
+   * <p>
    * Get List of InterviewerSlots from database where Week, User and DayOfWeek match parameters.
    * Then check every slot if it overlaps our new Period
    *
-   * @param period from Controller's request
-   * @param week from Controller's request
-   * @param user from Controller's request
+   * @param period    from Controller's request
+   * @param week      from Controller's request
+   * @param user      from Controller's request
    * @param dayOfWeek from Controller's request
    * @return boolean
    */
-  public boolean isSlotOverlapping(Period period,Week week, User user, DayOfWeek dayOfWeek){
+  public boolean isSlotOverlapping(Period period, Week week, User user, DayOfWeek dayOfWeek) {
     List<InterviewerSlot> interviewerSlotsList = interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(user.getId(), week.getId(), dayOfWeek);
     System.out.println(interviewerSlotRepository.findAll());
 
     if (!interviewerSlotsList.isEmpty()) {
-    for(InterviewerSlot interviewerSlot : interviewerSlotsList) {
-      //TODO use with ready period service
+      for (InterviewerSlot interviewerSlot : interviewerSlotsList) {
+        //TODO use with ready period service
 //        if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){
 //          return true;
 //        }
-    }
+      }
     }
     return false;
   }

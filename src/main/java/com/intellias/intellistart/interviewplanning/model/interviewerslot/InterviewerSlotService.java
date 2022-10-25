@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
+import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
@@ -24,23 +24,22 @@ public class InterviewerSlotService {
 
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final PeriodRepository periodRepository;
-  private final  InterviewerSlotDTOValidator interviewerSlotDTOValidator;
-
+  private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
 
   @Autowired
   public InterviewerSlotService(
-      InterviewerSlotDTOValidator interviewerSlotDTOValidator,
+      InterviewerSlotDtoValidator interviewerSlotDtoValidator,
       InterviewerSlotRepository interviewerSlotRepository,
       PeriodRepository periodRepository) {
-    this.interviewerSlotDTOValidator = interviewerSlotDTOValidator;
+    this.interviewerSlotDtoValidator = interviewerSlotDtoValidator;
     this.periodRepository = periodRepository;
     this.interviewerSlotRepository = interviewerSlotRepository;
   }
 
   /**
-   * Get InterviewerSlotDTO from Request, validate it and returns InterviewerSlot
-   * if all fields are correct, otherwise throws exception
+   * Get InterviewerSlotDto from Request, validate it and returns InterviewerSlot if all fields are
+   * correct, otherwise throws exception
    *
    * @param interviewerSlotDTO - from request
    * @return InterviewerSlot
@@ -49,26 +48,55 @@ public class InterviewerSlotService {
    * @throws InvalidBoundariesException
    * @throws InvalidInterviewerException
    */
-  public InterviewerSlot interviewerSlotValidation(InterviewerSlotDTO interviewerSlotDTO)
+  public InterviewerSlot interviewerSlotValidation(InterviewerSlotDto interviewerSlotDTO)
       throws InvalidDayOfWeekException, SlotIsOverlappingException,
       InvalidBoundariesException, InvalidInterviewerException, CannotEditThisWeekException {
-          return interviewerSlotDTOValidator.interviewerSlotValidateDTO(interviewerSlotDTO);
+    return interviewerSlotDtoValidator.interviewerSlotValidateDTO(interviewerSlotDTO);
   }
 
-  public  Optional<InterviewerSlot> getSlotByIdOne(){
+  /**
+   * Just for tests, for getting first slot from StartDataLoad
+   *
+   * @return Optional of Interviewer Slot
+   */
+  public Optional<InterviewerSlot> getSlotByIdOne() {
     return interviewerSlotRepository.findById(1L);
   }
-  public  InterviewerSlot createInterviewerSlot(User user, Week week, DayOfWeek dayOfWeek, Period period){
-    return interviewerSlotRepository.save(new InterviewerSlot(null, week, dayOfWeek, period, null, user));
+
+  /**
+   * Get all parameters for creating new Slot in database
+   *
+   * @param user - current user
+   * @param week - week
+   * @param dayOfWeek - day of week
+   * @param period - period
+   * @return InterviewerSlot
+   */
+  public InterviewerSlot createInterviewerSlot(User user, Week week, DayOfWeek dayOfWeek,
+      Period period) {
+    return interviewerSlotRepository.save(
+        new InterviewerSlot(null, week, dayOfWeek, period, null, user));
   }
-  public  Optional<Period> getPeriodById(Long id){
+
+  /**
+   * Get Optional of period from database
+   *
+   * @param id - Long id of Period to find
+   *
+   * @return Optional<Period>
+   */
+  public Optional<Period> getPeriodById(Long id) {
     return periodRepository.findById(id);
   }
 
-
-
-  public Optional<InterviewerSlot> getSlotById(Long id){
+  /**
+   * Get Optional of InterviewerSlot from database
+   *
+   * @param id - Long id of InterviewerSlot to find
+   *
+   * @return Optional<InterviewerSlot>
+   */
+  public Optional<InterviewerSlot> getSlotById(Long id) {
     return interviewerSlotRepository.findById(id);
   }
-
 }

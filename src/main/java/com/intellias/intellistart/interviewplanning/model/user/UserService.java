@@ -13,7 +13,7 @@ public class UserService {
   private final UserRepository userRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository){
     this.userRepository = userRepository;
   }
 
@@ -22,8 +22,7 @@ public class UserService {
    *
    * @return currently just newUser() without relationships.
    */
-  public User getCurrentUser() {
-
+  public User getCurrentUser(){
     User user = userRepository.findById(1L).get();
     return user;
   }
@@ -36,6 +35,5 @@ public class UserService {
   public Optional<User> getUserById(Long id){
     return userRepository.findById(id);
   }
-
 }
 

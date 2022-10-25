@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.controllers.dto;
+package com.intellias.intellistart.interviewplanning.controllers.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
-public class InterviewerSlotDTO {
+public class InterviewerSlotDto {
+
   private Long interviewerId;
   private Long week;
   @NonNull

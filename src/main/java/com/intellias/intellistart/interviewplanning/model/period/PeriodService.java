@@ -76,8 +76,16 @@ public class PeriodService {
     return periodRepository.save(
         new Period(null, from, to, null, null, null));
   }
+
+  /**
+   * Get id of Period and return Period
+   * Do not work correctly
+   * TODO check for Optional
+   *
+   * @param id
+   * @return Period
+   */
   public Period getPeriodById(Long id){
     return periodRepository.findById(id).get();
   }
-
 }

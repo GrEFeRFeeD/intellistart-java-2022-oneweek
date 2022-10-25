@@ -5,23 +5,18 @@ import static org.mockito.Mockito.verify;
 
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
-import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 
 
-import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -29,23 +24,24 @@ import org.mockito.Mockito;
 public class InterviewerSlotServiceTest {
 
 
-  static InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(InterviewerSlotRepository.class);
-  static PeriodRepository periodRepository =  Mockito.mock(PeriodRepository.class);
-  static InterviewerSlotDTOValidator interviewerSlotDTOValidator;
+  static InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(
+      InterviewerSlotRepository.class);
+  static PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
+  static InterviewerSlotDtoValidator interviewerSlotDTOValidator;
 
-   InterviewerSlotService cut = new InterviewerSlotService(
-       interviewerSlotDTOValidator, interviewerSlotRepository, periodRepository
-    );
-
+  InterviewerSlotService cut = new InterviewerSlotService(
+      interviewerSlotDTOValidator, interviewerSlotRepository, periodRepository
+  );
 
 
   @Test
-  void createInterviewerSlotsTest(){
+  void createInterviewerSlotsTest() {
     InterviewerSlot expected = new InterviewerSlot(null, w1, DayOfWeek.TUE, p1, null, u1);
 
     cut.createInterviewerSlot(u1, w1, DayOfWeek.TUE, p1);
 
-    ArgumentCaptor<InterviewerSlot> slotArgumentCaptor = ArgumentCaptor.forClass(InterviewerSlot.class);
+    ArgumentCaptor<InterviewerSlot> slotArgumentCaptor = ArgumentCaptor.forClass(
+        InterviewerSlot.class);
     verify(interviewerSlotRepository).save(slotArgumentCaptor.capture());
     InterviewerSlot actual = slotArgumentCaptor.getValue();
     assertEquals(expected, actual);

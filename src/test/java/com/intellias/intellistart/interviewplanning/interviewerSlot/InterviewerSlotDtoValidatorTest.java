@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -17,7 +17,6 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -27,39 +26,39 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 
-public class InterviewerSlotDTOValidatorTest {
+public class InterviewerSlotDtoValidatorTest {
 
-   InterviewerSlotDTOValidator interviewerSlotDTOValidator;
-   InterviewerSlotService interviewerSlotService;
+  InterviewerSlotDtoValidator interviewerSlotDTOValidator;
+  InterviewerSlotService interviewerSlotService;
 
-   InterviewerSlotRepository interviewerSlotRepository;
-   PeriodRepository periodRepository;
+  InterviewerSlotRepository interviewerSlotRepository;
+  PeriodRepository periodRepository;
 
-  void initialize(){
+  void initialize() {
 
     Mockito.mock(UserRepository.class);
     Mockito.mock(InterviewerSlotRepository.class);
     Mockito.mock(PeriodRepository.class);
     Mockito.mock(WeekRepository.class);
     this.interviewerSlotService = new InterviewerSlotService(
-        interviewerSlotDTOValidator, interviewerSlotRepository,periodRepository
+        interviewerSlotDTOValidator, interviewerSlotRepository, periodRepository
     );
   }
 
 
   @ParameterizedTest
   @CsvSource({"THU, true", "yy, false", ", false", "Fri, true", "SUN, true"})
-  void isCorrectDayTest(String dayOfWeek, boolean expect){
+  void isCorrectDayTest(String dayOfWeek, boolean expect) {
     boolean actual = interviewerSlotDTOValidator.isCorrectDay(dayOfWeek);
-    assertEquals(expect,actual);
+    assertEquals(expect, actual);
   }
 
 
   @ParameterizedTest
   @ArgumentsSource(UserArgumentsProvider.class)
-  void isInterviewerRoleINTERVIEWER(User user,boolean expect) {
+  void isInterviewerRoleINTERVIEWER(User user, boolean expect) {
     boolean actual = interviewerSlotDTOValidator.isInterviewerRoleINTERVIEWER(user);
-    assertEquals(expect,actual);
+    assertEquals(expect, actual);
   }
 
   static class UserArgumentsProvider implements ArgumentsProvider {
@@ -85,12 +84,14 @@ public class InterviewerSlotDTOValidatorTest {
 
   static Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
       new HashSet<>(), new HashSet<>(), new HashSet<>());
-  static InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.THU, p1, new HashSet<>(), u1);
-  static InterviewerSlot is2 = new InterviewerSlot(null, w2, DayOfWeek.FRI, p1, new HashSet<>(), u1);
-  static InterviewerSlot is3 = new InterviewerSlot(null, w2, DayOfWeek.TUE, p1, new HashSet<>(), u2);
-  static InterviewerSlot is4 = new InterviewerSlot(null, w1, DayOfWeek.SAT, p1, new HashSet<>(), u2);
-
-
+  static InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.THU, p1, new HashSet<>(),
+      u1);
+  static InterviewerSlot is2 = new InterviewerSlot(null, w2, DayOfWeek.FRI, p1, new HashSet<>(),
+      u1);
+  static InterviewerSlot is3 = new InterviewerSlot(null, w2, DayOfWeek.TUE, p1, new HashSet<>(),
+      u2);
+  static InterviewerSlot is4 = new InterviewerSlot(null, w1, DayOfWeek.SAT, p1, new HashSet<>(),
+      u2);
 
 
 }
