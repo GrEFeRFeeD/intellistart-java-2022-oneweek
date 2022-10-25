@@ -1,0 +1,11 @@
+jwt:
+  secret: oneweek
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: 844673723213018
+            clientSecret: 82d3e167444afb328472f830984a64a8
