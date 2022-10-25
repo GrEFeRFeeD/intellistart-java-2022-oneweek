@@ -6,9 +6,9 @@ import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundaries
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,18 @@ public class InterviewerController {
     this.interviewerSlotService = interviewerSlotService;
   }
 
+  /**
+   * Post Request for creating slot.
+   *
+   * @param interviewerSlotDto - DTO from request
+   * @param interviewerId - user Id from request
+   * @return interviewerSlotDto - and/or HTTP status
+   * @throws InvalidDayOfWeekException - invalid day of week
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws SlotIsOverlappingException - slot is overlapping exception
+   * @throws InvalidBoundariesException - invalid boundaries exception
+   * @throws CannotEditThisWeekException - can not edit this week
+   */
   @PostMapping("/interviewers/{interviewerId}/slots")
   public ResponseEntity<InterviewerSlotDto> createInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
@@ -45,13 +57,24 @@ public class InterviewerController {
     interviewerSlotDto.setInterviewerId(interviewerId);
     InterviewerSlot interviewerSlot = interviewerSlotService.interviewerSlotValidation(
         interviewerSlotDto);
-
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlotRepository.save(interviewerSlot);
-
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
 
+  /**
+   * Post Request for updating slot.
+   *
+   * @param interviewerSlotDto - DTO from request
+   * @param interviewerId - user Id from request
+   * @param slotId - slot Id from request
+   * @return interviewerSlotDto - and/or HTTP status
+   * @throws InvalidDayOfWeekException - invalid day of week
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws SlotIsOverlappingException - slot is overlapping exception
+   * @throws InvalidBoundariesException - invalid boundaries exception
+   * @throws CannotEditThisWeekException - can not edit this week
+   */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public ResponseEntity<InterviewerSlotDto> changeInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,

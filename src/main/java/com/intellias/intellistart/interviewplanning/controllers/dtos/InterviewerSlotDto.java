@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Class for Interviewer SLot DTO
+ * Class for Interviewer SLot DTO.
  */
 @Getter
 @Setter

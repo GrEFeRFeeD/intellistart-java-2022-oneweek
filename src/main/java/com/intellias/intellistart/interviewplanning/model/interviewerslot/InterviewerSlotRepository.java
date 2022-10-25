@@ -8,6 +8,6 @@ import org.springframework.data.repository.CrudRepository;
  * DAO for InterviewerSlot entity.
  */
 public interface InterviewerSlotRepository extends CrudRepository<InterviewerSlot, Long> {
-  List<InterviewerSlot> getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek (
+  List<InterviewerSlot> getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(
       Long userId, Long weekId, DayOfWeek dayOfWeek);
 }

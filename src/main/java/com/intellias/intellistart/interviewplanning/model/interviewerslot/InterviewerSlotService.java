@@ -26,9 +26,14 @@ public class InterviewerSlotService {
   private final PeriodRepository periodRepository;
   private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
-
+  /**
+   * Constructor for InterviewerSlotService
+   * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
+   * @param interviewerSlotRepository - interviewerSlotRepository
+   * @param periodRepository - periodRepository
+   */
   @Autowired
-  public InterviewerSlotService (
+  public InterviewerSlotService(
       InterviewerSlotDtoValidator interviewerSlotDtoValidator,
       InterviewerSlotRepository interviewerSlotRepository,
       PeriodRepository periodRepository) {
@@ -41,17 +46,17 @@ public class InterviewerSlotService {
    * Get InterviewerSlotDto from Request, validate it and returns InterviewerSlot if all fields are
    * correct, otherwise throws exception.
    *
-   * @param interviewerSlotDTO - from request
+   * @param interviewerSlotDto - from request
    * @return InterviewerSlot
    * @throws InvalidDayOfWeekException - invalid day of week
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    * @throws SlotIsOverlappingException - slot is overlapping exception
    * @throws InvalidBoundariesException - invalid boundaries exception
    */
-  public InterviewerSlot interviewerSlotValidation(InterviewerSlotDto interviewerSlotDTO)
+  public InterviewerSlot interviewerSlotValidation(InterviewerSlotDto interviewerSlotDto)
       throws InvalidDayOfWeekException, SlotIsOverlappingException,
       InvalidBoundariesException, InvalidInterviewerException, CannotEditThisWeekException {
-    return interviewerSlotDtoValidator.interviewerSlotValidateDTO(interviewerSlotDTO);
+    return interviewerSlotDtoValidator.interviewerSlotValidateDto(interviewerSlotDto);
   }
 
   /**

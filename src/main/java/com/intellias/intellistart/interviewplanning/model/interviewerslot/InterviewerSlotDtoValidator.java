@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 /**
- * Service for validation of Interviewer Slot DTO
+ * Service for validation of Interviewer Slot DTO.
  */
 @Component
 @Service
@@ -52,18 +52,18 @@ public class InterviewerSlotDtoValidator {
    * Validate interviewerSlotDTO for User, DayOfWeek, Period. If interviewerSlotDTO is correct:
    * returns InterviewerSlot. If not - throws one of the exceptions.
    *
-   * @param interviewerSlotDTO from Controller's request
+   * @param interviewerSlotDto from Controller's request
    * @return InterviewerSlot
    * @throws InvalidDayOfWeekException - invalid day of week
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    * @throws SlotIsOverlappingException - slot is overlapping exception
    * @throws InvalidBoundariesException - invalid boundaries exception
    */
-  public InterviewerSlot interviewerSlotValidateDTO(InterviewerSlotDto interviewerSlotDTO)
+  public InterviewerSlot interviewerSlotValidateDto(InterviewerSlotDto interviewerSlotDto)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException {
 
-    Optional<User> userOptional = userService.getUserById(interviewerSlotDTO.getInterviewerId());
+    Optional<User> userOptional = userService.getUserById(interviewerSlotDto.getInterviewerId());
     User user;
     if (userOptional.isPresent()) {
       user = userOptional.get();
@@ -75,7 +75,7 @@ public class InterviewerSlotDtoValidator {
       throw new InvalidInterviewerException();
     }
 
-    if (!isCorrectDay(interviewerSlotDTO.getDayOfWeek())) {
+    if (!isCorrectDay(interviewerSlotDto.getDayOfWeek())) {
       throw new InvalidDayOfWeekException();
     }
 
@@ -83,9 +83,9 @@ public class InterviewerSlotDtoValidator {
     Period period = periodService.getPeriodById(1L);
     //PeriodService.getPeriod(interviewerSlotDTO.getFrom(), interviewerSlotDTO.getTo());
 
-    Week week = weekService.getWeekByWeekNum(interviewerSlotDTO.getWeek());
+    Week week = weekService.getWeekByWeekNum(interviewerSlotDto.getWeek());
 
-    DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDTO.getDayOfWeek());
+    DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek());
 
     if (isSlotOverlapping(period, week, user, dayOfWeek)) {
       throw new SlotIsOverlappingException();
@@ -149,7 +149,6 @@ public class InterviewerSlotDtoValidator {
   /**
    * Returns true if new Period is not overlapping any other Period of this User -
    * on this Week and this DayOfWeek.
-   *
    * Get List of InterviewerSlots from database where Week, User and DayOfWeek match parameters.
    * Then check every slot if it overlaps our new Period.
    *
@@ -169,7 +168,7 @@ public class InterviewerSlotDtoValidator {
 //TODO use with ready period service
 //        if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){
 //          return true;
-//        }
+      //        }
       }
     }
     return false;
