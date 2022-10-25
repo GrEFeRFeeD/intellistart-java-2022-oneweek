@@ -22,7 +22,7 @@ public class UserService {
    *
    * @return currently just newUser() without relationships.
    */
-  public User getCurrentUser(){
+  public User getCurrentUser() {
     User user = userRepository.findById(1L).get();
     return user;
   }

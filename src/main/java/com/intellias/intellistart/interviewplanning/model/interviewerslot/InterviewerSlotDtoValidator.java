@@ -23,6 +23,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+/**
+ * Service for validation of Interviewer Slot DTO
+ */
 @Component
 @Service
 public class InterviewerSlotDtoValidator {
@@ -50,11 +53,11 @@ public class InterviewerSlotDtoValidator {
    * returns InterviewerSlot. If not - throws one of the exceptions.
    *
    * @param interviewerSlotDTO from Controller's request
+   * @return InterviewerSlot
    * @throws InvalidDayOfWeekException - invalid day of week
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    * @throws SlotIsOverlappingException - slot is overlapping exception
    * @throws InvalidBoundariesException - invalid boundaries exception
-   * @return InterviewerSlot
    */
   public InterviewerSlot interviewerSlotValidateDTO(InterviewerSlotDto interviewerSlotDTO)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
@@ -68,7 +71,7 @@ public class InterviewerSlotDtoValidator {
       throw new InvalidInterviewerException();
     }
 
-    if (!isInterviewerRoleINTERVIEWER(user)) {
+    if (!isInterviewerRoleInterviewer(user)) {
       throw new InvalidInterviewerException();
     }
 
@@ -104,7 +107,7 @@ public class InterviewerSlotDtoValidator {
    * @param user Interviewer
    * @return boolean
    */
-  public boolean isInterviewerRoleINTERVIEWER(User user) {
+  public boolean isInterviewerRoleInterviewer(User user) {
     return user.getRole().equals(Role.INTERVIEWER);
   }
 
@@ -144,11 +147,11 @@ public class InterviewerSlotDtoValidator {
   }
 
   /**
-   * Returns true if new Period is not overlapping any other Period of this User on this Week and
-   * this DayOfWeek.
+   * Returns true if new Period is not overlapping any other Period of this User -
+   * on this Week and this DayOfWeek.
    *
    * Get List of InterviewerSlots from database where Week, User and DayOfWeek match parameters.
-   * Then check every slot if it overlaps our new Period
+   * Then check every slot if it overlaps our new Period.
    *
    * @param period    from Controller's request
    * @param week      from Controller's request
@@ -163,7 +166,7 @@ public class InterviewerSlotDtoValidator {
 
     if (!interviewerSlotsList.isEmpty()) {
       for (InterviewerSlot interviewerSlot : interviewerSlotsList) {
-        //TODO use with ready period service
+//TODO use with ready period service
 //        if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){
 //          return true;
 //        }

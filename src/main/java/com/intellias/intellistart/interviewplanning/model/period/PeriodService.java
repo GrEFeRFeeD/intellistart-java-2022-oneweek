@@ -78,14 +78,14 @@ public class PeriodService {
   }
 
   /**
-   * Get id of Period and return Period
-   * Do not work correctly
+   * Get id of Period and return Period.
+   * Do not work correctly.
    * TODO check for Optional
    *
-   * @param id
+   * @param id - id of wanted Period
    * @return Period
    */
-  public Period getPeriodById(Long id){
+  public Period getPeriodById(Long id) {
     return periodRepository.findById(id).get();
   }
 }

@@ -28,7 +28,7 @@ public class InterviewerSlotService {
 
 
   @Autowired
-  public InterviewerSlotService(
+  public InterviewerSlotService (
       InterviewerSlotDtoValidator interviewerSlotDtoValidator,
       InterviewerSlotRepository interviewerSlotRepository,
       PeriodRepository periodRepository) {
@@ -47,7 +47,6 @@ public class InterviewerSlotService {
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    * @throws SlotIsOverlappingException - slot is overlapping exception
    * @throws InvalidBoundariesException - invalid boundaries exception
-   * @return InterviewerSlot from DTO
    */
   public InterviewerSlot interviewerSlotValidation(InterviewerSlotDto interviewerSlotDTO)
       throws InvalidDayOfWeekException, SlotIsOverlappingException,
@@ -84,7 +83,7 @@ public class InterviewerSlotService {
    *
    * @param id - Long id of Period to find
    *
-   * @return Optional<Period>
+   * @return {@link Optional} of {@link Period}
    */
   public Optional<Period> getPeriodById(Long id) {
     return periodRepository.findById(id);
@@ -95,7 +94,7 @@ public class InterviewerSlotService {
    *
    * @param id - Long id of InterviewerSlot to find
    *
-   * @return Optional<InterviewerSlot>
+   * @return {@link Optional} of {@link InterviewerSlot}
    */
   public Optional<InterviewerSlot> getSlotById(Long id) {
     return interviewerSlotRepository.findById(id);
