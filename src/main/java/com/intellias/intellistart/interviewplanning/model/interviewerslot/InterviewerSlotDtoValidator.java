@@ -165,7 +165,9 @@ public class InterviewerSlotDtoValidator {
 
     if (!interviewerSlotsList.isEmpty()) {
       for (InterviewerSlot interviewerSlot : interviewerSlotsList) {
-//TODO use with ready period service if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){return true;}
+        //TODO use with ready period service
+        // if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){return true;}
+
       }
     }
     return false;
