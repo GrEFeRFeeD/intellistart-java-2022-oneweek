@@ -111,31 +111,29 @@ public class StartDataLoader implements ApplicationRunner {
 
     b1 = bookingRepository.save(b1);
 
-//    System.out.println("====== USERS ======");
-//    System.out.println(u1);
-//    System.out.println(u2);
-//    System.out.println(u3);
-//    System.out.println(u4);
-//    System.out.println("====== BOOKING_LIMITS ======");
-//    System.out.println(bl1);
-//    System.out.println("====== WEEKS ======");
-//    System.out.println(w1);
-//    System.out.println("====== PERIODS ======");
-//    System.out.println(p1);
-//    System.out.println(p2);
-//    System.out.println(p3);
-//    System.out.println(p4);
-//    System.out.println("====== INTERVIEWER_SLOTS ======");
-//    System.out.println(is1);
-//    System.out.println(is2);
-//    System.out.println("====== CANDIDATE_SLOTS ======");
-//    System.out.println(cs1);
-//    System.out.println("====== BOOKINGS ======");
-//    System.out.println(b1);
-//    System.out.println("==================");
-//    System.out.println("If don't want to see these messages, than go and comment this class: "
-//        + this.getClass());
-
-   // System.out.println(weekRepository.findAll());
+    System.out.println("====== USERS ======");
+    System.out.println(u1);
+    System.out.println(u2);
+    System.out.println(u3);
+    System.out.println(u4);
+    System.out.println("====== BOOKING_LIMITS ======");
+    System.out.println(bl1);
+    System.out.println("====== WEEKS ======");
+    System.out.println(w1);
+    System.out.println("====== PERIODS ======");
+    System.out.println(p1);
+    System.out.println(p2);
+    System.out.println(p3);
+    System.out.println(p4);
+    System.out.println("====== INTERVIEWER_SLOTS ======");
+    System.out.println(is1);
+    System.out.println(is2);
+    System.out.println("====== CANDIDATE_SLOTS ======");
+    System.out.println(cs1);
+    System.out.println("====== BOOKINGS ======");
+    System.out.println(b1);
+    System.out.println("==================");
+    System.out.println("If don't want to see these messages, than go and comment this class: "
+        + this.getClass());
   }
 }
