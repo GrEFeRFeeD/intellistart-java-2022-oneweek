@@ -6,17 +6,18 @@ import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
-import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
+import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
+import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
-import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -24,26 +25,24 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class InterviewerSlotDtoValidatorTest {
 
-  InterviewerSlotDtoValidator interviewerSlotDTOValidator;
-  InterviewerSlotService interviewerSlotService;
+  static UserRepository userRepository = Mockito.mock(UserRepository.class);
+  static UserService userService = new UserService(userRepository);
 
-  InterviewerSlotRepository interviewerSlotRepository;
-  PeriodRepository periodRepository;
+  static PeriodService periodService;
+  static WeekService weekService;
 
-  void initialize() {
+  static InterviewerSlotRepository interviewerSlotRepository;
+  InterviewerSlotDtoValidator interviewerSlotDTOValidator = new InterviewerSlotDtoValidator(
+      periodService, userService, weekService, interviewerSlotRepository
+  );
 
-    Mockito.mock(UserRepository.class);
-    Mockito.mock(InterviewerSlotRepository.class);
-    Mockito.mock(PeriodRepository.class);
-    Mockito.mock(WeekRepository.class);
-    this.interviewerSlotService = new InterviewerSlotService(
-        interviewerSlotDTOValidator, interviewerSlotRepository, periodRepository
-    );
-  }
+
+
 
 
   @ParameterizedTest
