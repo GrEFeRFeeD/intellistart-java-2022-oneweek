@@ -1,8 +1,7 @@
 package com.intellias.intellistart.interviewplanning.exceptions;
 
 /**
- * Is thrown then we can not edit week that
- * we got in the DTO
+ * Thrown when we can not edit week that we got from the DTO.
  */
 public class CannotEditThisWeekException extends RuntimeException {
   public CannotEditThisWeekException(){

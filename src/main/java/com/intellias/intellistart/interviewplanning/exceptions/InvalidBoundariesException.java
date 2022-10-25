@@ -7,7 +7,7 @@ package com.intellias.intellistart.interviewplanning.exceptions;
  */
 public class InvalidBoundariesException extends IllegalArgumentException {
 
-  public InvalidBoundariesException(){
+  public InvalidBoundariesException() {
     super();
   }
 }

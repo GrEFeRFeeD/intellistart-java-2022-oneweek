@@ -39,14 +39,15 @@ public class InterviewerSlotService {
 
   /**
    * Get InterviewerSlotDto from Request, validate it and returns InterviewerSlot if all fields are
-   * correct, otherwise throws exception
+   * correct, otherwise throws exception.
    *
    * @param interviewerSlotDTO - from request
    * @return InterviewerSlot
-   * @throws InvalidDayOfWeekException
-   * @throws SlotIsOverlappingException
-   * @throws InvalidBoundariesException
-   * @throws InvalidInterviewerException
+   * @throws InvalidDayOfWeekException - invalid day of week
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws SlotIsOverlappingException - slot is overlapping exception
+   * @throws InvalidBoundariesException - invalid boundaries exception
+   * @return InterviewerSlot from DTO
    */
   public InterviewerSlot interviewerSlotValidation(InterviewerSlotDto interviewerSlotDTO)
       throws InvalidDayOfWeekException, SlotIsOverlappingException,
@@ -55,7 +56,7 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Just for tests, for getting first slot from StartDataLoad
+   * Just for tests, for getting first slot from StartDataLoad.
    *
    * @return Optional of Interviewer Slot
    */
@@ -64,7 +65,7 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Get all parameters for creating new Slot in database
+   * Get all parameters for creating new Slot in database.
    *
    * @param user - current user
    * @param week - week
@@ -79,7 +80,7 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Get Optional of period from database
+   * Get Optional of period from database.
    *
    * @param id - Long id of Period to find
    *
@@ -90,7 +91,7 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Get Optional of InterviewerSlot from database
+   * Get Optional of InterviewerSlot from database.
    *
    * @param id - Long id of InterviewerSlot to find
    *

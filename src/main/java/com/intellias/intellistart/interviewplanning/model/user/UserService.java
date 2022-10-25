@@ -13,7 +13,7 @@ public class UserService {
   private final UserRepository userRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository){
+  public UserService(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
@@ -28,11 +28,11 @@ public class UserService {
   }
   
   /**
-   * Method for gaining Optional User by id
+   * Method for gaining Optional User by id.
    *
-   * @return Optional User by id
+   * @return Optional User by id.
    */
-  public Optional<User> getUserById(Long id){
+  public Optional<User> getUserById(Long id) {
     return userRepository.findById(id);
   }
 }

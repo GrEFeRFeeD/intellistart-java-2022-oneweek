@@ -46,7 +46,7 @@ public class InterviewerSlotDtoValidator {
   }
 
   /**
-   * Validate interviewerSlotDTO for User, DayOfWeek, Period. If interviewerSlotDTO is correct
+   * Validate interviewerSlotDTO for User, DayOfWeek, Period. If interviewerSlotDTO is correct:
    * returns InterviewerSlot. If not - throws one of the exceptions.
    *
    * @param interviewerSlotDTO from Controller's request
@@ -137,17 +137,16 @@ public class InterviewerSlotDtoValidator {
     DayOfWeek currentDayOfWeek = weekService.getDayOfWeek(currentDate);
 
     if (interviewerSlot.getWeek().getId() == currentWeek.getId() + 1) {
-      return !(currentDayOfWeek.equals(DayOfWeek.SAT) ||
-          currentDayOfWeek.equals(DayOfWeek.SUN));
+      return !(currentDayOfWeek.equals(DayOfWeek.SAT)
+          || currentDayOfWeek.equals(DayOfWeek.SUN));
     }
-
     return true;
   }
 
   /**
    * Returns true if new Period is not overlapping any other Period of this User on this Week and
-   * this DayOfWeek
-   * <p>
+   * this DayOfWeek.
+   *
    * Get List of InterviewerSlots from database where Week, User and DayOfWeek match parameters.
    * Then check every slot if it overlaps our new Period
    *
