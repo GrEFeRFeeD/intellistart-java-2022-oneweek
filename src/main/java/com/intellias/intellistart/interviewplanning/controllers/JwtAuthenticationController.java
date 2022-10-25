@@ -4,6 +4,7 @@ import com.intellias.intellistart.interviewplanning.controllers.dtos.JwtRequest;
 import com.intellias.intellistart.interviewplanning.controllers.dtos.JwtResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
+import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil.FacebookScopes;
@@ -71,10 +72,10 @@ public class JwtAuthenticationController {
 
     authenticate(email);
 
-    final UserDetails userDetails = userDetailsService
+    final JwtUserDetails userDetails = (JwtUserDetails) userDetailsService
         .loadUserByEmailAndName(email, name);
 
-    JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userDetails, name));
+    JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userDetails));
 
     return ResponseEntity.ok(jwtResponse);
   }

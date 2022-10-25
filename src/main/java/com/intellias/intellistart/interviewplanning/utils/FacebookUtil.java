@@ -137,6 +137,7 @@ public class FacebookUtil {
 
     FbTokenInfo fbTokenInfo = getFbTokenInfo(token);
     String userId = fbTokenInfo.getData().getUserId();
+
     String uri = String.format(userUri, userId, token);
     RestTemplate restTemplate = new RestTemplate();
     FbUserInfo fbUserInfo = restTemplate.getForObject(uri, FbUserInfo.class);

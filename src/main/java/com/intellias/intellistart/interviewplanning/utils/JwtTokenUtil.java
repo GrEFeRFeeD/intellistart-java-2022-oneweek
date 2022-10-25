@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.utils;
 
+import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -83,31 +84,20 @@ public class JwtTokenUtil implements Serializable {
 
   /**
    * Generates token for given UserDetails user.
-   * Username, authorities, issued date and expiration date values will be signed with secret.
-   * Name field will be set null.
-   *
-   * @param userDetails user object to get username from
-   * @return generated JSON Web Token
-   */
-  public String generateToken(UserDetails userDetails) {
-    return generateToken(userDetails, null);
-  }
-
-  /**
-   * Generates token for given UserDetails user.
    * Username, name, authorities, issued date and expiration date values will be signed with secret.
    *
-   * @param userDetails user object to get username from
+   * @param jwtUserDetails user object to get email from
    * @return generated JSON Web Token
    */
-  public String generateToken(UserDetails userDetails, String name) {
+  public String generateToken(JwtUserDetails jwtUserDetails) {
+
     Map<String, Object> claims = new HashMap<>();
-    claims.put("authorities", userDetails.getAuthorities());
-    claims.put("name", name);
+    claims.put("authorities", jwtUserDetails.getAuthorities());
+    claims.put("name", jwtUserDetails.getName());
 
     return Jwts.builder()
         .setClaims(claims)
-        .setSubject(userDetails.getUsername())
+        .setSubject(jwtUserDetails.getEmail())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
         .signWith(SignatureAlgorithm.HS512, secret).compact();
@@ -118,11 +108,11 @@ public class JwtTokenUtil implements Serializable {
    * userDetails. Token must not been expired.
    *
    * @param token       token to validate
-   * @param userDetails user object to get username from
+   * @param jwtUserDetails user object to get email from
    * @return true if token correct or else false
    */
-  public Boolean validateToken(String token, UserDetails userDetails) {
+  public Boolean validateToken(String token, JwtUserDetails jwtUserDetails) {
     final String email = getEmailFromToken(token);
-    return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    return (email.equals(jwtUserDetails.getEmail()) && !isTokenExpired(token));
   }
 }
