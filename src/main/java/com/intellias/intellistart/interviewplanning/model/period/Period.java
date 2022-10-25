@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,8 +61,6 @@ public class Period {
   public void addBooking(Booking booking) {
     bookings.add(booking);
   }
-
-
 
   @Override
   public String toString() {
