@@ -21,7 +21,6 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
-import org.aspectj.weaver.patterns.PerObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

@@ -25,9 +25,15 @@ public class UserService {
     User user = userRepository.findById(1L).get();
     return user;
   }
-
+  
+  /**
+   * Method for gaining Optional User by id
+   *
+   * @return Optional User by id
+   */
   public Optional<User> getUserById(Long id){
     return userRepository.findById(id);
   }
 
 }
+

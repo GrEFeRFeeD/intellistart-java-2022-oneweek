@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -31,6 +32,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@JsonPropertyOrder({"email", "role", "id"})
 public class User {
 
   @Id
@@ -38,6 +40,7 @@ public class User {
   @Column(name = "user_id")
   private Long id;
 
+  @Column(unique = true)
   private String email;
 
   @Enumerated(EnumType.STRING)

@@ -28,7 +28,7 @@ public class WeekService {
    * @param date any date
    * @return number of week
    */
-  public  long getNumberOfWeek(LocalDate date) {
+  public long getNumberOfWeek(LocalDate date) {
     long sumOfWeeks = 0;
     if (date.getYear() != 2022) {
       for (int i = 2022; i < date.getYear(); i++) {
@@ -49,7 +49,7 @@ public class WeekService {
    * @param year current year
    * @return true if year begins from tuesday,wednesday or thursday
    */
-  private  boolean checkBeginOfYear(int year) {
+  private boolean checkBeginOfYear(int year) {
     LocalDate date = LocalDate.of(year, 1, 1);
     return date.getDayOfWeek().equals(java.time.DayOfWeek.TUESDAY)
         || date.getDayOfWeek().equals(java.time.DayOfWeek.WEDNESDAY)
