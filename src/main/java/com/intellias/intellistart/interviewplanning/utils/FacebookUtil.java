@@ -153,7 +153,7 @@ public class FacebookUtil {
   /**
    * Enum for application facebook scopes.
    */
-  public static enum FacebookScopes {
+  public enum FacebookScopes {
     EMAIL, NAME
   }
 }
