@@ -1,17 +1,10 @@
 package com.intellias.intellistart.interviewplanning.interviewerSlot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.verify;
 
-import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
-import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -24,33 +17,56 @@ import com.intellias.intellistart.interviewplanning.model.week.Week;
 
 import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.CsvSource;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 public class InterviewerSlotServiceTest {
+
+
   static InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(InterviewerSlotRepository.class);
-  UserRepository userRepository = Mockito.mock(UserRepository.class);
-  PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
-  WeekRepository weekRepository = Mockito.mock(WeekRepository.class);
-  InterviewerSlotService cut = new InterviewerSlotService(interviewerSlotRepository,
-  userRepository, periodRepository, weekRepository);
+  static UserRepository userRepository =  Mockito.mock(UserRepository.class);
+  static PeriodRepository periodRepository =  Mockito.mock(PeriodRepository.class);
+  static WeekRepository weekRepository  = Mockito.mock(WeekRepository.class);
+
+   InterviewerSlotService cut = new InterviewerSlotService(
+        interviewerSlotRepository, userRepository,periodRepository, weekRepository
+    );
 
 
-  @ParameterizedTest
-  public void interviewerSlotValidationTest(InterviewerSlotDTO interviewerSlotDTO)
-      throws InvalidDayOfWeekException, SlotIsOverlappingException,
-      InvalidBoundariesException, InvalidInterviewerException, CannotEditThisWeekException {
-    InterviewerSlot actual = InterviewerSlotService.interviewerSlotValidation(interviewerSlotDTO);
+
+  @Test
+  void createInterviewerSlotsTest(){
+    InterviewerSlot expected = new InterviewerSlot(null, w1, DayOfWeek.TUE, p1, null, u1);
+
+    cut.createInterviewerSlot(u1, w1, DayOfWeek.TUE, p1);
+
+    ArgumentCaptor<InterviewerSlot> slotArgumentCaptor = ArgumentCaptor.forClass(InterviewerSlot.class);
+    verify(interviewerSlotRepository).save(slotArgumentCaptor.capture());
+    InterviewerSlot actual = slotArgumentCaptor.getValue();
+    assertEquals(expected, actual);
+
   }
 
-
-
-
+  @Test
+  void getListOfInterviewerSlotsTest(){
+    List<InterviewerSlot> expected = new ArrayList<>();
+    expected.add(is1);
+    Mockito.when(interviewerSlotRepository.getInterviewerSlotsByUserAndWeekAndDayOfWeek(is1.getUser(),
+        is1.getWeek(), is1.getDayOfWeek())).thenReturn(expected);
+    List<InterviewerSlot> actual = cut.getInterviewerSlots(is1.getUser(),
+        is1.getWeek(), is1.getDayOfWeek());
+    Assertions.assertEquals(actual, expected);
   }
+
+  User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER, null);
+  Week w1 = new Week(50L, new HashSet<>());
+  Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
+      new HashSet<>(), new HashSet<>(), new HashSet<>());
+  InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.TUE, p1, null, u1);
+
+}

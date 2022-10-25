@@ -38,7 +38,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.util.NestedServletException;
 
 import static org.hamcrest.CoreMatchers.not;
 
@@ -94,26 +93,31 @@ public class InterviewerControllerTest {
   }
 
   @Test
-  void shouldThrowCanNotEditThisWeek() throws Exception {
-    assertThrows(CannotEditThisWeekException.class, () -> {
-          JsonObj jsonObj = new JsonObj(10L, "THU", "10:00", "20:00");
-          mockMvc.perform(MockMvcRequestBuilders.post("/interviewers/{interviewerId}/slots", 2L)
-                  .content(objectMapper.writeValueAsString(jsonObj))
-                  .contentType(MediaType.APPLICATION_JSON)
-                  .accept(MediaType.APPLICATION_JSON));
-        }
-    );
-  }
-  @Test
-  void shouldThrowInvalidDayOfWeekException() throws Exception {
-    assertThrows(InvalidDayOfWeekException.class, () -> {
-          JsonObj jsonObj = new JsonObj(50L, "FEB", "10:00", "20:00");
+  void postRequestwithNullDayAngGetBadRequest() throws Exception {
+          JsonObj jsonObj = new JsonObj(50L, null, "10:00", "20:00");
           mockMvc.perform(MockMvcRequestBuilders.post("/interviewers/{interviewerId}/slots", 1L)
                   .content(objectMapper.writeValueAsString(jsonObj))
                   .contentType(MediaType.APPLICATION_JSON)
-                  .accept(MediaType.APPLICATION_JSON));
-        }
-    );
+                  .accept(MediaType.APPLICATION_JSON))
+              .andExpect(status().isBadRequest());
+  }
+  @Test
+  void postRequestwithNullFromAngGetBadRequest() throws Exception {
+          JsonObj jsonObj = new JsonObj(50L, "THU", null, "20:00");
+          mockMvc.perform(MockMvcRequestBuilders.post("/interviewers/{interviewerId}/slots", 1L)
+                  .content(objectMapper.writeValueAsString(jsonObj))
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .accept(MediaType.APPLICATION_JSON))
+              .andExpect(status().isBadRequest());
+  }
+  @Test
+  void postRequestwithNullToAngGetBadRequest() throws Exception {
+          JsonObj jsonObj = new JsonObj(50L, "SUN", "10:00", null);
+          mockMvc.perform(MockMvcRequestBuilders.post("/interviewers/{interviewerId}/slots", 1L)
+                  .content(objectMapper.writeValueAsString(jsonObj))
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .accept(MediaType.APPLICATION_JSON))
+              .andExpect(status().isBadRequest());
   }
 
   @Test

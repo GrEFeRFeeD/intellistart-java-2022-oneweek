@@ -2,12 +2,6 @@ package com.intellias.intellistart.interviewplanning.interviewerSlot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDTO;
-import com.intellias.intellistart.interviewplanning.model.booking.Booking;
-import com.intellias.intellistart.interviewplanning.model.booking.BookingKey;
-import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
-import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDTOValidator;
@@ -20,13 +14,9 @@ import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,12 +25,11 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
+
 
 public class InterviewerSlotDTOValidatorTest {
 
-  //@MockBean
+  static InterviewerSlotDTOValidator interviewerSlotDTOValidator;
   static InterviewerSlotService interviewerSlotService;
 
   static InterviewerSlotRepository interviewerSlotRepository;
