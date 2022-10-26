@@ -30,6 +30,12 @@ public class InterviewerController {
   private final InterviewerSlotService interviewerSlotService;
   private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
+  /**
+   * Constructor.
+   * @param interviewerSlotRepository - interviewerSlotRepository
+   * @param interviewerSlotService - interviewerSlotService
+   * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
+   */
   @Autowired
   public InterviewerController(
       InterviewerSlotRepository interviewerSlotRepository,
@@ -59,8 +65,8 @@ public class InterviewerController {
       throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException,
       SlotIsOverlappingException, CannotEditThisWeekException {
     interviewerSlotDto.setInterviewerId(interviewerId);
-    InterviewerSlot interviewerSlot = interviewerSlotDtoValidator.
-        interviewerSlotValidateDto(interviewerSlotDto);
+    InterviewerSlot interviewerSlot = interviewerSlotDtoValidator
+        .interviewerSlotValidateDto(interviewerSlotDto);
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlotRepository.save(interviewerSlot);
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
