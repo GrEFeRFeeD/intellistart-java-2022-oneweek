@@ -80,8 +80,7 @@ public class InterviewerSlotDtoValidator {
     }
 
     //TODO replace with method from period service
-    Period period = periodService.getPeriodById(1L);
-    //PeriodService.getPeriod(interviewerSlotDTO.getFrom(), interviewerSlotDTO.getTo());
+    Period period = periodService.getPeriod(interviewerSlotDto.getFrom(), interviewerSlotDto.getTo());
 
     Week week = weekService.getWeekByWeekNum(interviewerSlotDto.getWeek());
 
@@ -162,12 +161,14 @@ public class InterviewerSlotDtoValidator {
     List<InterviewerSlot> interviewerSlotsList = interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(user.getId(), week.getId(), dayOfWeek);
     System.out.println(interviewerSlotRepository.findAll());
+    System.out.println(interviewerSlotsList + " LiST");
 
     if (!interviewerSlotsList.isEmpty()) {
       for (InterviewerSlot interviewerSlot : interviewerSlotsList) {
-        //TODO use with ready period service
-        // if(PeriodService.isOverlap(interviewerSlot.getPeriod(), period)){return true;}
-
+        if (periodService.isOverlap(interviewerSlot.getPeriod(), period)) {
+          System.out.println("++++++++++++++++++++++++++++++");
+          return true;
+        }
       }
     }
     return false;

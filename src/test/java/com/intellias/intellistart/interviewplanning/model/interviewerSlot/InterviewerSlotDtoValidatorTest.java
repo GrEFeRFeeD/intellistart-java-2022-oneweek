@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.interviewerSlot;
+package com.intellias.intellistart.interviewplanning.model.interviewerSlot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
