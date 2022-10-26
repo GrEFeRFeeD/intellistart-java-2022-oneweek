@@ -83,6 +83,15 @@ public class InterviewerSlotDtoValidator {
     return interviewerSlot;
   }
 
+  /**
+   * Get id of user from DTO.
+   * If user is present - return user.
+   * If user is not present - throw exception.
+   *
+   * @param userOptional - from DB by id from DTO
+   * @return User
+   * @throws InvalidInterviewerException - InvalidInterviewerException
+   */
   public User isUserPresent(Optional<User> userOptional) throws InvalidInterviewerException {
     User user;
     if (userOptional.isPresent()) {
@@ -100,8 +109,9 @@ public class InterviewerSlotDtoValidator {
    * @throws InvalidInterviewerException - InvalidInterviewerException
    */
   public void isInterviewerRoleInterviewer(User user) throws InvalidInterviewerException {
-    if(!user.getRole().equals(Role.INTERVIEWER))
+    if (!user.getRole().equals(Role.INTERVIEWER)) {
       throw new InvalidInterviewerException();
+    }
   }
 
   /**
@@ -111,8 +121,9 @@ public class InterviewerSlotDtoValidator {
    * @throws InvalidDayOfWeekException - InvalidDayOfWeekException
    */
   public void isCorrectDay(String dayOfWeek) throws InvalidDayOfWeekException {
-    if(!ObjectUtils.containsConstant(DayOfWeek.values(), dayOfWeek))
+    if (!ObjectUtils.containsConstant(DayOfWeek.values(), dayOfWeek)) {
       throw new InvalidDayOfWeekException();
+    }
   }
 
   /**
@@ -133,9 +144,10 @@ public class InterviewerSlotDtoValidator {
     LocalDate currentDate = LocalDate.now();
     DayOfWeek currentDayOfWeek = weekService.getDayOfWeek(currentDate);
     if (interviewerSlot.getWeek().getId() == currentWeek.getId() + 1) {
-      if(currentDayOfWeek.equals(DayOfWeek.SAT)
-          || currentDayOfWeek.equals(DayOfWeek.SUN))
+      if (currentDayOfWeek.equals(DayOfWeek.SAT)
+          || currentDayOfWeek.equals(DayOfWeek.SUN)) {
         throw new CannotEditThisWeekException();
+      }
     }
   }
 
