@@ -9,5 +9,4 @@ class InterviewPlanningApplicationTests {
   @Test
   void contextLoads() {
   }
-
 }
