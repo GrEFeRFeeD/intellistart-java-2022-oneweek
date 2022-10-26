@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 public class InterviewerSlotService {
 
   private final InterviewerSlotRepository interviewerSlotRepository;
-  private final PeriodRepository periodRepository;
   private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
   /**
@@ -31,15 +30,12 @@ public class InterviewerSlotService {
    *
    * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
    * @param interviewerSlotRepository - interviewerSlotRepository
-   * @param periodRepository - periodRepository
    */
   @Autowired
   public InterviewerSlotService(
       InterviewerSlotDtoValidator interviewerSlotDtoValidator,
-      InterviewerSlotRepository interviewerSlotRepository,
-      PeriodRepository periodRepository) {
+      InterviewerSlotRepository interviewerSlotRepository) {
     this.interviewerSlotDtoValidator = interviewerSlotDtoValidator;
-    this.periodRepository = periodRepository;
     this.interviewerSlotRepository = interviewerSlotRepository;
   }
 
@@ -61,15 +57,6 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Just for tests, for getting first slot from StartDataLoad.
-   *
-   * @return Optional of Interviewer Slot
-   */
-  public Optional<InterviewerSlot> getSlotByIdOne() {
-    return interviewerSlotRepository.findById(1L);
-  }
-
-  /**
    * Get all parameters for creating new Slot in database.
    *
    * @param user - current user
@@ -82,17 +69,6 @@ public class InterviewerSlotService {
       Period period) {
     return interviewerSlotRepository.save(
         new InterviewerSlot(null, week, dayOfWeek, period, null, user));
-  }
-
-  /**
-   * Get Optional of period from database.
-   *
-   * @param id - Long id of Period to find
-   *
-   * @return {@link Optional} of {@link Period}
-   */
-  public Optional<Period> getPeriodById(Long id) {
-    return periodRepository.findById(id);
   }
 
   /**

@@ -8,6 +8,7 @@ import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewe
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.Optional;
@@ -27,13 +28,16 @@ public class InterviewerController {
 
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final InterviewerSlotService interviewerSlotService;
+  private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
   @Autowired
   public InterviewerController(
       InterviewerSlotRepository interviewerSlotRepository,
-      InterviewerSlotService interviewerSlotService) {
+      InterviewerSlotService interviewerSlotService,
+      InterviewerSlotDtoValidator interviewerSlotDtoValidator) {
     this.interviewerSlotRepository = interviewerSlotRepository;
     this.interviewerSlotService = interviewerSlotService;
+    this.interviewerSlotDtoValidator = interviewerSlotDtoValidator;
   }
 
   /**
@@ -55,8 +59,8 @@ public class InterviewerController {
       throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException,
       SlotIsOverlappingException, CannotEditThisWeekException {
     interviewerSlotDto.setInterviewerId(interviewerId);
-    InterviewerSlot interviewerSlot = interviewerSlotService.interviewerSlotValidation(
-        interviewerSlotDto);
+    InterviewerSlot interviewerSlot = interviewerSlotDtoValidator.
+        interviewerSlotValidateDto(interviewerSlotDto);
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlotRepository.save(interviewerSlot);
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
