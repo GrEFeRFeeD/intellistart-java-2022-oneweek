@@ -32,6 +32,7 @@ public class InterviewerController {
 
   /**
    * Constructor.
+   *
    * @param interviewerSlotRepository - interviewerSlotRepository
    * @param interviewerSlotService - interviewerSlotService
    * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
