@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.exeptions;
+package com.intellias.intellistart.interviewplanning.exceptions;
 
 /**
  * Is thrown then slot is overlapping.
