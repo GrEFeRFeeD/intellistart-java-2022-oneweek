@@ -35,12 +35,15 @@ public class CandidateSlotServiceTest {
     userService = Mockito.mock(UserService.class);
     cut = new CandidateSlotService(candidateSlotRepository,
         periodService, userService);
+
     period1 = new Period();
     period1.setFrom(LocalTime.of(9,0));
     period1.setTo(LocalTime.of(10,30));
+
     period2 = new Period();
     period2.setFrom(LocalTime.of(14,0));
     period2.setTo(LocalTime.of(20,30));
+
     user1 = new User();
     user1.setEmail("test@unit.com");
     user1.setRole(Role.INTERVIEWER);
