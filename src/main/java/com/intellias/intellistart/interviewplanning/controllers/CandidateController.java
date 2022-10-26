@@ -72,14 +72,15 @@ public class CandidateController {
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots/{slotId}")
-  public ResponseEntity<CandidateSlot> updateCandidateSlot(@RequestBody CandidateSlotDto request,
+  public ResponseEntity<CandidateSlotDto> updateCandidateSlot(@RequestBody CandidateSlotDto request,
       @PathVariable("slotId") Long id)
       throws SlotNotFoundException, SlotIsBookedException, InvalidBoundariesException,
       SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request);
+    candidateSlot.setId(id);
     candidateSlotValidator.validateUpdateCandidateSlot(candidateSlot, id);
     candidateSlot = candidateSlotService.update(candidateSlot, id);
-    return ResponseEntity.ok(candidateSlot);
+    return ResponseEntity.ok(new CandidateSlotDto(candidateSlot));
   }
 
   /**

@@ -56,43 +56,51 @@ public class CandidateSlotValidatorTest {
     user1.setRole(Role.INTERVIEWER);
 
     candidateSlot1 = new CandidateSlot();
+    candidateSlot1.setId(1L);
     candidateSlot1.setDate(LocalDate.of(1990,1,1));
     candidateSlot1.setPeriod(period1);
     candidateSlot1.setUser(user1);
 
     candidateSlot2 = new CandidateSlot();
+    candidateSlot2.setId(2L);
     candidateSlot2.setDate(LocalDate.of(2021, 4, 24));
     candidateSlot2.setPeriod(period2);
     candidateSlot2.setUser(user1);
 
     candidateSlot3 = new CandidateSlot();
+    candidateSlot3.setId(3L);
     candidateSlot3.setDate(LocalDate.of(LocalDate.now().getYear()+1,1,1));
     candidateSlot3.setPeriod(period1);
     candidateSlot3.setUser(user1);
 
     candidateSlot4 = new CandidateSlot();
+    candidateSlot4.setId(4L);
     candidateSlot4.setDate(LocalDate.of(LocalDate.now().getYear()+1,2,2));
     candidateSlot4.setPeriod(period2);
     candidateSlot4.setUser(user1);
 
     candidateSlot5 = new CandidateSlot();
+    candidateSlot5.setId(5L);
     candidateSlot5.setDate(LocalDate.of(LocalDate.now().getYear()+1,1,1));
     candidateSlot5.setPeriod(period2);
     candidateSlot5.setUser(user1);
     candidateSlot5.addBooking(new Booking());
 
     candidateSlot6 = new CandidateSlot();
+    candidateSlot6.setId(6L);
     candidateSlot6.setDate(LocalDate.of(LocalDate.now().getYear()+1,2,2));
     candidateSlot6.setPeriod(period1);
     candidateSlot6.setUser(user1);
     candidateSlot6.addBooking(new Booking());
 
     candidateSlot7 = new CandidateSlot();
+    candidateSlot7.setId(7L);
     candidateSlot7.setDate(LocalDate.of(LocalDate.now().getYear()+1,12,1));
     candidateSlot7.setPeriod(period1);
     candidateSlot7.setUser(user1);
 
     candidateSlot8 = new CandidateSlot();
+    candidateSlot8.setId(8L);
     candidateSlot8.setDate(LocalDate.of(LocalDate.now().getYear()+1,9,2));
     candidateSlot8.setPeriod(period2);
     candidateSlot8.setUser(user1);
