@@ -3,10 +3,12 @@ package com.intellias.intellistart.interviewplanning.model.interviewerSlot;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
@@ -18,9 +20,14 @@ import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
+import com.intellias.intellistart.interviewplanning.model.week.WeekRepository;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +39,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
-
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 public class InterviewerSlotDtoValidatorTest {
@@ -41,9 +48,12 @@ public class InterviewerSlotDtoValidatorTest {
   static UserService userService = new UserService(userRepository);
 
   static PeriodService periodService;
-  static WeekService weekService;
+  static WeekRepository weekRepository = Mockito.mock(WeekRepository.class);
+  @MockBean
+  static WeekService weekService = new WeekService(weekRepository);
 
-  static InterviewerSlotRepository interviewerSlotRepository;
+  static InterviewerSlotRepository interviewerSlotRepository =
+      Mockito.mock(InterviewerSlotRepository.class);
   InterviewerSlotDtoValidator cut = new InterviewerSlotDtoValidator(
       periodService, userService, weekService, interviewerSlotRepository
   );
@@ -72,9 +82,21 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void canEditThisWeekTest() {
+    when(weekService.getCurrentWeek()).thenReturn(new Week(43L,new HashSet<>()));
     assertThrows(CannotEditThisWeekException.class, () -> cut.canEditThisWeek(is2));
     assertDoesNotThrow(() -> cut.canEditThisWeek(is1));
   }
+
+  @Test
+  void isSlotOverlapTest() {
+    List<InterviewerSlot> list = new ArrayList<>();
+    when(interviewerSlotRepository
+        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
+            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
+    assertDoesNotThrow(() -> cut.isSlotOverlapping(p1, w1, u1, DayOfWeek.TUE));
+  }
+
+
 
 
 
@@ -99,10 +121,11 @@ public class InterviewerSlotDtoValidatorTest {
 
   static Week w1 = new Week(100L, new HashSet<>());
   static Week w2 = new Week(35L, new HashSet<>());
+  static Week w3 = new Week(100L, new HashSet<>());
 
   static Period p1 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
       new HashSet<>(), new HashSet<>(), new HashSet<>());
-  static Period p2 = new Period(null, LocalTime.of(10, 0), LocalTime.of(20, 0),
+  static Period p2 = new Period(null, LocalTime.of(16, 0), LocalTime.of(20, 0),
       new HashSet<>(), new HashSet<>(), new HashSet<>());
   static InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.THU, p1, new HashSet<>(),
       u1);
@@ -110,8 +133,7 @@ public class InterviewerSlotDtoValidatorTest {
       u1);
   static InterviewerSlot is3 = new InterviewerSlot(null, w2, DayOfWeek.TUE, p1, new HashSet<>(),
       u2);
-  static InterviewerSlot is4 = new InterviewerSlot(null, w1, DayOfWeek.SAT, p1, new HashSet<>(),
+  static InterviewerSlot is4 = new InterviewerSlot(null, w3, DayOfWeek.SAT, p2, new HashSet<>(),
       u2);
-
 
 }
