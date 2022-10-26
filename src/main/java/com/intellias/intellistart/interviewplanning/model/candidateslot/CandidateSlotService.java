@@ -51,7 +51,7 @@ public class CandidateSlotService {
    */
   public CandidateSlot update(CandidateSlot candidateSlot, Long id) {
     candidateSlot.setId(id);
-    return candidateSlotRepository.save(candidateSlot);
+    return create(candidateSlot);
   }
 
 
@@ -99,9 +99,11 @@ public class CandidateSlotService {
    */
   public CandidateSlot createCandidateSlot(LocalDate date, String from, String to) {
     CandidateSlot candidateSlot = new CandidateSlot();
+
     candidateSlot.setDate(date);
     candidateSlot.setPeriod(periodService.getPeriod(from, to));
     candidateSlot.setUser(userService.getCurrentUser());
+
     return candidateSlot;
   }
 }

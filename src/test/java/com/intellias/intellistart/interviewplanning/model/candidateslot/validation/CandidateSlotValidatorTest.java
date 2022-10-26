@@ -118,7 +118,9 @@ public class CandidateSlotValidatorTest {
       throws SlotIsOverlappingException, InvalidBoundariesException {
     Mockito.when(candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate()))
         .thenReturn(List.of());
-    cut.validateCreateCandidateSlot(candidateSlot);
+
+    cut.validateCreation(candidateSlot);
+
     Mockito.verify(candidateSlotService).getCandidateSlotsByUserAndDate(candidateSlot.getDate());
   }
 
@@ -133,7 +135,7 @@ public class CandidateSlotValidatorTest {
   void validateCreateCandidateSlotInvalidBoundariesExceptionTest(CandidateSlot candidateSlot,
       Class<Exception> actual) {
     Assertions.assertThrows(actual,
-        ()-> cut.validateCreateCandidateSlot(candidateSlot));
+        ()-> cut.validateCreation(candidateSlot));
   }
 
   static Arguments[] validateCreateCandidateSlotExc2Args(){
@@ -150,11 +152,13 @@ public class CandidateSlotValidatorTest {
       Class<Exception> actual, List<CandidateSlot> candidateSlotList) {
     Mockito.when(candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate()))
             .thenReturn(candidateSlotList);
+
     Period period = candidateSlot.getPeriod();
     Mockito.when(periodService.isOverlap(period, candidateSlotList.get(1).getPeriod()))
             .thenReturn(true);
+
     Assertions.assertThrows(actual,
-        ()-> cut.validateCreateCandidateSlot(candidateSlot));
+        ()-> cut.validateCreation(candidateSlot));
   }
 
   static Arguments[] validateUpdateCandidateSlotArgs(){
@@ -172,7 +176,9 @@ public class CandidateSlotValidatorTest {
         .thenReturn(List.of());
     Mockito.when(candidateSlotService.getCandidateSlotById(id))
         .thenReturn(Optional.of(candidateSlot));
-    cut.validateUpdateCandidateSlot(candidateSlot, id);
+
+    cut.validateUpdates(candidateSlot, id);
+
     Mockito.verify(candidateSlotService).getCandidateSlotsByUserAndDate(candidateSlot.getDate());
     Mockito.verify(candidateSlotService).getCandidateSlotById(id);
   }
@@ -188,8 +194,9 @@ public class CandidateSlotValidatorTest {
   void validateUpdateCandidateSlotSlotNotFoundExceptionTest(CandidateSlot candidateSlot,
       Class<Exception> actual, long id) {
     Mockito.when(candidateSlotService.getCandidateSlotById(id)).thenReturn(Optional.empty());
+
     Assertions.assertThrows(actual,
-        ()-> cut.validateUpdateCandidateSlot(candidateSlot, id));
+        ()-> cut.validateUpdates(candidateSlot, id));
   }
 
   static Arguments[] validateUpdateCandidateSlotExc2Args(){
@@ -204,9 +211,8 @@ public class CandidateSlotValidatorTest {
       Class<Exception> actual, long id) {
     Mockito.when(candidateSlotService.getCandidateSlotById(id))
         .thenReturn(Optional.of(candidateSlot));
+
     Assertions.assertThrows(actual,
-        ()-> cut.validateUpdateCandidateSlot(candidateSlot, id));
+        ()-> cut.validateUpdates(candidateSlot, id));
   }
-
-
 }

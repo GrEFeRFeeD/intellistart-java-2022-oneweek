@@ -38,7 +38,7 @@ public class CandidateSlotValidator {
    * @throws InvalidBoundariesException - when parameters are incorrect.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
-  public void validateCreateCandidateSlot(CandidateSlot candidateSlot)
+  public void validateCreation(CandidateSlot candidateSlot)
       throws InvalidBoundariesException, SlotIsOverlappingException {
     validateSlotInFuture(candidateSlot);
     validateOverlapping(candidateSlot);
@@ -56,11 +56,11 @@ public class CandidateSlotValidator {
    * @throws SlotIsBookedException - when updated slot is booked.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
-  public void validateUpdateCandidateSlot(CandidateSlot candidateSlot, Long id)
+  public void validateUpdates(CandidateSlot candidateSlot, Long id)
       throws InvalidBoundariesException, SlotNotFoundException, SlotIsBookedException,
       SlotIsOverlappingException {
     validateSlotIsBookingAndTheSlotExists(id);
-    validateCreateCandidateSlot(candidateSlot);
+    validateCreation(candidateSlot);
   }
 
   /**
@@ -85,11 +85,14 @@ public class CandidateSlotValidator {
    */
   private void validateOverlapping(CandidateSlot candidateSlot) throws SlotIsOverlappingException {
     Period period = candidateSlot.getPeriod();
+    long id = candidateSlot.getId();
+
     List<CandidateSlot> candidateSlotList =
         candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate());
+
     if (!candidateSlotList.isEmpty()) {
       for (CandidateSlot item : candidateSlotList) {
-        if (candidateSlot.getId() != item.getId()
+        if (id != item.getId()
             && periodService.isOverlap(period, item.getPeriod())) {
           throw new SlotIsOverlappingException();
         }
@@ -109,12 +112,9 @@ public class CandidateSlotValidator {
   private void validateSlotIsBookingAndTheSlotExists(Long id)
       throws SlotNotFoundException, SlotIsBookedException {
     Optional<CandidateSlot> candidateSlotOptional = candidateSlotService.getCandidateSlotById(id);
-    CandidateSlot candidateSlot;
-    if (candidateSlotOptional.isPresent()) {
-      candidateSlot = candidateSlotOptional.get();
-    } else {
-      throw new SlotNotFoundException();
-    }
+
+    CandidateSlot candidateSlot = candidateSlotOptional.orElseThrow(SlotNotFoundException::new);
+
     if (!candidateSlot.getBookings().isEmpty()) {
       throw new SlotIsBookedException();
     }

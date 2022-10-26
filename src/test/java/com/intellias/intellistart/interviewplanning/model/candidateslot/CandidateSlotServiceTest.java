@@ -44,10 +44,12 @@ public class CandidateSlotServiceTest {
     user1 = new User();
     user1.setEmail("test@unit.com");
     user1.setRole(Role.INTERVIEWER);
+
     candidateSlot1 = new CandidateSlot();
     candidateSlot1.setDate(LocalDate.of(2023, 1, 1));
     candidateSlot1.setPeriod(period1);
     candidateSlot1.setUser(user1);
+
     candidateSlot2 = new CandidateSlot();
     candidateSlot2.setDate(LocalDate.of(2023, 4, 24));
     candidateSlot2.setPeriod(period2);
@@ -64,6 +66,7 @@ public class CandidateSlotServiceTest {
   @MethodSource("createTestArgs")
   void createTest(CandidateSlot expected) {
     Mockito.when(candidateSlotRepository.save(expected)).thenReturn(expected);
+
     CandidateSlot actual = cut.create(expected);
     Assertions.assertEquals(actual, expected);
   }
@@ -78,6 +81,7 @@ public class CandidateSlotServiceTest {
   @MethodSource("updateTestArgs")
   void updateTest(CandidateSlot expected, Long id) {
     Mockito.when(candidateSlotRepository.save(expected)).thenReturn(expected);
+
     CandidateSlot actual = cut.update(expected, id);
     Assertions.assertEquals(actual, expected);
     Assertions.assertEquals(id, expected.getId());
@@ -95,6 +99,7 @@ public class CandidateSlotServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(user1);
     Mockito.when(candidateSlotRepository.findByUser(userService.getCurrentUser()))
         .thenReturn(expected);
+
     List<CandidateSlot> actual = cut.getAllSlotsOfCandidate();
     Assertions.assertEquals(actual, expected);
   }
@@ -112,6 +117,7 @@ public class CandidateSlotServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(user1);
     Mockito.when(candidateSlotRepository.findByUserAndDate(userService.getCurrentUser(), date))
         .thenReturn(expected);
+
     List<CandidateSlot> actual = cut.getCandidateSlotsByUserAndDate(date);
     Assertions.assertEquals(actual, expected);
   }
@@ -126,6 +132,7 @@ public class CandidateSlotServiceTest {
   @MethodSource("getCandidateSlotByIdArgs")
   void getCandidateSlotByIdTest(CandidateSlot expected, Long id) {
     Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
+
     Optional<CandidateSlot> optional = cut.getCandidateSlotById(id);
     CandidateSlot actual = optional.orElse(null);
     Assertions.assertEquals(actual, expected);
@@ -145,6 +152,7 @@ public class CandidateSlotServiceTest {
       CandidateSlot expected, Period period) {
     Mockito.when(periodService.getPeriod(from, to)).thenReturn(period);
     Mockito.when(userService.getCurrentUser()).thenReturn(user1);
+
     CandidateSlot actual = cut.createCandidateSlot(date, from, to);
     Assertions.assertEquals(actual, expected);
   }

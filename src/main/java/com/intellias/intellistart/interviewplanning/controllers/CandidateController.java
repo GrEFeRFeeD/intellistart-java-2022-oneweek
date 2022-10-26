@@ -51,8 +51,10 @@ public class CandidateController {
   public ResponseEntity<CandidateSlotDto> createCandidateSlot(@RequestBody CandidateSlotDto request)
       throws InvalidBoundariesException, SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request);
-    candidateSlotValidator.validateCreateCandidateSlot(candidateSlot);
+    candidateSlotValidator.validateCreation(candidateSlot);
+
     candidateSlot = candidateSlotService.create(candidateSlot);
+
     return ResponseEntity.ok(new CandidateSlotDto(candidateSlot));
   }
 
@@ -78,8 +80,10 @@ public class CandidateController {
       SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request);
     candidateSlot.setId(id);
-    candidateSlotValidator.validateUpdateCandidateSlot(candidateSlot, id);
+    candidateSlotValidator.validateUpdates(candidateSlot, id);
+
     candidateSlot = candidateSlotService.update(candidateSlot, id);
+
     return ResponseEntity.ok(new CandidateSlotDto(candidateSlot));
   }
 
@@ -118,8 +122,10 @@ public class CandidateController {
         .stream()
         .map(CandidateSlotDto::new)
         .collect(Collectors.toList());
+
     CandidateSlotsDto candidateSlotsDto = new CandidateSlotsDto();
     candidateSlotsDto.setCandidateSlotDtoList(candidateSlotDtoList);
+
     return candidateSlotsDto;
   }
 }
