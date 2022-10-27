@@ -1,5 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.week;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import java.util.HashSet;
 import java.util.Objects;
@@ -28,9 +30,11 @@ public class Week {
 
   @Id
   @Column(name = "week_id")
+  @JsonProperty("weekNum")
   private Long id;
 
   @OneToMany(mappedBy = "week", fetch = FetchType.EAGER)
+  @JsonIgnore
   private Set<InterviewerSlot> interviewerSlots = new HashSet<>();
 
   public void addInterviewerSlot(InterviewerSlot interviewerSlot) {
