@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.controllers.dtos;
+package com.intellias.intellistart.interviewplanning.controllers.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

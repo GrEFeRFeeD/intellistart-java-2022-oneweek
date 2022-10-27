@@ -1,10 +1,12 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for User entity.
  */
+@Service
 public class UserService {
 
   private final UserRepository userRepository;
