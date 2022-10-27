@@ -99,7 +99,7 @@ public class InterviewerController {
     if (interviewerSlotOptional.isPresent()) {
       Long id = interviewerSlotOptional.get().getId();
       interviewerSlotDto.setInterviewerId(interviewerId);
-      InterviewerSlot interviewerSlotNew =interviewerSlotDtoValidator
+      InterviewerSlot interviewerSlotNew = interviewerSlotDtoValidator
           .interviewerSlotValidateDto(interviewerSlotDto);
       interviewerSlotNew.setId(id);
       interviewerSlotRepository.save(interviewerSlotNew);
