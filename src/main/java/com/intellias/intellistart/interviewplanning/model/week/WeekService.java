@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WeekService {
 
-  private static  WeekRepository weekRepository;
+  private final WeekRepository weekRepository;
 
 
   @Autowired
