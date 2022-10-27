@@ -119,7 +119,7 @@ public class CandidateSlotValidatorTest {
     Mockito.when(candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate()))
         .thenReturn(List.of());
 
-    cut.validateCreation(candidateSlot);
+    cut.validateCreating(candidateSlot);
 
     Mockito.verify(candidateSlotService).getCandidateSlotsByUserAndDate(candidateSlot.getDate());
   }
@@ -135,7 +135,7 @@ public class CandidateSlotValidatorTest {
   void validateCreateCandidateSlotInvalidBoundariesExceptionTest(CandidateSlot candidateSlot,
       Class<Exception> actual) {
     Assertions.assertThrows(actual,
-        ()-> cut.validateCreation(candidateSlot));
+        ()-> cut.validateCreating(candidateSlot));
   }
 
   static Arguments[] validateCreateCandidateSlotExc2Args(){
@@ -158,7 +158,7 @@ public class CandidateSlotValidatorTest {
             .thenReturn(true);
 
     Assertions.assertThrows(actual,
-        ()-> cut.validateCreation(candidateSlot));
+        ()-> cut.validateCreating(candidateSlot));
   }
 
   static Arguments[] validateUpdateCandidateSlotArgs(){
@@ -177,7 +177,7 @@ public class CandidateSlotValidatorTest {
     Mockito.when(candidateSlotService.getCandidateSlotById(id))
         .thenReturn(Optional.of(candidateSlot));
 
-    cut.validateUpdates(candidateSlot, id);
+    cut.validateUpdating(candidateSlot, id);
 
     Mockito.verify(candidateSlotService).getCandidateSlotsByUserAndDate(candidateSlot.getDate());
     Mockito.verify(candidateSlotService).getCandidateSlotById(id);
@@ -196,7 +196,7 @@ public class CandidateSlotValidatorTest {
     Mockito.when(candidateSlotService.getCandidateSlotById(id)).thenReturn(Optional.empty());
 
     Assertions.assertThrows(actual,
-        ()-> cut.validateUpdates(candidateSlot, id));
+        ()-> cut.validateUpdating(candidateSlot, id));
   }
 
   static Arguments[] validateUpdateCandidateSlotExc2Args(){
@@ -213,6 +213,6 @@ public class CandidateSlotValidatorTest {
         .thenReturn(Optional.of(candidateSlot));
 
     Assertions.assertThrows(actual,
-        ()-> cut.validateUpdates(candidateSlot, id));
+        ()-> cut.validateUpdating(candidateSlot, id));
   }
 }

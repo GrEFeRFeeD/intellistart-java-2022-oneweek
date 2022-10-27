@@ -38,7 +38,7 @@ public class CandidateSlotValidator {
    * @throws InvalidBoundariesException - when parameters are incorrect.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
-  public void validateCreation(CandidateSlot candidateSlot)
+  public void validateCreating(CandidateSlot candidateSlot)
       throws InvalidBoundariesException, SlotIsOverlappingException {
     validateSlotInFuture(candidateSlot);
     validateOverlapping(candidateSlot);
@@ -56,11 +56,11 @@ public class CandidateSlotValidator {
    * @throws SlotIsBookedException - when updated slot is booked.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
-  public void validateUpdates(CandidateSlot candidateSlot, Long id)
+  public void validateUpdating(CandidateSlot candidateSlot, Long id)
       throws InvalidBoundariesException, SlotNotFoundException, SlotIsBookedException,
       SlotIsOverlappingException {
     validateSlotIsBookingAndTheSlotExists(id);
-    validateCreation(candidateSlot);
+    validateCreating(candidateSlot);
   }
 
   /**
