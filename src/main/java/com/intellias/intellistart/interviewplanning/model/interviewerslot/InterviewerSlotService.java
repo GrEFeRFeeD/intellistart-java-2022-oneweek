@@ -1,14 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
-import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.Optional;

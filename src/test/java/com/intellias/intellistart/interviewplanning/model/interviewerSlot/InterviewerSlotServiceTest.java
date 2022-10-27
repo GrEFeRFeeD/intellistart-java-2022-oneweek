@@ -4,17 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
-import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
@@ -26,14 +20,7 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +37,9 @@ public class InterviewerSlotServiceTest {
   static WeekService weekService;
   @Autowired
   static PeriodService periodService;
-  @Autowired
-  static InterviewerSlotDtoValidator interviewerSlotDTOValidator =
-      new InterviewerSlotDtoValidator(periodService, userService, weekService, interviewerSlotRepository);
 
   InterviewerSlotService cut = new InterviewerSlotService(
-      interviewerSlotDTOValidator, interviewerSlotRepository
+      interviewerSlotRepository
   );
 
 
