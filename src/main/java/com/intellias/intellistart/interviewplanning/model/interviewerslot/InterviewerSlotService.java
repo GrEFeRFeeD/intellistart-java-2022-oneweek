@@ -23,37 +23,16 @@ import org.springframework.stereotype.Service;
 public class InterviewerSlotService {
 
   private final InterviewerSlotRepository interviewerSlotRepository;
-  private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
 
   /**
    * Constructor for InterviewerSlotService.
    *
-   * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
    * @param interviewerSlotRepository - interviewerSlotRepository
    */
   @Autowired
   public InterviewerSlotService(
-      InterviewerSlotDtoValidator interviewerSlotDtoValidator,
       InterviewerSlotRepository interviewerSlotRepository) {
-    this.interviewerSlotDtoValidator = interviewerSlotDtoValidator;
     this.interviewerSlotRepository = interviewerSlotRepository;
-  }
-
-  /**
-   * Get InterviewerSlotDto from Request, validate it and returns InterviewerSlot if all fields are
-   * correct, otherwise throws exception.
-   *
-   * @param interviewerSlotDto - from request
-   * @return InterviewerSlot
-   * @throws InvalidDayOfWeekException - invalid day of week
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws SlotIsOverlappingException - slot is overlapping exception
-   * @throws InvalidBoundariesException - invalid boundaries exception
-   */
-  public InterviewerSlot interviewerSlotValidation(InterviewerSlotDto interviewerSlotDto)
-      throws InvalidDayOfWeekException, SlotIsOverlappingException,
-      InvalidBoundariesException, InvalidInterviewerException, CannotEditThisWeekException {
-    return interviewerSlotDtoValidator.interviewerSlotValidateDto(interviewerSlotDto);
   }
 
   /**
@@ -80,5 +59,15 @@ public class InterviewerSlotService {
    */
   public Optional<InterviewerSlot> getSlotById(Long id) {
     return interviewerSlotRepository.findById(id);
+  }
+
+  /**
+   * Get InterviewerSlot and save it in the DB.
+   *
+   * @param interviewerSlot - interviewerSlot
+   * @return InterviewerSlot
+   */
+  public InterviewerSlot saveInRepo(InterviewerSlot interviewerSlot) {
+    return interviewerSlotRepository.save(interviewerSlot);
   }
 }

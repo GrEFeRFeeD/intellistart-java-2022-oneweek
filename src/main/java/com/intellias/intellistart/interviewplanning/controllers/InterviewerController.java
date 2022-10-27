@@ -68,8 +68,9 @@ public class InterviewerController {
     interviewerSlotDto.setInterviewerId(interviewerId);
     InterviewerSlot interviewerSlot = interviewerSlotDtoValidator
         .interviewerSlotValidateDto(interviewerSlotDto);
+    System.out.println(interviewerSlot + " con");
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
-    interviewerSlotRepository.save(interviewerSlot);
+    interviewerSlotService.saveInRepo(interviewerSlot);
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
 
@@ -98,8 +99,8 @@ public class InterviewerController {
     if (interviewerSlotOptional.isPresent()) {
       Long id = interviewerSlotOptional.get().getId();
       interviewerSlotDto.setInterviewerId(interviewerId);
-      InterviewerSlot interviewerSlotNew = interviewerSlotService.interviewerSlotValidation(
-          interviewerSlotDto);
+      InterviewerSlot interviewerSlotNew =interviewerSlotDtoValidator
+          .interviewerSlotValidateDto(interviewerSlotDto);
       interviewerSlotNew.setId(id);
       interviewerSlotRepository.save(interviewerSlotNew);
       interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
