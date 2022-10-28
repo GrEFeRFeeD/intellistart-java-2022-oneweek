@@ -60,6 +60,12 @@ You can face next exceptions while using JWT within yout request:
 - 401 - unsupported_token_exception
 - 403 - access_denied_exception
 
+#### Users
+There are four groups of users:
+- Guests - users without authentication
+- Candidates - users that have passed authentication but have not Interviewer or Coordinator role
+- Interviewers - users that have passed authentication and have Interviewer role
+- Сoordinator - users that have passed authentication and have Coordinator role
 
 ### Implemented API
 Implemented API
