@@ -8,6 +8,7 @@
   * [Implemented API](#implemented-api)
   * [API to implement in future](#api-to-implement-in-future)
 * [Setting-up the project](#setting-up-the-project)
+  * [Configuring docker](#configuring-docker)
 
 ## Project information
 Interview planning application is a RESTful service designed for better communication between interviewers and candidates through coordinators.
@@ -78,14 +79,14 @@ Response: `{"email": "example@google.com", "role": "INTERVIEWER", "id": 123}`
 This section describes all already implemented business logic endoints. Section is devided by users.
 
 #### Guest
-Guests can only get current and next week of num or authenticate (see [authentication](#authentication--authorization)).
+Guests can only get current and next week of num or [authenticate](#authentication--authorization)
 
 ##### Get current number of week:
 Request: `GET /weeks/current`
 
 Response: `{"weekNum": 44}`
 
-##### Get current next of week:
+##### Get next number of week:
 Request: `GET /weeks/next`
 
 Response: `{"weekNum": 45}`
@@ -135,9 +136,12 @@ Interviewer can create or update own slots following next requirements:
 - Slot duration must be greather or equal 1.5 hours
 - Slot start time cannot be less than 8:00
 - Slot end time cannot be greater than 22:00
+
 Also Interviewers can set booking limit for next week (maximum amount of booking that Coordinators will able to create for that certain Interviewer and it's certain week):
 - If maximum number of bookings is not set for certain week, the previous week limit is actual
 - If limit was never set, any number of bookings can be assigned to interviewer
+
+Getting of own slots is available only for current and next week.
 
 ##### Creating Slot
 Request: `POST /interviewers/{interviewerId}/slots`
@@ -146,16 +150,69 @@ URL parametres:
 - `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
 
 Data parametres:
-- `be` - date...
+- `week` - number of week (can be obtained by [/weeks/\*\*](#guest) endpoints)
+- `dayOfWeek` - day of week (MON, TUE, WED, THU, FRI)
+- `from` - start time of slot in format HH:mm
+- `to` - end time of slot in format HH:mm
 
-Response:
+Response: `{"week": 49, "dayOfWeek": "TUE", "from":"18:00", "to":"21:30"}`
 
 Exceptions:
-- be_not_found_exception
+- interviewer_not_found_exception
+- slot_is_overlaping_exception
+- invalid_boundaries_exception
+- invalid_day_of_week_exception
+- slot_not_found_exception
+- cannot_edit_this_week_exception
 
 ##### Updating Slot
+Request: `POST /interviewers/{interviewerId}/slots/{slotId}`
+
+URL parametres:
+- `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
+- `slotId` - id of slot to edit (can be obtained by [getting slots](#getting-slots) endpoint)
+
+Data parametres:
+- `week` - number of week (can be obtained by [/weeks/\*\*](#guest) endpoints)
+- `dayOfWeek` - day of week (MON, TUE, WED, THU, FRI)
+- `from` - start time of slot in format HH:mm
+- `to` - end time of slot in format HH:mm
+
+Response: `{"id": 123, "week": 49, "dayOfWeek": "TUE", "from":"18:00", "to":"21:30"}`
+
+Exceptions:
+- interviewer_not_found_exception
+- slot_is_overlaping_exception
+- invalid_boundaries_exception
+- invalid_day_of_week_exception
+- slot_not_found_exception
+- cannot_edit_this_week_exception
+
 ##### Getting Slots
+Requests:
+- `GET /interviewers/{interviewerId}/slots/current` (for getting current week slots) 
+- `GET /interviewers/{interviewerId}/slots/next` (for getting next week slots)
+
+URL parametres:
+- `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
+
+Response - 
+
 ##### Setting Booking Limit
+Request: `POST /interviewers/{interviewerId}/bookingLimit`
+
+URL parametres:
+- `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
+
+Data perametres:
+- `bookingLimit` - limit of bookings per next week
+
+Response: `{"userId": 10, "weekNum": 45, "bookingLimit": 123}`
+
+Exceptions:
+- incorrect_id_exception
+- incorrect_booking_limit_exception
+- 
 
 #### Coordinator
 DashBoard
@@ -164,6 +221,10 @@ Booking update
 Booking delete
 
 ## Setting-up the project
-Docker compose
+This section describes all needed steps to launch the application.
+
+### Configuring docker
+To launch docker with application, type:
+
 `docker run -d -p 8080:8080 makskostyshen/intellias-interview-planning-application`
 
