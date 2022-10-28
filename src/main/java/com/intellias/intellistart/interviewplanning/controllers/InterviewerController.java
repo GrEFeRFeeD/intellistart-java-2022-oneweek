@@ -68,7 +68,7 @@ public class InterviewerController {
 
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
 
-    interviewerSlotService.saveInRepo(interviewerSlot);
+    interviewerSlotService.create(interviewerSlot);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
@@ -87,7 +87,7 @@ public class InterviewerController {
    * @throws CannotEditThisWeekException - can not edit this week
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
-  public ResponseEntity<InterviewerSlotDto> changeInterviewerSlot(
+  public ResponseEntity<InterviewerSlotDto> updateInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
       @PathVariable("interviewerId") Long interviewerId,
       @PathVariable("slotId") Long slotId)
@@ -97,22 +97,21 @@ public class InterviewerController {
 
     Optional<InterviewerSlot> interviewerSlotOptional = interviewerSlotService.getSlotById(slotId);
 
-    if (interviewerSlotOptional.isPresent()) {
-      Long id = interviewerSlotOptional.get().getId();
-
-      interviewerSlotDto.setInterviewerId(interviewerId);
-
-      InterviewerSlot interviewerSlotNew = interviewerSlotDtoValidator
-          .interviewerSlotValidateDto(interviewerSlotDto);
-      interviewerSlotNew.setId(id);
-
-      interviewerSlotService.saveInRepo(interviewerSlotNew);
-
-      interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
-
-      return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
+    if (interviewerSlotOptional.isEmpty()) {
+      throw new SlotIsNotFoundException();
     }
+    Long id = interviewerSlotOptional.get().getId();
 
-    throw new SlotIsNotFoundException();
+    interviewerSlotDto.setInterviewerId(interviewerId);
+
+    InterviewerSlot interviewerSlotNew = interviewerSlotDtoValidator
+        .interviewerSlotValidateDto(interviewerSlotDto);
+    interviewerSlotNew.setId(id);
+
+    interviewerSlotService.create(interviewerSlotNew);
+
+    interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
+
+    return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
 }

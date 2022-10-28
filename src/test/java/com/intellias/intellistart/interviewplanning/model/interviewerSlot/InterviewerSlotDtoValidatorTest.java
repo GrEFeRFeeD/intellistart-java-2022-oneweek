@@ -70,31 +70,23 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void isCorrectDayTest() {
-    assertThrows(InvalidDayOfWeekException.class, () -> cut.isCorrectDay("friday"));
-    assertThrows(InvalidDayOfWeekException.class, () -> cut.isCorrectDay("february"));
-    assertDoesNotThrow(() -> cut.isCorrectDay("TUE"));
+    assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("friday"));
+    assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("february"));
+    assertDoesNotThrow(() -> cut.validateIfCorrectDay("TUE"));
   }
 
   @Test
   void isInterviewerRoleINTERVIEWERTest() {
-    assertThrows(InvalidInterviewerException.class, () -> cut.isInterviewerRoleInterviewer(u3));
-    assertThrows(InvalidInterviewerException.class, () -> cut.isInterviewerRoleInterviewer(u2));
-    assertDoesNotThrow(() -> cut.isInterviewerRoleInterviewer(u1));
-  }
-
-  @Test
-  void isInterviewerExistTest() {
-    final Optional<User> user = Optional.empty();
-    assertThrows(InvalidInterviewerException.class, () -> cut.isUserPresent(user));
-    final Optional<User> user2 = Optional.of(u1);
-    assertDoesNotThrow(() -> cut.isUserPresent(user2));
+    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
+    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
+    assertDoesNotThrow(() -> cut.validateIfInterviewerRoleInterviewer(u1));
   }
 
   @Test
   void canEditThisWeekTest() {
     when(weekService.getCurrentWeek()).thenReturn(new Week(43L,new HashSet<>()));
-    assertThrows(CannotEditThisWeekException.class, () -> cut.canEditThisWeek(is2));
-    assertDoesNotThrow(() -> cut.canEditThisWeek(is1));
+    assertThrows(CannotEditThisWeekException.class, () -> cut.validateIfCanEditThisWeek(is2));
+    assertDoesNotThrow(() -> cut.validateIfCanEditThisWeek(is1));
   }
 
   @Test
@@ -103,7 +95,7 @@ public class InterviewerSlotDtoValidatorTest {
     when(interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
             w1.getId(), DayOfWeek.TUE)).thenReturn(list);
-    assertDoesNotThrow(() -> cut.isSlotOverlapping(p1, w1, u1, DayOfWeek.TUE));
+    assertDoesNotThrow(() -> cut.validateIfPeriodIsOverlapping(p1, w1, u1, DayOfWeek.TUE));
   }
 
   @ParameterizedTest

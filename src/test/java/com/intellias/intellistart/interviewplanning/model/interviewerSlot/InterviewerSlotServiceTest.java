@@ -31,13 +31,6 @@ public class InterviewerSlotServiceTest {
   static InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(
       InterviewerSlotRepository.class);
 
-  @Autowired
-  static UserService userService;
-  @Autowired
-  static WeekService weekService;
-  @Autowired
-  static PeriodService periodService;
-
   InterviewerSlotService cut = new InterviewerSlotService(
       interviewerSlotRepository
   );
@@ -53,9 +46,20 @@ public class InterviewerSlotServiceTest {
 
 
   @Test
+  void createInterviewerSlotWithDtoTest() {
+    InterviewerSlot expected = new InterviewerSlot(null, w1, DayOfWeek.TUE, p1, null, u1);
+    cut.createWithDto(u1, w1, DayOfWeek.TUE, p1);
+    ArgumentCaptor<InterviewerSlot> slotArgumentCaptor = ArgumentCaptor.forClass(
+        InterviewerSlot.class);
+    verify(interviewerSlotRepository).save(slotArgumentCaptor.capture());
+    InterviewerSlot actual = slotArgumentCaptor.getValue();
+    assertEquals(expected, actual);
+  }
+
+  @Test
   void createInterviewerSlotsTest() {
     InterviewerSlot expected = new InterviewerSlot(null, w1, DayOfWeek.TUE, p1, null, u1);
-    cut.createInterviewerSlot(u1, w1, DayOfWeek.TUE, p1);
+    cut.create(expected);
     ArgumentCaptor<InterviewerSlot> slotArgumentCaptor = ArgumentCaptor.forClass(
         InterviewerSlot.class);
     verify(interviewerSlotRepository).save(slotArgumentCaptor.capture());

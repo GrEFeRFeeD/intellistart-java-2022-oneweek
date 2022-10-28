@@ -37,7 +37,7 @@ public class InterviewerSlotService {
    * @param period - period
    * @return InterviewerSlot
    */
-  public InterviewerSlot createInterviewerSlot(User user, Week week, DayOfWeek dayOfWeek,
+  public InterviewerSlot createWithDto(User user, Week week, DayOfWeek dayOfWeek,
       Period period) {
     return interviewerSlotRepository.save(
         new InterviewerSlot(null, week, dayOfWeek, period, null, user));
@@ -60,7 +60,7 @@ public class InterviewerSlotService {
    * @param interviewerSlot - interviewerSlot
    * @return InterviewerSlot
    */
-  public InterviewerSlot saveInRepo(InterviewerSlot interviewerSlot) {
+  public InterviewerSlot create(InterviewerSlot interviewerSlot) {
     return interviewerSlotRepository.save(interviewerSlot);
   }
 }

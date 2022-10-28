@@ -63,43 +63,24 @@ public class InterviewerSlotDtoValidator {
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException {
 
-    Optional<User> userOptional = userService.getUserById(interviewerSlotDto.getInterviewerId());
-    User user = isUserPresent(userOptional);
+    User user = userService.getUserById(interviewerSlotDto.getInterviewerId())
+        .orElseThrow(InvalidInterviewerException::new);
 
-    isInterviewerRoleInterviewer(user);
+    validateIfInterviewerRoleInterviewer(user);
 
-    isCorrectDay(interviewerSlotDto.getDayOfWeek());
+    validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
 
     Period period = periodService.getPeriod(interviewerSlotDto.getFrom(),
         interviewerSlotDto.getTo());
     Week week = weekService.getWeekByWeekNum(interviewerSlotDto.getWeek());
     DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek());
-    isSlotOverlapping(period, week, user, dayOfWeek);
+    validateIfPeriodIsOverlapping(period, week, user, dayOfWeek);
 
     InterviewerSlot interviewerSlot = new InterviewerSlot(null, week,
         dayOfWeek, period, null, user);
 
-    canEditThisWeek(interviewerSlot);
+    validateIfCanEditThisWeek(interviewerSlot);
     return interviewerSlot;
-  }
-
-  /**
-   * Get id of user from DTO.
-   * If user is present - return user.
-   * If user is not present - throw exception.
-   *
-   * @param userOptional - from DB by id from DTO
-   * @return User
-   * @throws InvalidInterviewerException - InvalidInterviewerException
-   */
-  public User isUserPresent(Optional<User> userOptional) throws InvalidInterviewerException {
-    User user;
-    if (userOptional.isPresent()) {
-      user = userOptional.get();
-    } else {
-      throw new InvalidInterviewerException();
-    }
-    return user;
   }
 
   /**
@@ -108,7 +89,7 @@ public class InterviewerSlotDtoValidator {
    * @param user Interviewer
    * @throws InvalidInterviewerException - InvalidInterviewerException
    */
-  public void isInterviewerRoleInterviewer(User user) throws InvalidInterviewerException {
+  public void validateIfInterviewerRoleInterviewer(User user) throws InvalidInterviewerException {
     if (!user.getRole().equals(Role.INTERVIEWER)) {
       throw new InvalidInterviewerException();
     }
@@ -120,7 +101,7 @@ public class InterviewerSlotDtoValidator {
    * @param dayOfWeek dayOfWeek from interviewerSlotDTO
    * @throws InvalidDayOfWeekException - InvalidDayOfWeekException
    */
-  public void isCorrectDay(String dayOfWeek) throws InvalidDayOfWeekException {
+  public void validateIfCorrectDay(String dayOfWeek) throws InvalidDayOfWeekException {
     if (!ObjectUtils.containsConstant(DayOfWeek.values(), dayOfWeek)) {
       throw new InvalidDayOfWeekException();
     }
@@ -135,7 +116,8 @@ public class InterviewerSlotDtoValidator {
    * @param interviewerSlot from Controller's request
    * @throws CannotEditThisWeekException - CannotEditThisWeekException
    */
-  public void canEditThisWeek(InterviewerSlot interviewerSlot) throws CannotEditThisWeekException {
+  public void validateIfCanEditThisWeek(InterviewerSlot interviewerSlot)
+      throws CannotEditThisWeekException {
 
     Week currentWeek = weekService.getCurrentWeek();
     if (interviewerSlot.getWeek().getId() <= currentWeek.getId()) {
@@ -163,7 +145,8 @@ public class InterviewerSlotDtoValidator {
    * @param dayOfWeek from Controller's request
    * @throws SlotIsOverlappingException - SlotIsOverlappingException
    */
-  public void isSlotOverlapping(Period period, Week week, User user, DayOfWeek dayOfWeek)
+  public void validateIfPeriodIsOverlapping(Period period, Week week,
+      User user, DayOfWeek dayOfWeek)
       throws SlotIsOverlappingException {
     List<InterviewerSlot> interviewerSlotsList = interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(user.getId(), week.getId(), dayOfWeek);
