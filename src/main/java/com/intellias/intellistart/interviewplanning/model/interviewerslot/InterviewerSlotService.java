@@ -29,21 +29,6 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Get all parameters for creating new Slot in database.
-   *
-   * @param user - current user
-   * @param week - week
-   * @param dayOfWeek - day of week
-   * @param period - period
-   * @return InterviewerSlot
-   */
-  public InterviewerSlot createWithDto(User user, Week week, DayOfWeek dayOfWeek,
-      Period period) {
-    return interviewerSlotRepository.save(
-        new InterviewerSlot(null, week, dayOfWeek, period, null, user));
-  }
-
-  /**
    * Get Optional of InterviewerSlot from database.
    *
    * @param id - Long id of InterviewerSlot to find

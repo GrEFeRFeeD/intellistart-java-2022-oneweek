@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
@@ -17,7 +17,6 @@ import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;

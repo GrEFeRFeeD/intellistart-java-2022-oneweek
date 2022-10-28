@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
@@ -70,6 +70,9 @@ public class InterviewerController {
 
     interviewerSlotService.create(interviewerSlot);
 
+    interviewerSlotDto.setInterviewerSlotId(interviewerSlot.getId());
+
+
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
 
@@ -109,6 +112,8 @@ public class InterviewerController {
     interviewerSlotNew.setId(id);
 
     interviewerSlotService.create(interviewerSlotNew);
+
+    interviewerSlotDto.setInterviewerSlotId(interviewerSlotNew.getId());
 
     interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
 

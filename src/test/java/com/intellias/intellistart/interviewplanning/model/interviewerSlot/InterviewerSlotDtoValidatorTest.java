@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import com.intellias.intellistart.interviewplanning.controllers.dtos.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
@@ -128,9 +128,9 @@ static Period p1 = new Period(null, LocalTime.of(12, 0), LocalTime.of(18, 0),
   static InterviewerSlot is2 = new InterviewerSlot(null, w2, DayOfWeek.FRI, p1, new HashSet<>(),
       u1);
 
-  static InterviewerSlotDto dto2 = new InterviewerSlotDto(1L, 100L,
+  static InterviewerSlotDto dto2 = new InterviewerSlotDto(1L, null, 100L,
       "TUE", "12:00", "18:00");
-  static InterviewerSlotDto dto3 = new InterviewerSlotDto(1L, 103L,
+  static InterviewerSlotDto dto3 = new InterviewerSlotDto(1L, null, 103L,
       "THU", "11:00", "17:30");
   static User u4 = new User(2L, "interviewer@gmail2.com", Role.INTERVIEWER);
   static Week w4 = new Week(103L, new HashSet<>());
