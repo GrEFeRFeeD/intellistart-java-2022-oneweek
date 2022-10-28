@@ -1,10 +1,8 @@
 package com.intellias.intellistart.interviewplanning.exceptions;
 
 /**
- * Thrown when new slot is overlapping another existed slot.
+ * Is thrown then slot is overlapping.
  */
-public class SlotIsOverlappingException extends Exception {
-  public SlotIsOverlappingException() {
-    super();
-  }
+public class SlotIsOverlappingException extends Exception{
+
 }

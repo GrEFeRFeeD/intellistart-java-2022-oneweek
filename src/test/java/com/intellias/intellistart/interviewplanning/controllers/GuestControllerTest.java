@@ -32,8 +32,8 @@ class GuestControllerTest {
     when(weekService.getCurrentWeek()).thenReturn(new Week(42L,new HashSet<>()));
     mockMvc.perform(MockMvcRequestBuilders.get("/weeks/current"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", Matchers.is(42)))
-        .andExpect(jsonPath("$.*",Matchers.hasSize(2)));
+        .andExpect(jsonPath("$.weekNum", Matchers.is(42)))
+        .andExpect(jsonPath("$.*",Matchers.hasSize(1)));
     verify(weekService).getCurrentWeek();
   }
 
@@ -42,8 +42,8 @@ class GuestControllerTest {
     when(weekService.getNextWeek()).thenReturn(new Week(43L,new HashSet<>()));
     mockMvc.perform(MockMvcRequestBuilders.get("/weeks/next"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", Matchers.is(43)))
-        .andExpect(jsonPath("$.*",Matchers.hasSize(2)));
+        .andExpect(jsonPath("$.weekNum", Matchers.is(43)))
+        .andExpect(jsonPath("$.*",Matchers.hasSize(1)));
     verify(weekService).getNextWeek();
   }
 }
