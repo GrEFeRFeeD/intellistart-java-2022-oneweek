@@ -133,7 +133,7 @@ Exceptions:
 - slot_is_overlaping_exception
 - invalid_boundaries_exception
 
-##### Geting Slots
+##### Getting Slots
 Request: `GET /candidates/current/slots`
 
 Response: `{"candidateSlotDtoList": [{"date": "22.01.2022", "from": "9:00", "to": "17:00""}, {"date": "23.01.2022", "from": "13:00", "to": "20:00""}]}`
