@@ -32,12 +32,34 @@ Application supports next basic functionality:
 This section describes all implemented and planned to implement endpoints.
 
 ### Authentication & authorization
+
+#### Getting the JWT
+
 To perform any authenticated or authorized request you should provide your Facebook Token to the next endpoint:
 
->POST /authenticate
-{
-    "facebookToken": "EAAHC..."
-}
+`POST /authenticate`
+
+With requiered data parameter `{"facebookToken": "EAAHC..."}`.
+
+As the response you will get JSON Web Token as `{"token": "eyJhb..."}`.
+
+The possible exceptions are:
+- 401 - bad_facebook_token_exception
+- 401 - bad_credentials
+
+Gained JWT should be put in request header as a parameter `Authorization` with value `Bearer eyJhb...`.
+
+#### Edge cases
+
+You can face next exceptions while using JWT within yout request:
+- 401 - not_authenticated_exception 
+- 401 - bad_token_exception
+- 401 - expired_token_exception
+- 401 - bad_token_signature_exception
+- 401 - malformed_token_exception
+- 401 - unsupported_token_exception
+- 403 - access_denied_exception
+
 
 ### Implemented API
 Implemented API
