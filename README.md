@@ -68,11 +68,35 @@ There are four groups of users:
 - Сoordinator - users that have passed authentication and have Coordinator role
 
 ### Implemented API
-Implemented API
+This section describes all already implemented business logic endoints. Section is devided by users.
+
+#### Guest
+Week current
+Week next
+
+#### Candidate
+Create Slot
+Update Slot
+Get Slots
+
+#### Interviewer
+Create Slot
+Update Slot
+Get Slots
 
 ### API to implement in future
-API to implement in future
+This section describes all business logic endoints that will be implemented soon. Section is devided by users.
+
+#### Interviewer
+BookingLimit
+
+#### Coordinator
+DashBoard
+Booking create
+Booking update
+Booking delete
 
 ## Setting-up the project
-Setting-up the project
+Docker compose
+`docker run -d -p 8080:8080 makskostyshen/intellias-interview-planning-application`
 
