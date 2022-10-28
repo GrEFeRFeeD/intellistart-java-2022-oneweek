@@ -102,28 +102,41 @@ Candidate can create or update own slots following next requirements:
 Request: `POST /candidates/current/slots`
 
 Data parametres:
-- `be` - date...
+- `date` - date of candidate slot
+- `from` - start time of slot in format HH:mm
+- `to` - end time of slot in format HH:mm
 
-Response:
+Response: {"date": "22.01.2022", "from": "9:00", "to": "17:00""}
 
 Exceptions:
-- be_not_found_exception
+- slot_is_overlaping_exception
+- invalid_boundaries_exception
 
 ##### Updating Slot
-Request: `POST /candidates/current/slots`
+Request: `POST /candidates/current/slots/{slotId}`
+
+URL parametres:
+- `slotId` - id of slot to edit (can be obtained by [getting slots](#getting-slots) endpoint)
 
 Data parametres:
-- `be` - date...
-- 
-Response:
+- `date` - date of candidate slot
+- `from` - start time of slot in format HH:mm
+- `to` - end time of slot in format HH:mm
+
+Response: {"date": "22.01.2022", "from": "9:00", "to": "17:00""}
 
 Exceptions:
-- be_not_found_exception
+- slot_is_overlaping_exception
+- invalid_boundaries_exception
+- slot_not_found_exception
+- slot_is_booked_exception
+- slot_is_overlaping_exception
+- invalid_boundaries_exception
 
 ##### Geting Slots
 Request: `GET /candidates/current/slots`
 
-Response: 
+Response: `{"candidateSlotDtoList": [{"date": "22.01.2022", "from": "9:00", "to": "17:00""}, {"date": "23.01.2022", "from": "13:00", "to": "20:00""}]}`
 
 ### API to implement in future
 This section describes all business logic endoints that will be implemented soon. Section is devided by users.
@@ -196,7 +209,7 @@ Requests:
 URL parametres:
 - `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
 
-Response - 
+Response - {"interviewerSlots": [{"id": 123, "week": 49, "dayOfWeek": "TUE", "from":"18:00", "to":"21:30"}, {"id": 123, "week": 50, "dayOfWeek": "MON", "from":"10:00", "to":"21:30"}]}
 
 ##### Setting Booking Limit
 Request: `POST /interviewers/{interviewerId}/bookingLimit`
@@ -212,7 +225,6 @@ Response: `{"userId": 10, "weekNum": 45, "bookingLimit": 123}`
 Exceptions:
 - incorrect_id_exception
 - incorrect_booking_limit_exception
-- 
 
 #### Coordinator
 DashBoard
