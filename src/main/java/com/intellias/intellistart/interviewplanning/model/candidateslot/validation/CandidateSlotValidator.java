@@ -85,15 +85,16 @@ public class CandidateSlotValidator {
    */
   private void validateOverlapping(CandidateSlot candidateSlot) throws SlotIsOverlappingException {
     Period period = candidateSlot.getPeriod();
-    long id = candidateSlot.getId();
 
     List<CandidateSlot> candidateSlotList =
         candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate());
 
     if (!candidateSlotList.isEmpty()) {
       for (CandidateSlot item : candidateSlotList) {
-        if (id != item.getId()
-            && periodService.isOverlap(period, item.getPeriod())) {
+        if (candidateSlot.getId() != null && candidateSlot.getId() == item.getId()) {
+          continue;
+        }
+        if (periodService.isOverlap(period, item.getPeriod())) {
           throw new SlotIsOverlappingException();
         }
       }
