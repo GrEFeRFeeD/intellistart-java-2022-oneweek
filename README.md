@@ -67,28 +67,95 @@ There are four groups of users:
 - Interviewers - users that have passed authentication and have Interviewer role
 - Сoordinator - users that have passed authentication and have Coordinator role
 
+#### User obtention endpoint
+Interviewers and Coordinators can perform next endoint to obtain their user information:
+
+Request: `GET /me`
+
+Response: `{"email": "example@google.com", "role": "INTERVIEWER", "id": 123}`
+
 ### Implemented API
 This section describes all already implemented business logic endoints. Section is devided by users.
 
 #### Guest
-Week current
-Week next
+Guests can only get current and next week of num or authenticate (see [authentication](#authentication--authorization)).
+
+##### Get current number of week:
+Request: `GET /weeks/current`
+
+Response: `{"weekNum": 44}`
+
+##### Get current next of week:
+Request: `GET /weeks/next`
+
+Response: `{"weekNum": 45}`
 
 #### Candidate
-Create Slot
-Update Slot
-Get Slots
+Candidate can create or update own slots following next requirements:
+- Slots must be in future
+- Slot has to be 1.5 hours or more and rounded to 30 minutes
+- Slot is defined as exact date and time diapason
+- Updating is enabled only if there is no bookings for this slot
 
-#### Interviewer
-Create Slot
-Update Slot
-Get Slots
+##### Creating Slot
+Request: `POST /candidates/current/slots`
+
+Data parametres:
+- `be` - date...
+
+Response:
+
+Exceptions:
+- be_not_found_exception
+
+##### Updating Slot
+Request: `POST /candidates/current/slots`
+
+Data parametres:
+- `be` - date...
+- 
+Response:
+
+Exceptions:
+- be_not_found_exception
+
+##### Geting Slots
+Request: `GET /candidates/current/slots`
+
+Response: 
 
 ### API to implement in future
 This section describes all business logic endoints that will be implemented soon. Section is devided by users.
 
 #### Interviewer
-BookingLimit
+Interviewer can create or update own slots following next requirements:
+- Creation until end of Friday (00:00) of current week
+- Slot means day of week + time diapason
+- Slot boundaries are rounded to 30 minutes
+- Slot duration must be greather or equal 1.5 hours
+- Slot start time cannot be less than 8:00
+- Slot end time cannot be greater than 22:00
+Also Interviewers can set booking limit for next week (maximum amount of booking that Coordinators will able to create for that certain Interviewer and it's certain week):
+- If maximum number of bookings is not set for certain week, the previous week limit is actual
+- If limit was never set, any number of bookings can be assigned to interviewer
+
+##### Creating Slot
+Request: `POST /interviewers/{interviewerId}/slots`
+
+URL parametres:
+- `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
+
+Data parametres:
+- `be` - date...
+
+Response:
+
+Exceptions:
+- be_not_found_exception
+
+##### Updating Slot
+##### Getting Slots
+##### Setting Booking Limit
 
 #### Coordinator
 DashBoard
