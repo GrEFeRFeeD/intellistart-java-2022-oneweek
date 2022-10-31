@@ -52,7 +52,7 @@ class OverlapServiceTest {
   }
 
   @Test
-  void noOverlapWhenBorders(){
+  void noOverlapWhenOuterBorders(){
 
     Period period = new Period();
     period.setFrom(LocalTime.of(14, 30));
@@ -69,5 +69,28 @@ class OverlapServiceTest {
     period.setTo(LocalTime.of(17, 30));
 
     assertFalse(cut.isOverlap(tenToTwoPeriod, period));
+  }
+
+  @Test
+  void overlapWhenSameFrom(){
+    Period period = new Period();
+    period.setFrom(LocalTime.of(10, 0));
+    period.setTo(LocalTime.of(12, 0));
+
+    assertTrue(cut.isOverlap(tenToTwoPeriod, period));
+  }
+
+  @Test
+  void overlapWhenSameTo(){
+    Period period = new Period();
+    period.setFrom(LocalTime.of(12, 0));
+    period.setTo(LocalTime.of(14, 0));
+
+    assertTrue(cut.isOverlap(tenToTwoPeriod, period));
+  }
+
+  @Test
+  void overlapWhenSame(){
+    assertTrue(cut.isOverlap(tenToTwoPeriod, tenToTwoPeriod));
   }
 }
