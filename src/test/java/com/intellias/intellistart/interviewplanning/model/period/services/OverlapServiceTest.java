@@ -70,4 +70,5 @@ class OverlapServiceTest {
 
     assertFalse(cut.isOverlap(tenToTwoPeriod, period));
   }
+
 }

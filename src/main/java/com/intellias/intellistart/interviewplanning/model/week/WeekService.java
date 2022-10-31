@@ -16,6 +16,7 @@ public class WeekService {
 
   private final WeekRepository weekRepository;
 
+
   @Autowired
   public WeekService(WeekRepository weekRepository) {
     this.weekRepository = weekRepository;

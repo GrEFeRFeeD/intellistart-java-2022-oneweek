@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,17 @@ public class UserService {
    * @return currently just newUser() without relationships.
    */
   public User getCurrentUser() {
-
     User user = userRepository.findById(1L).get();
     return user;
   }
+  
+  /**
+   * Method for gaining Optional User by id.
+   *
+   * @return Optional User by id.
+   */
+  public Optional<User> getUserById(Long id) {
+    return userRepository.findById(id);
+  }
 }
+
