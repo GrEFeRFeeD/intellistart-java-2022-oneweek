@@ -28,6 +28,7 @@ public class OverlapService {
    * period's end time.
    */
   private boolean isTimeInPeriod(LocalTime time, Period period) {
-    return time.isAfter(period.getFrom()) && period.getTo().isAfter(time);
+    return time.compareTo(period.getFrom()) >= 0
+        && time.compareTo(period.getTo()) < 0;
   }
 }
