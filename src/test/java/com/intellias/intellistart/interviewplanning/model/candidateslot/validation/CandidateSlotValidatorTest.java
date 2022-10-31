@@ -154,7 +154,7 @@ public class CandidateSlotValidatorTest {
             .thenReturn(candidateSlotList);
 
     Period period = candidateSlot.getPeriod();
-    Mockito.when(periodService.isOverlap(period, candidateSlotList.get(1).getPeriod()))
+    Mockito.when(periodService.areOverlapping(period, candidateSlotList.get(1).getPeriod()))
             .thenReturn(true);
 
     Assertions.assertThrows(actual,
