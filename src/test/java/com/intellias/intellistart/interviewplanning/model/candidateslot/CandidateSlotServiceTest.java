@@ -74,8 +74,8 @@ public class CandidateSlotServiceTest {
 
   static Arguments[] updateTestArgs(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot1, 1l),
-        Arguments.arguments(candidateSlot2, 4l)
+        Arguments.arguments(candidateSlot1, 1L),
+        Arguments.arguments(candidateSlot2, 4L)
     };
   }
   @ParameterizedTest
@@ -123,8 +123,8 @@ public class CandidateSlotServiceTest {
 
   static Arguments[] getCandidateSlotByIdArgs(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot1, 1l),
-        Arguments.arguments(candidateSlot2, 2l),
+        Arguments.arguments(candidateSlot1, 1L),
+        Arguments.arguments(candidateSlot2, 2L),
     };
   }
   @ParameterizedTest
@@ -149,7 +149,8 @@ public class CandidateSlotServiceTest {
   @MethodSource("createCandidateSlotArgs")
   void createCandidateSlotTest(LocalDate date, String from, String to, String email, String name,
       CandidateSlot expected, Period period) {
-    Mockito.when(periodService.getPeriod(from, to)).thenReturn(period);
+      
+    Mockito.when(periodService.obtainPeriod(from, to)).thenReturn(period);
 
     CandidateSlot actual = cut.createCandidateSlot(date, from, to, email, name);
     Assertions.assertEquals(actual, expected);

@@ -100,10 +100,10 @@ public class CandidateSlotService {
     CandidateSlot candidateSlot = new CandidateSlot();
 
     candidateSlot.setDate(date);
-    candidateSlot.setPeriod(periodService.getPeriod(from, to));
+    candidateSlot.setPeriod(periodService.obtainPeriod(from, to));
     candidateSlot.setEmail(email);
     candidateSlot.setName(name);
-
+    
     return candidateSlot;
   }
 }
