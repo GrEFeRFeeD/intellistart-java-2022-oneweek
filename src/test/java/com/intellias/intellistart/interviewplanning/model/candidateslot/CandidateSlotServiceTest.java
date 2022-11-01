@@ -26,7 +26,6 @@ public class CandidateSlotServiceTest {
   private static CandidateSlot candidateSlot2;
   private static Period period1;
   private static Period period2;
-  private static User user1;
 
   @BeforeAll
   static void initialize() {
@@ -151,7 +150,6 @@ public class CandidateSlotServiceTest {
   void createCandidateSlotTest(LocalDate date, String from, String to, String email, String name,
       CandidateSlot expected, Period period) {
     Mockito.when(periodService.getPeriod(from, to)).thenReturn(period);
-    Mockito.when(userService.getCurrentUser()).thenReturn(user1);
 
     CandidateSlot actual = cut.createCandidateSlot(date, from, to, email, name);
     Assertions.assertEquals(actual, expected);
