@@ -69,7 +69,7 @@ public class InterviewerSlotDtoValidator {
 
     validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
 
-    Period period = periodService.getPeriod(interviewerSlotDto.getFrom(),
+    Period period = periodService.obtainPeriod(interviewerSlotDto.getFrom(),
         interviewerSlotDto.getTo());
     Week week = weekService.getWeekByWeekNum(interviewerSlotDto.getWeek());
     DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek());
@@ -151,7 +151,7 @@ public class InterviewerSlotDtoValidator {
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(user.getId(), week.getId(), dayOfWeek);
     if (!interviewerSlotsList.isEmpty()) {
       for (InterviewerSlot interviewerSlot : interviewerSlotsList) {
-        if (periodService.isOverlap(interviewerSlot.getPeriod(), period)) {
+        if (periodService.areOverlapping(interviewerSlot.getPeriod(), period)) {
           throw new SlotIsOverlappingException();
         }
       }
