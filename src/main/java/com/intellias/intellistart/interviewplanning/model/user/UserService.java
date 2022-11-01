@@ -36,6 +36,13 @@ public class UserService {
     return userRepository.findById(id);
   }
 
+  /**
+   * Returned the current user by given email.
+   *
+   * @param email - email on which the database will be searched.
+   *
+   * @return User - user object with current info.
+   */
   public User getUserByEmail(String email) {
     return userRepository.findByEmail(email);
   }
