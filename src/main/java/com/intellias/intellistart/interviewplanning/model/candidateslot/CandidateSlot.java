@@ -55,13 +55,13 @@ public class CandidateSlot {
 
   @Override
   public String toString() {
-    return "CandidateSlot{" +
-        "id=" + id +
-        ", date=" + date +
-        ", period=" + period +
-        ", email='" + email + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+    return "CandidateSlot{"
+        + "id=" + id
+        + ", date=" + date
+        + ", period=" + period
+        + ", email='" + email
+        + '\'' + ", name='"
+        + name + '\'' + '}';
   }
 
   @Override

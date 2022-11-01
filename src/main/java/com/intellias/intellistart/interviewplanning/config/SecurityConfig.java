@@ -71,7 +71,8 @@ public class SecurityConfig {
 
         // TODO: Enable security
         // .authorizeRequests().antMatchers("/authenticate").permitAll()
-        // .anyRequest().authenticated().and()
+        // .antMatchers("/candidates/**").hasRole("CANDIDATE").anyRequest()
+        // .authenticated().and()
 
         // Add custom handling for unauthenticated and access denied errors
         .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
