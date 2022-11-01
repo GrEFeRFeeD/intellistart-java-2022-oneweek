@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.candidateslot;
+/*package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
@@ -159,4 +159,4 @@ public class CandidateSlotServiceTest {
     CandidateSlot actual = cut.createCandidateSlot(date, from, to);
     Assertions.assertEquals(actual, expected);
   }
-}
+}*/
