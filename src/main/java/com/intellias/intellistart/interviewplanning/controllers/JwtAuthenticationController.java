@@ -94,6 +94,13 @@ public class JwtAuthenticationController {
     }
   }
 
+  /**
+   * GET request for getting info about current User.
+   *
+   * @param authentication - Spring security auth object.
+   *
+   * @return User - user object with current info.
+   */
   @GetMapping("/me")
   public User getMyself(Authentication authentication) {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
