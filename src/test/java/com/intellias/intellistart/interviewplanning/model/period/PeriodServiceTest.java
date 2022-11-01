@@ -3,13 +3,10 @@ package com.intellias.intellistart.interviewplanning.model.period;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.model.period.services.OverlapService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -26,12 +23,10 @@ class PeriodServiceTest {
   private static PeriodRepository repository;
   private static TimeConverter converter;
   private static PeriodValidator validator;
-  private static OverlapService overlapService;
+  private static Period tenToTwoPeriod;
   private static PeriodService cut;
 
-  private static List<Arguments> arguments;
-
-  Period createPeriod(LocalTime from, LocalTime to){
+  static Period createPeriod(LocalTime from, LocalTime to){
     Period period = new Period();
     period.setFrom(from);
     period.setTo(to);
@@ -44,61 +39,17 @@ class PeriodServiceTest {
     repository = Mockito.mock(PeriodRepository.class);
     converter = Mockito.mock(TimeConverter.class);
     validator = Mockito.mock(PeriodValidator.class);
-    overlapService = Mockito.mock(OverlapService.class);
 
     cut = new PeriodService(
         repository,
         converter,
-        validator,
-        overlapService
+        validator
     );
 
-    arguments = new ArrayList<>();
-    arguments.add(Arguments.of(
-        "19:30",
-        "20:00",
-        LocalTime.of(19, 30),
-        LocalTime.of(20,0)));
-
-    arguments.add(Arguments.of(
-        "8:00",
-        "16:00",
-        LocalTime.of(8, 0),
-        LocalTime.of(16,0)));
-
-    arguments.add(Arguments.of(
-        "12:30",
-        "21:00",
-        LocalTime.of(12, 30),
-        LocalTime.of(21,0)));
+    tenToTwoPeriod = createPeriod(LocalTime.of(10, 0), LocalTime.of(14,0));
   }
 
-  @Test
-  void exceptionWhenIncorrectConversion(){
-    Mockito.when(converter.convert("19:00:33"))
-        .thenThrow(InvalidBoundariesException.class);
-
-    assertThrows(InvalidBoundariesException.class, () ->
-        cut.getPeriod("19:00:33", "20:00"));
-  }
-
-  @Test
-  void exceptionWhenIncorrectValidation(){
-    String fromStr = "19:00";
-    String toStr = "23:00";
-    LocalTime from = LocalTime.of(19, 0);
-    LocalTime to = LocalTime.of(23, 0);
-
-    Mockito.when(converter.convert(fromStr)).thenReturn(from);
-    Mockito.when(converter.convert(toStr)).thenReturn(to);
-
-    Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
-
-    assertThrows(InvalidBoundariesException.class, () ->
-        cut.getPeriod(fromStr, toStr));
-  }
-
-  static Stream<Arguments> provideArguments(){
+  static Stream<Arguments> provideObtainPeriodArguments(){
     return Stream.of(
         Arguments.of(
             "19:30",
@@ -117,8 +68,33 @@ class PeriodServiceTest {
             LocalTime.of(21,0)));
   }
 
+  @Test
+  void exceptionWhenIncorrectConversion(){
+    Mockito.when(converter.convert("19:00:33"))
+        .thenThrow(InvalidBoundariesException.class);
+
+    assertThrows(InvalidBoundariesException.class, () ->
+        cut.obtainPeriod("19:00:33", "20:00"));
+  }
+
+  @Test
+  void exceptionWhenIncorrectValidation(){
+    String fromStr = "19:00";
+    String toStr = "23:00";
+    LocalTime from = LocalTime.of(19, 0);
+    LocalTime to = LocalTime.of(23, 0);
+
+    Mockito.when(converter.convert(fromStr)).thenReturn(from);
+    Mockito.when(converter.convert(toStr)).thenReturn(to);
+
+    Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
+
+    assertThrows(InvalidBoundariesException.class, () ->
+        cut.obtainPeriod(fromStr, toStr));
+  }
+
   @ParameterizedTest
-  @MethodSource("provideArguments")
+  @MethodSource("provideObtainPeriodArguments")
   void returnPeriodWhenPeriodNotExists(String fromStr, String toStr,
       LocalTime from, LocalTime to){
 
@@ -130,15 +106,17 @@ class PeriodServiceTest {
     Mockito.when(repository.findPeriodByFromAndTo(from, to)).thenReturn(Optional.empty());
 
     Period createdPeriod = createPeriod(from, to);
-    Mockito.when(cut.createPeriod(from, to)).thenReturn(createdPeriod);
+    Mockito.when(repository
+        .save(new Period(null, from, to, null, null, null)))
+        .thenReturn(createdPeriod);
 
-    Period actual = cut.getPeriod(fromStr, toStr);
+    Period actual = cut.obtainPeriod(fromStr, toStr);
 
     assertEquals(actual, expected);
   }
 
   @ParameterizedTest
-  @MethodSource("provideArguments")
+  @MethodSource("provideObtainPeriodArguments")
   void returnPeriodWhenPeriodExists(String fromStr, String toStr,
   LocalTime from, LocalTime to){
 
@@ -150,8 +128,68 @@ class PeriodServiceTest {
     Period foundPeriod = createPeriod(from, to);
     Mockito.when(repository.findPeriodByFromAndTo(from, to)).thenReturn(Optional.of(foundPeriod));
 
-    Period actual = cut.getPeriod(fromStr, toStr);
+    Period actual = cut.obtainPeriod(fromStr, toStr);
 
     assertEquals(actual, expected);
+  }
+
+  static Stream<Arguments> provideOverlappingArguments(){
+    Period crossingSecondBefore = createPeriod(
+        LocalTime.of(8, 30),
+        LocalTime.of(11, 30));
+
+    Period crossingFirstBefore = createPeriod(
+        LocalTime.of(13, 30),
+        LocalTime.of(18, 30));
+
+    Period inner = createPeriod(
+        LocalTime.of(8, 0),
+        LocalTime.of(16, 30));
+
+    Period sameFrom = createPeriod(
+        LocalTime.of(10, 0),
+        LocalTime.of(12, 0));
+
+    Period sameTo = createPeriod(
+        LocalTime.of(12, 0),
+        LocalTime.of(14, 0));
+
+    Period same = tenToTwoPeriod;
+
+    return Stream.of(Arguments.of(
+        crossingSecondBefore,
+        crossingFirstBefore,
+        inner,
+        sameFrom,
+        sameTo,
+        same));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideOverlappingArguments")
+  void overlapWhenShould(Period period){
+    System.out.println(period);
+    System.out.println(tenToTwoPeriod);
+    assertTrue(cut.areOverlapping(tenToTwoPeriod, period));
+  }
+
+  static Stream<Arguments> provideNonOverlappingArguments(){
+    Period outerBorders = createPeriod(
+        LocalTime.of(14, 0),
+        LocalTime.of(17, 30));
+
+    Period completelyDifferent = createPeriod(
+        LocalTime.of(15, 30),
+        LocalTime.of(18, 30));
+
+    return Stream.of(Arguments.of(
+        outerBorders,
+        completelyDifferent));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideNonOverlappingArguments")
+  void notOverlappingWhenShouldNot(Period period){
+    assertFalse(cut.areOverlapping(tenToTwoPeriod, period));
   }
 }
