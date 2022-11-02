@@ -25,7 +25,7 @@ public class BookingService {
    * @return Optional&lt;Booking&gt; with persisted Booking objects if
    *          such object with given id exists and with null if not.
    */
-  public Optional<Booking> findById(BookingKey id) {
+  public Optional<Booking> findById(Long id) {
     return bookingRepository.findById(id);
   }
 
@@ -71,7 +71,7 @@ public class BookingService {
    *
    * @param id id of Booking object that will be deleted.
    */
-  public void deleteById(BookingKey id) {
+  public void deleteById(Long id) {
     Optional<Booking> booking = bookingRepository.findById(id);
     if (booking.isPresent()) {
       delete(booking.get());
