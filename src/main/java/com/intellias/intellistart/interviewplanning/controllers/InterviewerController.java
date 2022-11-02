@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
+import com.intellias.intellistart.interviewplanning.controllers.dto.BookingLimitDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
@@ -7,6 +8,8 @@ import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekE
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
@@ -27,19 +30,23 @@ public class InterviewerController {
 
   private final InterviewerSlotService interviewerSlotService;
   private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
+  private final BookingLimitService bookingLimitService;
 
   /**
    * Constructor.
    *
-   * @param interviewerSlotService - interviewerSlotService
+   * @param interviewerSlotService      - interviewerSlotService
    * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
+   * @param bookingLimitService         - bookingLimitService
    */
   @Autowired
   public InterviewerController(
       InterviewerSlotService interviewerSlotService,
-      InterviewerSlotDtoValidator interviewerSlotDtoValidator) {
+      InterviewerSlotDtoValidator interviewerSlotDtoValidator,
+      BookingLimitService bookingLimitService) {
     this.interviewerSlotService = interviewerSlotService;
     this.interviewerSlotDtoValidator = interviewerSlotDtoValidator;
+    this.bookingLimitService = bookingLimitService;
   }
 
   /**
@@ -118,5 +125,32 @@ public class InterviewerController {
     interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
+  }
+
+  /**
+   * Post Request for creating booking limit.
+   *
+   * @param bookingLimitDto - DTO for BookingLimit
+   * @param interviewerId   - user id from request
+   * @return BookingLimitDto and HTTP status
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   */
+  @PostMapping("/interviewers/{interviewerId}/bookinglimit")
+  public ResponseEntity<BookingLimitDto> createBookingLimit(
+      @RequestBody BookingLimitDto bookingLimitDto,
+      @PathVariable("interviewerId") Long interviewerId)
+      throws InvalidInterviewerException {
+
+    bookingLimitDto.setUserId(interviewerId);
+
+    BookingLimit bookingLimit = getBookingLimitFromDto(bookingLimitDto);
+
+    return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
+  }
+
+  private BookingLimit getBookingLimitFromDto(BookingLimitDto bookingLimitDto)
+      throws InvalidInterviewerException {
+    return bookingLimitService.createBookingLimit(bookingLimitDto.getUserId(),
+        bookingLimitDto.getBookingLimit());
   }
 }
