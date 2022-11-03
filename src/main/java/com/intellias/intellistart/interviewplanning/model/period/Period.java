@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -41,12 +42,15 @@ public class Period {
   private LocalTime to;
 
   @OneToMany(mappedBy = "period")
+  @JsonIgnore
   private Set<InterviewerSlot> interviewerSlots = new HashSet<>();
 
   @OneToMany(mappedBy = "period")
+  @JsonIgnore
   private Set<CandidateSlot> candidateSlots = new HashSet<>();
 
   @OneToMany(mappedBy = "period")
+  @JsonIgnore
   private Set<Booking> bookings = new HashSet<>();
 
 
