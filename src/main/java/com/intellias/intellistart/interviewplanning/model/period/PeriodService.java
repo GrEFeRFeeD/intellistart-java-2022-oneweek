@@ -15,20 +15,21 @@ import org.springframework.stereotype.Service;
 public class PeriodService {
 
   private final PeriodRepository periodRepository;
-  private final TimeConverter timeConverter;
   private final PeriodValidator periodValidator;
+  private final TimeConverter timeConverter;
 
   /**
    * Constructor.
    */
   @Autowired
-  public PeriodService(PeriodRepository periodRepository,
-      TimeConverter timeConverter,
-      PeriodValidator periodValidator) {
+  public PeriodService(
+      PeriodRepository periodRepository,
+      PeriodValidator periodValidator,
+      TimeConverter timeConverter) {
 
     this.periodRepository = periodRepository;
-    this.timeConverter = timeConverter;
     this.periodValidator = periodValidator;
+    this.timeConverter = timeConverter;
   }
 
 

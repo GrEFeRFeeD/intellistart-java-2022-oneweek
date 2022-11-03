@@ -15,7 +15,6 @@ class TimeConverterTest {
   public static void initialize(){
     cut = new TimeConverter();
   }
-
   @Test
   void convertWhenCorrectFormat() {
     LocalTime actual = cut.convert("19:00");
@@ -26,15 +25,15 @@ class TimeConverterTest {
   @Test
   void notConvertWhenSecondsGiven() {
     assertThrows(InvalidBoundariesException.class, () ->
-      cut.convert("19:00:33"));
+        cut.convert("19:00:33"));
   }
 
   @Test
   void notConvertWhenInvalidHourOrMinutes(){
     assertThrows(InvalidBoundariesException.class, () ->
-      cut.convert("34:00"));
+        cut.convert("34:00"));
     assertThrows(InvalidBoundariesException.class, () ->
-      cut.convert("11:77"));
+        cut.convert("11:77"));
   }
 
   @Test

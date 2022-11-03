@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.period.services.validation.chain;
 
-import java.time.Duration;
+import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
 import java.time.LocalTime;
 import lombok.NoArgsConstructor;
 
@@ -24,12 +24,6 @@ public class DurationValidator implements PeriodChainValidator {
    */
   @Override
   public boolean isCorrect(LocalTime lowerBoundary, LocalTime upperBoundary) {
-    Duration duration = Duration.between(lowerBoundary, upperBoundary);
-
-    int minutes = duration.toMinutesPart();
-    int hours = duration.toHoursPart();
-
-    return hours * 60 + minutes >= MIN_DURATION;
+    return new TimeConverter().getDurationMinutes(lowerBoundary, upperBoundary) >= MIN_DURATION;
   }
-
 }

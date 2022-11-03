@@ -42,8 +42,8 @@ class PeriodServiceTest {
 
     cut = new PeriodService(
         repository,
-        converter,
-        validator
+        validator,
+        converter
     );
 
     tenToTwoPeriod = createPeriod(LocalTime.of(10, 0), LocalTime.of(14,0));
@@ -69,23 +69,11 @@ class PeriodServiceTest {
   }
 
   @Test
-  void exceptionWhenIncorrectConversion(){
-    Mockito.when(converter.convert("19:00:33"))
-        .thenThrow(InvalidBoundariesException.class);
-
-    assertThrows(InvalidBoundariesException.class, () ->
-        cut.obtainPeriod("19:00:33", "20:00"));
-  }
-
-  @Test
   void exceptionWhenIncorrectValidation(){
     String fromStr = "19:00";
     String toStr = "23:00";
     LocalTime from = LocalTime.of(19, 0);
     LocalTime to = LocalTime.of(23, 0);
-
-    Mockito.when(converter.convert(fromStr)).thenReturn(from);
-    Mockito.when(converter.convert(toStr)).thenReturn(to);
 
     Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
 
