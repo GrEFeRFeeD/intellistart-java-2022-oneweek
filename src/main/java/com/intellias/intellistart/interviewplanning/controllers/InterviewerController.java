@@ -162,9 +162,9 @@ public class InterviewerController {
     JwtUserDetails jwtUserDetails  = (JwtUserDetails) authentication.getPrincipal();
 
     String email = jwtUserDetails.getEmail();
-    Long currentWeekId = weekService.getNextWeek().getId();
+    Long nextWeekId = weekService.getNextWeek().getId();
 
-    List<InterviewerSlot> slots = interviewerSlotService.getSlotsByWeek(email, currentWeekId);
+    List<InterviewerSlot> slots = interviewerSlotService.getSlotsByWeek(email, nextWeekId);
 
     return new ResponseEntity<>(slots, HttpStatus.OK);
   }
