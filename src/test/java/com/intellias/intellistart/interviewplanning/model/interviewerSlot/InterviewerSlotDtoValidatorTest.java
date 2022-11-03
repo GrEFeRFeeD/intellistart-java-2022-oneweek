@@ -17,7 +17,6 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.period.services.OverlapService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
@@ -51,10 +50,12 @@ public class InterviewerSlotDtoValidatorTest {
   static PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
   static TimeConverter timeConverter = new TimeConverter();
   static PeriodValidator periodValidator = new PeriodValidator();
-  static OverlapService overlapService = new OverlapService();
+
   @MockBean
-  static PeriodService periodService = new PeriodService(periodRepository, timeConverter,
-      periodValidator, overlapService);
+  static PeriodService periodService = new PeriodService(
+          periodRepository,
+          timeConverter,
+          periodValidator);
   static WeekRepository weekRepository = Mockito.mock(WeekRepository.class);
   @MockBean
   static WeekService weekService = new WeekService(weekRepository);
@@ -103,7 +104,7 @@ public class InterviewerSlotDtoValidatorTest {
   void InterviewerSlotValidationIdTest(InterviewerSlotDto dto, InterviewerSlot expected)
       throws InvalidDayOfWeekException, SlotIsOverlappingException, InvalidInterviewerException {
     when(userService.getUserById(1L)).thenReturn(Optional.of(expected.getUser()));
-    when(periodService.getPeriod(dto.getFrom(), dto.getTo())).thenReturn(expected.getPeriod());
+    when(periodService.obtainPeriod(dto.getFrom(), dto.getTo())).thenReturn(expected.getPeriod());
     when(weekService.getWeekByWeekNum(dto.getWeek())).thenReturn(expected.getWeek());
     when(weekService.getCurrentWeek()).thenReturn(new Week(20L, new HashSet<>()));
     InterviewerSlot actual = cut.interviewerSlotValidateDto(dto);

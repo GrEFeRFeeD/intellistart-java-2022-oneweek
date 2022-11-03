@@ -79,7 +79,9 @@ public class StartDataLoader implements ApplicationRunner {
     InterviewerSlot is2 = new InterviewerSlot(null, w1, DayOfWeek.FRI, p2, new HashSet<>(), u1);
     p2.addInterviewerSlot(is2);
 
-    CandidateSlot cs1 = new CandidateSlot(null, LocalDate.of(2022, 10, 6), p3, new HashSet<>(), u4);
+    CandidateSlot cs1 = new CandidateSlot(null,
+        LocalDate.of(2022, 10, 6), p3, new HashSet<>(),
+        "candidate@gmail.com", "Facebook Candidate");
     p3.addCandidateSlot(cs1);
 
     Booking b1 = new Booking(new BookingKey(), "Test subject", "Test description", is1, cs1, p4);

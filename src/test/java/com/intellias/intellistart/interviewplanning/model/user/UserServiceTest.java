@@ -44,4 +44,5 @@ public class UserServiceTest {
     User actual = cut.getUserByEmail(email);
     Assertions.assertEquals(expected, actual);
   }
+
 }
