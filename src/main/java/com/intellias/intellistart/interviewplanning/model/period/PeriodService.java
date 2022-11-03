@@ -77,7 +77,17 @@ public class PeriodService {
   }
 
   /**
-   * Tell if given time isn't smaller than "from" and lower time is smaller than "to".
+   * Boundaries are inclusive.
+   *
+   * @return true if first period is inside the second period.
+   */
+  public boolean isFirstInsideSecond(Period first, Period second) {
+    return first.getFrom().compareTo(second.getFrom()) >= 0
+        && first.getTo().compareTo(second.getTo()) <= 0;
+  }
+
+  /**
+   * Tell if given time isn't smaller than "from" and smaller than "to".
    */
   private boolean isTimeInPeriod(LocalTime time, Period period) {
     return time.compareTo(period.getFrom()) >= 0

@@ -192,4 +192,67 @@ class PeriodServiceTest {
   void notOverlappingWhenShouldNot(Period period){
     assertFalse(cut.areOverlapping(tenToTwoPeriod, period));
   }
+
+  static Stream<Arguments> provideIsInsideArguments(){
+    Period sameFrom = createPeriod(
+        LocalTime.of(10, 0),
+        LocalTime.of(11, 30));
+
+    Period sameTo = createPeriod(
+        LocalTime.of(10, 30),
+        LocalTime.of(14, 0));
+
+    Period inner = createPeriod(
+        LocalTime.of(10, 30),
+        LocalTime.of(13, 30));
+
+    Period same = tenToTwoPeriod;
+
+    return Stream.of(Arguments.of(
+        sameFrom,
+        sameTo,
+        inner,
+        same));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideIsInsideArguments")
+  void isInsideFirstWhenShould(Period period){
+    assertTrue(cut.isFirstInsideSecond(period, tenToTwoPeriod));
+  }
+
+  static Stream<Arguments> provideNotInsideArguments(){
+    Period bordersAbove = createPeriod(
+        LocalTime.of(14, 0),
+        LocalTime.of(16, 30));
+
+    Period bordersBelow = createPeriod(
+        LocalTime.of(8, 30),
+        LocalTime.of(10, 0));
+
+    Period overlapsBelow = createPeriod(
+        LocalTime.of(8, 30),
+        LocalTime.of(13, 30));
+
+    Period overlapsAbove = createPeriod(
+        LocalTime.of(13, 30),
+        LocalTime.of(20, 30));
+
+    Period completelyDifferent = createPeriod(
+        LocalTime.of(18, 30),
+        LocalTime.of(21, 30));
+
+    return Stream.of(Arguments.of(
+        bordersAbove,
+        bordersBelow,
+        overlapsBelow,
+        overlapsAbove,
+        completelyDifferent));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideNotInsideArguments")
+  void notInsideFirstWhenShouldNot(Period period){
+    assertFalse(cut.isFirstInsideSecond(period, tenToTwoPeriod));
+  }
 }

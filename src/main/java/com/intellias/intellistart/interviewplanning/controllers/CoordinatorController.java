@@ -27,10 +27,9 @@ public class CoordinatorController {
   public ResponseEntity<BookingDto> updateBooking(
       @RequestBody BookingDto bookingDto,
       @PathVariable Long id) {
-    System.out.println("updating is started");
+
     //TODO: test how save and update works and choose the best option
     Booking targetBooking = bookingService.findById(id);
-    System.out.println("old booking: \n" + targetBooking);
 
     bookingService.populateFields(targetBooking, bookingDto);
     Booking savedBooking = bookingService.save(targetBooking);
@@ -42,13 +41,11 @@ public class CoordinatorController {
   @PostMapping("bookings")
   public ResponseEntity<BookingDto> createBooking(@RequestBody BookingDto bookingDto) {
 
-    System.out.println("creation is started");
     Booking createdBooking = new Booking();
-    //System.out.println("old booking: \n" + createdBooking);
+
     bookingService.populateFields(createdBooking, bookingDto);
     Booking savedBooking = bookingService.save(createdBooking);
 
-    System.out.println("new booking: \n" + savedBooking);
     return ResponseEntity.ok(new BookingDto(savedBooking));
   }
 }
