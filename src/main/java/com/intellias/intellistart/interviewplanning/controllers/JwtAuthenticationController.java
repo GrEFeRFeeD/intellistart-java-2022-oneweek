@@ -4,6 +4,8 @@ import com.intellias.intellistart.interviewplanning.controllers.dto.JwtRequest;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
+import com.intellias.intellistart.interviewplanning.model.user.User;
+import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
@@ -15,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +37,7 @@ public class JwtAuthenticationController {
   private final JwtTokenUtil jwtTokenUtil;
   private final JwtUserDetailsService userDetailsService;
   private final FacebookUtil facebookUtil;
+  private final UserService userService;
 
   /**
    * Constructor.
@@ -40,11 +45,12 @@ public class JwtAuthenticationController {
   @Autowired
   public JwtAuthenticationController(AuthenticationManager authenticationManager,
       JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService,
-      FacebookUtil facebookUtil) {
+      FacebookUtil facebookUtil, UserService userService) {
     this.authenticationManager = authenticationManager;
     this.jwtTokenUtil = jwtTokenUtil;
     this.userDetailsService = userDetailsService;
     this.facebookUtil = facebookUtil;
+    this.userService = userService;
   }
 
   /**
@@ -86,5 +92,18 @@ public class JwtAuthenticationController {
     } catch (BadCredentialsException e) {
       throw new SecurityException(SecurityExceptionProfile.BAD_CREDENTIALS);
     }
+  }
+
+  /**
+   * GET request for getting info about current User.
+   *
+   * @param authentication - Spring security auth object.
+   *
+   * @return User - user object with current info.
+   */
+  @GetMapping("/me")
+  public User getMyself(Authentication authentication) {
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+    return userService.getUserByEmail(jwtUserDetails.getEmail());
   }
 }
