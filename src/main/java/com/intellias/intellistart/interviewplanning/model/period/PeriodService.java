@@ -35,7 +35,7 @@ public class PeriodService {
   /**
   * Alias for {@link #obtainPeriod(LocalTime, LocalTime)} with time conversion.
   *
-  * @throws InvalidBoundariesException when parameters are incorrect:
+  * @throws InvalidBoundariesException when parameters are invalid:
   *     can't be read as time
   *     wrong business logic
   */
@@ -54,7 +54,7 @@ public class PeriodService {
    *
    * @throws InvalidBoundariesException when wrong business logic.
    */
-  public Period obtainPeriod(LocalTime from, LocalTime to) {
+  private Period obtainPeriod(LocalTime from, LocalTime to) {
     periodValidator.validate(from, to);
 
     Optional<Period> periodOptional = periodRepository.findPeriodByFromAndTo(from, to);

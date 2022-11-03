@@ -134,10 +134,11 @@ public class CandidateSlotServiceTest {
   @ParameterizedTest
   @MethodSource("getCandidateSlotByIdArgs")
   void getCandidateSlotByIdTest(CandidateSlot expected, Long id) {
+//    Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
     Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
 
-    Optional<CandidateSlot> optional = cut.getCandidateSlotById(id);
-    CandidateSlot actual = optional.orElse(null);
+    CandidateSlot actual = cut.findById(id);
+//    CandidateSlot actual = candidateSlot.orElse(null);
     Assertions.assertEquals(actual, expected);
   }
 

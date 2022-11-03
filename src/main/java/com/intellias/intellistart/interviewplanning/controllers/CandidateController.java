@@ -2,10 +2,10 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotsDto;
+import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.validation.CandidateSlotValidator;
@@ -68,7 +68,7 @@ public class CandidateController {
    *
    * @return ResponseEntity - Response of the updated object converted to a DTO.
    *
-   * @throws SlotNotFoundException - when updated slot id not found.
+   * @throws CandidateSlotNotFoundException - when updated slot id not found.
    * @throws SlotIsBookedException - when updated slot is booked.
    * @throws InvalidBoundariesException - when parameters are incorrect.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
@@ -76,7 +76,7 @@ public class CandidateController {
   @PostMapping("/candidates/current/slots/{slotId}")
   public ResponseEntity<CandidateSlotDto> updateCandidateSlot(@RequestBody CandidateSlotDto request,
       @PathVariable("slotId") Long id)
-      throws SlotNotFoundException, SlotIsBookedException, InvalidBoundariesException,
+      throws CandidateSlotNotFoundException, SlotIsBookedException, InvalidBoundariesException,
       SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request);
     candidateSlot.setId(id);

@@ -3,9 +3,9 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -54,16 +54,19 @@ public class InterviewerSlotDtoValidator {
    * @param interviewerSlotDto from Controller's request
    * @return InterviewerSlot
    * @throws InvalidDayOfWeekException - invalid day of week
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws InterviewerSlotNotFoundException - invalid user (interviewer) exception
    * @throws SlotIsOverlappingException - slot is overlapping exception
    * @throws InvalidBoundariesException - invalid boundaries exception
    */
-  public InterviewerSlot interviewerSlotValidateDto(InterviewerSlotDto interviewerSlotDto)
-      throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
-      SlotIsOverlappingException, CannotEditThisWeekException {
+  public InterviewerSlot interviewerSlotValidateDto(InterviewerSlotDto interviewerSlotDto) throws
+      InvalidDayOfWeekException,
+      InterviewerSlotNotFoundException,
+      InvalidBoundariesException,
+      SlotIsOverlappingException,
+      CannotEditThisWeekException {
 
     User user = userService.getUserById(interviewerSlotDto.getInterviewerId())
-        .orElseThrow(InvalidInterviewerException::new);
+        .orElseThrow(InterviewerSlotNotFoundException::new);
 
     validateIfInterviewerRoleInterviewer(user);
 
@@ -86,11 +89,12 @@ public class InterviewerSlotDtoValidator {
    * Get User and check if User's role is INTERVIEWER.
    *
    * @param user Interviewer
-   * @throws InvalidInterviewerException - InvalidInterviewerException
+   * @throws InterviewerSlotNotFoundException - InvalidInterviewerException
    */
-  public void validateIfInterviewerRoleInterviewer(User user) throws InvalidInterviewerException {
+  public void validateIfInterviewerRoleInterviewer(User user) throws
+      InterviewerSlotNotFoundException {
     if (!user.getRole().equals(Role.INTERVIEWER)) {
-      throw new InvalidInterviewerException();
+      throw new InterviewerSlotNotFoundException();
     }
   }
 

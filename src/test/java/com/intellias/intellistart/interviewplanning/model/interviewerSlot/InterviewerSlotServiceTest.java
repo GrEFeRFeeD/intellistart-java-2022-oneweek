@@ -9,21 +9,16 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
-import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 
 
-import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalTime;
 import java.util.HashSet;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class InterviewerSlotServiceTest {
 
@@ -38,8 +33,8 @@ public class InterviewerSlotServiceTest {
 
   @Test
   void getSlotByIdTest(){
-    when(cut.getSlotById(1L)).thenReturn(Optional.of(is1));
-    InterviewerSlot actual = cut.getSlotById(1L).get();
+    when(cut.findById(1L)).thenReturn(is1);
+    InterviewerSlot actual = cut.findById(1L);
     InterviewerSlot expected = is1;
     assertEquals(expected, actual);
   }

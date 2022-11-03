@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -78,8 +78,8 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void isInterviewerRoleINTERVIEWERTest() {
-    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
-    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
+    assertThrows(InterviewerSlotNotFoundException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
+    assertThrows(InterviewerSlotNotFoundException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
     assertDoesNotThrow(() -> cut.validateIfInterviewerRoleInterviewer(u1));
   }
 
@@ -102,7 +102,7 @@ public class InterviewerSlotDtoValidatorTest {
   @ParameterizedTest
   @ArgumentsSource(DtoSlotArgumentsProvider.class)
   void InterviewerSlotValidationIdTest(InterviewerSlotDto dto, InterviewerSlot expected)
-      throws InvalidDayOfWeekException, SlotIsOverlappingException, InvalidInterviewerException {
+      throws InvalidDayOfWeekException, SlotIsOverlappingException, InterviewerSlotNotFoundException {
     when(userService.getUserById(1L)).thenReturn(Optional.of(expected.getUser()));
     when(periodService.obtainPeriod(dto.getFrom(), dto.getTo())).thenReturn(expected.getPeriod());
     when(weekService.getWeekByWeekNum(dto.getWeek())).thenReturn(expected.getWeek());
