@@ -86,7 +86,8 @@ public class CandidateSlotValidator {
     Period period = candidateSlot.getPeriod();
 
     List<CandidateSlot> candidateSlotList =
-        candidateSlotService.getCandidateSlotsByUserAndDate(candidateSlot.getDate());
+        candidateSlotService.getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
+            candidateSlot.getDate());
 
     if (!candidateSlotList.isEmpty()) {
       for (CandidateSlot item : candidateSlotList) {

@@ -2,17 +2,19 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotsDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.validation.CandidateSlotValidator;
+import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +50,10 @@ public class CandidateController {
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots")
-  public ResponseEntity<CandidateSlotDto> createCandidateSlot(@RequestBody CandidateSlotDto request)
+  public ResponseEntity<CandidateSlotDto> createCandidateSlot(@RequestBody CandidateSlotDto request,
+      Authentication authentication)
       throws InvalidBoundariesException, SlotIsOverlappingException {
-    CandidateSlot candidateSlot = getCandidateSlotFromDto(request);
+    CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlotValidator.validateCreating(candidateSlot);
 
     candidateSlot = candidateSlotService.create(candidateSlot);
@@ -68,17 +71,17 @@ public class CandidateController {
    *
    * @return ResponseEntity - Response of the updated object converted to a DTO.
    *
-   * @throws CandidateSlotNotFoundException - when updated slot id not found.
+   * @throws SlotNotFoundException - when updated slot id not found.
    * @throws SlotIsBookedException - when updated slot is booked.
    * @throws InvalidBoundariesException - when parameters are incorrect.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots/{slotId}")
   public ResponseEntity<CandidateSlotDto> updateCandidateSlot(@RequestBody CandidateSlotDto request,
-      @PathVariable("slotId") Long id)
-      throws CandidateSlotNotFoundException, SlotIsBookedException, InvalidBoundariesException,
+      @PathVariable("slotId") Long id, Authentication authentication)
+      throws SlotNotFoundException, SlotIsBookedException, InvalidBoundariesException,
       SlotIsOverlappingException {
-    CandidateSlot candidateSlot = getCandidateSlotFromDto(request);
+    CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlot.setId(id);
     candidateSlotValidator.validateUpdating(candidateSlot, id);
 
@@ -93,8 +96,13 @@ public class CandidateController {
    * @return ResponseEntity - Response of the list of slots converted to a DTO.
    */
   @GetMapping("/candidates/current/slots")
-  public ResponseEntity<CandidateSlotsDto> getAllSlotsOfCandidate() {
-    List<CandidateSlot> candidateSlots = candidateSlotService.getAllSlotsOfCandidate();
+  public ResponseEntity<CandidateSlotsDto> getAllSlotsOfCandidate(Authentication authentication) {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+    
+    List<CandidateSlot> candidateSlots = candidateSlotService
+        .getAllSlotsByEmail(jwtUserDetails.getEmail());
+
     return ResponseEntity.ok(getCandidateSlotsDtoFromListOf(candidateSlots));
   }
 
@@ -105,9 +113,14 @@ public class CandidateController {
    *
    * @return CandidateSlot object by given DTO.
    */
-  private CandidateSlot getCandidateSlotFromDto(CandidateSlotDto candidateSlotDto) {
+  private CandidateSlot getCandidateSlotFromDto(CandidateSlotDto candidateSlotDto,
+      Authentication authentication) {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+
     return candidateSlotService.createCandidateSlot(candidateSlotDto.getDate(),
-        candidateSlotDto.getFrom(), candidateSlotDto.getTo());
+        candidateSlotDto.getFrom(), candidateSlotDto.getTo(), jwtUserDetails.getEmail(),
+        jwtUserDetails.getName());
   }
 
   /**
