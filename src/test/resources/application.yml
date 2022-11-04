@@ -1,0 +1,22 @@
+jwt:
+  secret: oneweek
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: 123456
+            clientSecret: qwerty
+
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+
+
