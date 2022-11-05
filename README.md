@@ -8,6 +8,7 @@
   * [Implemented API](#implemented-api)
   * [API to implement in future](#api-to-implement-in-future)
 * [Setting-up the project](#setting-up-the-project)
+  * [Getting the project](#getting-the-project) 
   * [Configuring docker](#configuring-docker)
 
 ## Project information
@@ -235,8 +236,46 @@ Booking delete
 ## Setting-up the project
 This section describes all needed steps to launch the application.
 
-### Configuring docker
-To launch docker with application, type:
+### Getting the project
+First of all, you need to get the project. You can do this by two ways:
+- [Getting zip project file](#getting-zip-project-file)
+- [Cloning the repository](#cloning-the-repository)
 
-`docker run -d -p 8080:8080 makskostyshen/intellias-interview-planning-application`
+#### Getting zip project file
+To download project in zip follow the [link](https://github.com/GrEFeRFeeD/intellistart-java-2022-oneweek/archive/refs/heads/main.zip).
+
+After downloading, unzip the archive and go to __intellistart-java-2022-oneweek-main__ directory.
+
+#### Cloning the repository
+To clone the repository run the console and type:
+
+`git clone https://github.com/GrEFeRFeeD/intellistart-java-2022-oneweek.git`
+
+After cloning is done change the directory to __intellistart-java-2022-oneweek-main__ by the following command:
+
+`cd intellistart-java-2022-oneweek-main`
+
+### Configuring docker
+This section describes all needed steps to launch application via docker.
+
+#### Configuring environmental variables
+Before launching the application via docker, you need to created `api.env` file with next environment variables.
+The example of such file represented in `example.env` file. The needed variables are:
+- `JWT_SECRET` - defines secret work to assign the JWT
+- `FACEBOOK_CLIENT_ID` - application client id provided by facebook
+- `FACEBOOK_SECRET` - application secret provided by facebook
+- `HIBERNATE_DDL_AUTO` - hibernate DDL launch mode:
+  - `validate`: validates the schema, makes no changes to the database.
+  - `update`: updates the schema.
+  - `create`: creates the schema, destroying previous data.
+  - `create-drop`: drop the schema when the SessionFactory is closed explicitly, typically when the application is stopped.
+  - none: does nothing with the schema, makes no changes to the database.
+- `POSTGRES_USER` - name of default postgresql user
+- `POSTGRES_PASSWORD` - password of default postgresql user
+- `POSTGRES_DB` - postgresql database name
+
+#### Launching the application
+Once the `api.env` is created with proper variables you can launch docker with application through running the following command:
+
+`docker-compose up`
 
