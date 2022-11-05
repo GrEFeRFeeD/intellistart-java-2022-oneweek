@@ -46,7 +46,7 @@ public class StartDataLoader implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
 
-    User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER);
+    User u1 = new User(null, "interviewer1@gmail.com", Role.INTERVIEWER);
     User u2 = new User(null, "interviewer2@gmail.com", Role.INTERVIEWER);
     u1.setId(u1.getId()); // Don't mind. Just for maven validation. Is smells.
     u2.setId(u2.getId()); // Don't mind. Just for maven validation. Is smells.
