@@ -2,18 +2,17 @@ package com.intellias.intellistart.interviewplanning.model.period.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import java.time.LocalTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class TimeConverterTest {
+class TimeServiceTest {
 
-  private static TimeConverter cut;
+  private static TimeService cut;
 
   @BeforeAll
   public static void initialize(){
-    cut = new TimeConverter();
+    cut = new TimeService();
   }
   @Test
   void convertWhenCorrectFormat() {
@@ -24,15 +23,15 @@ class TimeConverterTest {
 
   @Test
   void notConvertWhenSecondsGiven() {
-    assertThrows(InvalidBoundariesException.class, () ->
+    assertThrows(IllegalArgumentException.class, () ->
         cut.convert("19:00:33"));
   }
 
   @Test
   void notConvertWhenInvalidHourOrMinutes(){
-    assertThrows(InvalidBoundariesException.class, () ->
+    assertThrows(IllegalArgumentException.class, () ->
         cut.convert("34:00"));
-    assertThrows(InvalidBoundariesException.class, () ->
+    assertThrows(IllegalArgumentException.class, () ->
         cut.convert("11:77"));
   }
 

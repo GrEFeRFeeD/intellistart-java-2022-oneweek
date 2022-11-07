@@ -16,6 +16,7 @@ import com.intellias.intellistart.interviewplanning.model.week.Week;
 
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -33,7 +34,7 @@ public class InterviewerSlotServiceTest {
 
   @Test
   void getSlotByIdTest(){
-    when(cut.findById(1L)).thenReturn(is1);
+    when(interviewerSlotRepository.findById(1L)).thenReturn(Optional.of(is1));
     InterviewerSlot actual = cut.findById(1L);
     InterviewerSlot expected = is1;
     assertEquals(expected, actual);

@@ -3,7 +3,7 @@ package com.intellias.intellistart.interviewplanning.model.period;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
+import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 
 import java.time.LocalTime;
@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 class PeriodServiceTest {
 
   private static PeriodRepository repository;
-  private static TimeConverter converter;
+  private static TimeService converter;
   private static PeriodValidator validator;
   private static Period tenToTwoPeriod;
   private static PeriodService cut;
@@ -37,7 +37,7 @@ class PeriodServiceTest {
   @BeforeAll
   static void initialize(){
     repository = Mockito.mock(PeriodRepository.class);
-    converter = Mockito.mock(TimeConverter.class);
+    converter = Mockito.mock(TimeService.class);
     validator = Mockito.mock(PeriodValidator.class);
 
     cut = new PeriodService(
@@ -76,6 +76,9 @@ class PeriodServiceTest {
     LocalTime to = LocalTime.of(23, 0);
 
     Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
+
+    Mockito.when(converter.convert(fromStr)).thenReturn(from);
+    Mockito.when(converter.convert(toStr)).thenReturn(to);
 
     assertThrows(InvalidBoundariesException.class, () ->
         cut.obtainPeriod(fromStr, toStr));

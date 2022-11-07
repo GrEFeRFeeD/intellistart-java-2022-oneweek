@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
+import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public class PeriodService {
 
   private final PeriodRepository periodRepository;
   private final PeriodValidator periodValidator;
-  private final TimeConverter timeConverter;
+  private final TimeService timeService;
 
   /**
    * Constructor.
@@ -25,11 +25,11 @@ public class PeriodService {
   public PeriodService(
       PeriodRepository periodRepository,
       PeriodValidator periodValidator,
-      TimeConverter timeConverter) {
+      TimeService timeService) {
 
     this.periodRepository = periodRepository;
     this.periodValidator = periodValidator;
-    this.timeConverter = timeConverter;
+    this.timeService = timeService;
   }
 
 
@@ -41,9 +41,14 @@ public class PeriodService {
   *     wrong business logic
   */
   public Period obtainPeriod(String fromString, String toString) {
-    LocalTime from = timeConverter.convert(fromString);
-    LocalTime to = timeConverter.convert(toString);
-
+    LocalTime from, to;
+    try{
+      from = timeService.convert(fromString);
+      to = timeService.convert(toString);
+    }
+    catch (IllegalArgumentException iae){
+      throw new InvalidBoundariesException();
+    }
     return obtainPeriod(from, to);
   }
 

@@ -17,7 +17,7 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
+import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
@@ -48,14 +48,14 @@ public class InterviewerSlotDtoValidatorTest {
   @MockBean
   static UserService userService = new UserService(userRepository);
   static PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
-  static TimeConverter timeConverter = new TimeConverter();
+  static TimeService timeService = new TimeService();
   static PeriodValidator periodValidator = new PeriodValidator();
 
   @MockBean
   static PeriodService periodService = new PeriodService(
           periodRepository,
-          timeConverter,
-          periodValidator);
+          periodValidator,
+      timeService);
   static WeekRepository weekRepository = Mockito.mock(WeekRepository.class);
   @MockBean
   static WeekService weekService = new WeekService(weekRepository);

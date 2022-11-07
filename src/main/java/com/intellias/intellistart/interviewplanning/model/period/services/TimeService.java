@@ -1,6 +1,5 @@
 package com.intellias.intellistart.interviewplanning.model.period.services;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,23 +11,30 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class TimeConverter {
+public class TimeService {
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
   /**
-   * Conversion method.
+   * Convert String to LocalTime by pattern HH:mm.
+   *
+   * @throws IllegalArgumentException if String doesn't satisfy the pattern
    */
   public LocalTime convert(String source) {
     try {
       return LocalTime.parse(source, formatter);
     } catch (DateTimeParseException e) {
-      throw new InvalidBoundariesException();
+      throw new IllegalArgumentException();
     }
   }
 
-  public int getDurationMinutes(LocalTime lower, LocalTime upper){
-    Duration duration = Duration.between(lower, upper);
+  /**
+   * Calculate duration from "from" to "to" in minutes.
+   * @param from - LocalTime
+   * @param to - LocalTime
+   */
+  public int calculateDurationMinutes(LocalTime from, LocalTime to){
+    Duration duration = Duration.between(from, to);
 
     int minutes = duration.toMinutesPart();
     int hours = duration.toHoursPart();
