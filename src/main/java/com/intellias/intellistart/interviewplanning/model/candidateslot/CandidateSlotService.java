@@ -78,11 +78,11 @@ public class CandidateSlotService {
   }
 
   /**
-   * Returned slot of current Candidate by id.
+   * Find CandidateSlot of current Candidate in database by id.
    *
    * @param id - The slot number to search for in the database.
    *
-   * @return Optional of CandidateSlot - Optional object of find slot by id.
+   * @throws CandidateSlotNotFoundException if slot with given id is not present
    */
   public CandidateSlot findById(Long id) {
     return candidateSlotRepository.findById(id).orElseThrow(CandidateSlotNotFoundException::new);

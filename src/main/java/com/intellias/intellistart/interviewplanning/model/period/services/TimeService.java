@@ -30,10 +30,11 @@ public class TimeService {
 
   /**
    * Calculate duration from "from" to "to" in minutes.
+   *
    * @param from - LocalTime
    * @param to - LocalTime
    */
-  public int calculateDurationMinutes(LocalTime from, LocalTime to){
+  public int calculateDurationMinutes(LocalTime from, LocalTime to) {
     Duration duration = Duration.between(from, to);
 
     int minutes = duration.toMinutesPart();

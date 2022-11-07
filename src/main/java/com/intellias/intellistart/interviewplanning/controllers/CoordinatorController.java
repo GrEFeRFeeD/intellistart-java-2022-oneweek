@@ -1,6 +1,10 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
+import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,29 +27,50 @@ public class CoordinatorController {
     this.bookingService = bookingService;
   }
 
+  /**
+   * POST request method for updating booking by id.
+   *
+   * @param bookingDto request DTO
+   *
+   * @return ResponseEntity - Response of the saved updated object converted to a DTO.
+   *
+   * @throws InvalidBoundariesException if Period boundaries are Invalid
+   * @throws CandidateSlotNotFoundException if CandidateSlot is not found
+   * @throws InterviewerSlotNotFoundException if InterviewerSlot is not found
+   * @throws SlotsAreNotIntersectingException if CandidateSlot, InterviewerSlot
+   *     do not intersect with Period
+   */
   @PostMapping("bookings/{id}")
   public ResponseEntity<BookingDto> updateBooking(
       @RequestBody BookingDto bookingDto,
       @PathVariable Long id) {
 
-    //TODO: test how save and update works and choose the best option
-    Booking targetBooking = bookingService.findById(id);
+    Booking updatingBooking = bookingService.findById(id);
+    bookingService.updateBooking(updatingBooking, bookingDto);
 
-    bookingService.populateFields(targetBooking, bookingDto);
-    Booking savedBooking = bookingService.save(targetBooking);
-
-    System.out.println("new booking: \n" + savedBooking);
-    return ResponseEntity.ok(new BookingDto(savedBooking));
+    return ResponseEntity.ok(new BookingDto(updatingBooking));
   }
 
+  /**
+   * POST request method for adding booking.
+   *
+   * @param bookingDto request DTO
+   *
+   * @return ResponseEntity - Response of the saved created object converted to a DTO.
+   *
+   * @throws InvalidBoundariesException if Period boundaries are Invalid
+   * @throws CandidateSlotNotFoundException if CandidateSlot is not found
+   * @throws InterviewerSlotNotFoundException if InterviewerSlot is not found
+   * @throws SlotsAreNotIntersectingException if CandidateSlot, InterviewerSlot
+   *     do not intersect with Period
+   */
   @PostMapping("bookings")
-  public ResponseEntity<BookingDto> createBooking(@RequestBody BookingDto bookingDto) {
+  public ResponseEntity<BookingDto> createBooking(
+      @RequestBody BookingDto bookingDto) {
 
-    Booking createdBooking = new Booking();
+    Booking newBooking = new Booking();
+    bookingService.updateBooking(newBooking, bookingDto);
 
-    bookingService.populateFields(createdBooking, bookingDto);
-    Booking savedBooking = bookingService.save(createdBooking);
-
-    return ResponseEntity.ok(new BookingDto(savedBooking));
+    return ResponseEntity.ok(new BookingDto(newBooking));
   }
 }

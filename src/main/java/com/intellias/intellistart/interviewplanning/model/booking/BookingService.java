@@ -2,6 +2,8 @@ package com.intellias.intellistart.interviewplanning.model.booking;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -22,44 +24,55 @@ public class BookingService {
   private final CandidateSlotService candidateSlotService;
   private final InterviewerSlotService interviewerSlotService;
 
+  private final BookingValidator bookingValidator;
+
+  /**
+   * Constructor.
+   */
   @Autowired
-  public BookingService(
-          BookingRepository bookingRepository,
-          PeriodService periodService,
-          CandidateSlotService candidateSlotService,
-          InterviewerSlotService interviewerSlotService) {
+  public BookingService(BookingRepository bookingRepository, PeriodService periodService,
+      CandidateSlotService candidateSlotService, InterviewerSlotService interviewerSlotService,
+      BookingValidator bookingValidator) {
     this.bookingRepository = bookingRepository;
     this.periodService = periodService;
     this.candidateSlotService = candidateSlotService;
     this.interviewerSlotService = interviewerSlotService;
+    this.bookingValidator = bookingValidator;
   }
 
+  /**
+   * Find Booking by id from repository.
+   *
+   * @throws BookingNotFoundException if no booking with given id
+   */
   public Booking findById(Long id) {
     return bookingRepository.findById(id).orElseThrow(BookingNotFoundException::new);
   }
 
-
-  public Booking save(Booking booking) {
-    return bookingRepository.save(booking);
-  }
-
-  public void populateFields(Booking booking, BookingDto bookingDto) {
-
-    Period period = periodService.obtainPeriod(bookingDto.getFrom(), bookingDto.getTo());
-    booking.setPeriod(period);
-
-    String subject = booking.getSubject();
-    booking.setSubject(subject);
-
-    String description = booking.getDescription();
-    booking.setDescription(description);
+  /**
+   * Update booking: validate InterviewSlot, CandidateSlot, Period parameters and populate fields.
+   *
+   * @throws InvalidBoundariesException if validation failed
+   * @throws SlotsAreNotIntersectingException if validation failed
+   */
+  public void updateBooking(Booking updatingBooking, BookingDto bookingDto) {
+    InterviewerSlot interviewerSlot = interviewerSlotService
+        .findById(bookingDto.getInterviewerSlotId());
 
     CandidateSlot candidateSlot = candidateSlotService
         .findById(bookingDto.getCandidateSlotId());
-    booking.setCandidateSlot(candidateSlot);
 
-    InterviewerSlot interviewerSlot = interviewerSlotService
-        .findById(bookingDto.getInterviewerSlotId());
-    booking.setInterviewerSlot(interviewerSlot);
+    Period period = periodService.obtainPeriod(
+        bookingDto.getFrom(),
+        bookingDto.getTo());
+
+    bookingValidator.validateParameters(updatingBooking, interviewerSlot, candidateSlot, period);
+
+    updatingBooking.setSubject(bookingDto.getSubject());
+    updatingBooking.setDescription(bookingDto.getDescription());
+
+    updatingBooking.setInterviewerSlot(interviewerSlot);
+    updatingBooking.setCandidateSlot(candidateSlot);
+    updatingBooking.setPeriod(period);
   }
 }

@@ -41,12 +41,12 @@ public class PeriodService {
   *     wrong business logic
   */
   public Period obtainPeriod(String fromString, String toString) {
-    LocalTime from, to;
-    try{
+    LocalTime from;
+    LocalTime to;
+    try {
       from = timeService.convert(fromString);
       to = timeService.convert(toString);
-    }
-    catch (IllegalArgumentException iae){
+    } catch (IllegalArgumentException iae) {
       throw new InvalidBoundariesException();
     }
     return obtainPeriod(from, to);

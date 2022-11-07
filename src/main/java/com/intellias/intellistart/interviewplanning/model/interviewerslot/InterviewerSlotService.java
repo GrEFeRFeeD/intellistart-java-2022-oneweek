@@ -1,7 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +24,11 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Get Optional of InterviewerSlot from database.
+   * Find InterviewerSlot in database by id.
    *
    * @param id - Long id of InterviewerSlot to find
    *
-   * @return {@link Optional} of {@link InterviewerSlot}
+   * @throws InterviewerSlotNotFoundException if slot with given id is not present
    */
   public InterviewerSlot findById(Long id) {
     return interviewerSlotRepository

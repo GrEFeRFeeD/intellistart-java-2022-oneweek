@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Booking data transfer object from RestController.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -19,6 +22,9 @@ public class BookingDto {
   private String subject;
   private String description;
 
+  /**
+   * Constructor.
+   */
   public BookingDto(Booking booking) {
     this.candidateSlotId = booking.getCandidateSlot().getId();
     this.interviewerSlotId = booking.getInterviewerSlot().getId();

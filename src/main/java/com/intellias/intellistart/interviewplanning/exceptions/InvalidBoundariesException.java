@@ -1,7 +1,10 @@
 package com.intellias.intellistart.interviewplanning.exceptions;
 
 /**
- * Is thrown in obtaining periods when parameters are invalid:
- * can't be read as time or wrong business logic.
+ * Is thrown in obtaining periods when parameters are invalid.
+ * <ul>
+ * <li>can't be read as time
+ * <li>wrong business logic.
+ * </ul>
  */
 public class InvalidBoundariesException extends IllegalArgumentException {}
