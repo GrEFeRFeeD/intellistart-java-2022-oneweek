@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,29 @@ public class UserService {
    */
   public User getUserByEmail(String email) {
     return userRepository.findByEmail(email);
+  }
+
+  /**
+   * Method for grant the user a role by email.
+   *
+   * @param email - email address of the user to whom we will give the role.
+   * @param roleOfUser - the role to grant the user.
+   *
+   * @return User - user to whom we granted the role.
+   *
+   * @throws UserAlreadyHasRoleException - - when user already has role.
+   */
+  public User grantRoleByEmail(String email, Role roleOfUser) throws UserAlreadyHasRoleException {
+    User user = getUserByEmail(email);
+    if (user != null) {
+      throw new UserAlreadyHasRoleException();
+    }
+
+    user = new User();
+    user.setEmail(email);
+    user.setRole(roleOfUser);
+
+    return userRepository.save(user);
   }
 }
 
