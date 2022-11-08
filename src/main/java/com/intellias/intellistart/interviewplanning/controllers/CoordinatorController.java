@@ -46,9 +46,10 @@ public class CoordinatorController {
       @PathVariable Long id) {
 
     Booking updatingBooking = bookingService.findById(id);
-    bookingService.updateBooking(updatingBooking, bookingDto);
+    Booking updatedBooking = bookingService.getUpdatedBooking(updatingBooking, bookingDto);
 
-    return ResponseEntity.ok(new BookingDto(updatingBooking));
+    ///TODO: maybe repository explicitly here?
+    return ResponseEntity.ok(new BookingDto(updatedBooking));
   }
 
   /**
@@ -69,8 +70,8 @@ public class CoordinatorController {
       @RequestBody BookingDto bookingDto) {
 
     Booking newBooking = new Booking();
-    bookingService.updateBooking(newBooking, bookingDto);
+    Booking updatedBooking = bookingService.getUpdatedBooking(newBooking, bookingDto);
 
-    return ResponseEntity.ok(new BookingDto(newBooking));
+    return ResponseEntity.ok(new BookingDto(updatedBooking));
   }
 }

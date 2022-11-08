@@ -1,7 +1,10 @@
-package com.intellias.intellistart.interviewplanning.model.booking;
+package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidDescriptionException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidSubjectException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
+import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -9,18 +12,22 @@ import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Business logic Booking validator.
  */
-public class BookingValidator {
-
+@Component
+public class BookingDataValidator {
+  //TODO : fix javadoc
   private static final int BOOKING_PERIOD_DURATION_MINUTES = 90;
+  private static final int DESCRIPTION_MAX_SIZE = 4000;
+  private static final int SUBJECT_MAX_SIZE = 255;
   private final PeriodService periodService;
   private final TimeService timeService;
 
   @Autowired
-  public BookingValidator(PeriodService periodService, TimeService timeService) {
+  public BookingDataValidator(PeriodService periodService, TimeService timeService) {
     this.periodService = periodService;
     this.timeService = timeService;
   }
@@ -28,18 +35,18 @@ public class BookingValidator {
   /**
    * Perform business logic validation of Booking parameters.
    *
-   * @param oldBooking Booking with old parameters
+   * @param updatingBooking Booking with old parameters
    *
    * @throws InvalidBoundariesException if duration of new Period is invalid
    * @throws SlotsAreNotIntersectingException if
    *     periods of InterviewSlot, CandidateSlot do not intersect with new Period or
    *     new Period is overlapping with existing Periods of InterviewerSlot and CandidateSlot
    */
-  public void validateParameters(
-      Booking oldBooking,
-      InterviewerSlot interviewerSlot,
-      CandidateSlot candidateSlot,
-      Period newPeriod) {
+  public void validate(Booking updatingBooking, BookingData newData) {
+
+    Period newPeriod = newData.getPeriod();
+    InterviewerSlot newInterviewerSlot = newData.getInterviewerSlot();
+    CandidateSlot newCandidateSlot = newData.getCandidateSlot();
 
     int periodDuration = timeService.calculateDurationMinutes(
         newPeriod.getFrom(), newPeriod.getTo());
@@ -47,19 +54,26 @@ public class BookingValidator {
       throw new InvalidBoundariesException();
     }
 
-    if (!periodService.isFirstInsideSecond(newPeriod, interviewerSlot.getPeriod())
-        || !periodService.isFirstInsideSecond(newPeriod, candidateSlot.getPeriod())) {
+    if (!periodService.isFirstInsideSecond(newPeriod, newInterviewerSlot.getPeriod())
+        || !periodService.isFirstInsideSecond(newPeriod, newCandidateSlot.getPeriod())) {
       throw new SlotsAreNotIntersectingException();
     }
 
-    Collection<Booking> interviewSlotBookings = interviewerSlot.getBookings();
-    Collection<Booking> candidateSlotBookings = candidateSlot.getBookings();
+    Collection<Booking> interviewSlotBookings = newInterviewerSlot.getBookings();
+    Collection<Booking> candidateSlotBookings = newCandidateSlot.getBookings();
+
+    if(newData.getSubject().length() <= SUBJECT_MAX_SIZE) {
+      throw new InvalidSubjectException();
+    }
+    if (newData.getDescription().length() <= DESCRIPTION_MAX_SIZE) {
+      throw new InvalidDescriptionException();
+    }
 
     validatePeriodNotOverlappingWithOtherBookingPeriods(
-        oldBooking, newPeriod, interviewSlotBookings);
+        updatingBooking, newPeriod, interviewSlotBookings);
 
     validatePeriodNotOverlappingWithOtherBookingPeriods(
-        oldBooking, newPeriod, candidateSlotBookings);
+        updatingBooking, newPeriod, candidateSlotBookings);
   }
 
   private void validatePeriodNotOverlappingWithOtherBookingPeriods(

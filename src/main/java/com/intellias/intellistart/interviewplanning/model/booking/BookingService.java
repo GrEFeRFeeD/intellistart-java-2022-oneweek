@@ -4,6 +4,8 @@ import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
+import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingData;
+import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingDataValidator;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -19,25 +21,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookingService {
 
+  //TODO : fix javadoc
   private final BookingRepository bookingRepository;
+  private final BookingDataValidator bookingDataValidator;
   private final PeriodService periodService;
   private final CandidateSlotService candidateSlotService;
   private final InterviewerSlotService interviewerSlotService;
-
-  private final BookingValidator bookingValidator;
 
   /**
    * Constructor.
    */
   @Autowired
-  public BookingService(BookingRepository bookingRepository, PeriodService periodService,
-      CandidateSlotService candidateSlotService, InterviewerSlotService interviewerSlotService,
-      BookingValidator bookingValidator) {
+  public BookingService(BookingRepository bookingRepository,
+      BookingDataValidator bookingDataValidator, PeriodService periodService,
+      CandidateSlotService candidateSlotService, InterviewerSlotService interviewerSlotService) {
+
     this.bookingRepository = bookingRepository;
+    this.bookingDataValidator = bookingDataValidator;
     this.periodService = periodService;
     this.candidateSlotService = candidateSlotService;
     this.interviewerSlotService = interviewerSlotService;
-    this.bookingValidator = bookingValidator;
   }
 
   /**
@@ -55,7 +58,16 @@ public class BookingService {
    * @throws InvalidBoundariesException if validation failed
    * @throws SlotsAreNotIntersectingException if validation failed
    */
-  public void updateBooking(Booking updatingBooking, BookingDto bookingDto) {
+  public Booking getUpdatedBooking(Booking updatingBooking, BookingDto bookingDto) {
+    BookingData bookingData = createBookingData(bookingDto);
+
+    bookingDataValidator.validate(updatingBooking, bookingData);
+    populateFields(updatingBooking, bookingData);
+
+    return bookingRepository.save(updatingBooking);
+  }
+
+  BookingData createBookingData(BookingDto bookingDto){
     InterviewerSlot interviewerSlot = interviewerSlotService
         .findById(bookingDto.getInterviewerSlotId());
 
@@ -66,13 +78,20 @@ public class BookingService {
         bookingDto.getFrom(),
         bookingDto.getTo());
 
-    bookingValidator.validateParameters(updatingBooking, interviewerSlot, candidateSlot, period);
+    return new BookingData(
+        bookingDto.getSubject(),
+        bookingDto.getDescription(),
+        interviewerSlot,
+        candidateSlot,
+        period);
+  }
 
-    updatingBooking.setSubject(bookingDto.getSubject());
-    updatingBooking.setDescription(bookingDto.getDescription());
-
-    updatingBooking.setInterviewerSlot(interviewerSlot);
-    updatingBooking.setCandidateSlot(candidateSlot);
-    updatingBooking.setPeriod(period);
+  //TODO : public private?
+  void populateFields(Booking booking, BookingData bookingData){
+    booking.setSubject(bookingData.getSubject());
+    booking.setDescription(bookingData.getDescription());
+    booking.setInterviewerSlot(bookingData.getInterviewerSlot());
+    booking.setCandidateSlot(bookingData.getCandidateSlot());
+    booking.setPeriod(bookingData.getPeriod());
   }
 }
