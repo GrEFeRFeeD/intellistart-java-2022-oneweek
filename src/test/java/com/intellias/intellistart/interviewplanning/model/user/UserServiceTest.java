@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,8 @@ public class UserServiceTest {
   private static UserService cut;
   private static User user1;
   private static User user2;
+  private static User user3;
+  private static User user4;
 
   @BeforeAll
   static void initialize() {
@@ -28,6 +31,14 @@ public class UserServiceTest {
     user2.setId(2L);
     user2.setEmail("test2@mail.com");
     user2.setRole(Role.INTERVIEWER);
+
+    user3 = new User();
+    user3.setEmail("test3@mail.com");
+    user3.setRole(Role.COORDINATOR);
+
+    user4 = new User();
+    user4.setEmail("test4@mail.com");
+    user4.setRole(Role.INTERVIEWER);
   }
 
   static Arguments[] getUserByEmailTestArgs(){
@@ -45,4 +56,35 @@ public class UserServiceTest {
     Assertions.assertEquals(expected, actual);
   }
 
+  static Arguments[] grantRoleByEmailTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments("test3@mail.com", Role.COORDINATOR, user3),
+        Arguments.arguments("test4@mail.com", Role.INTERVIEWER, user4)
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("grantRoleByEmailTestArgs")
+  void grantRoleByEmailTest(String email, Role role, User expected)
+      throws UserAlreadyHasRoleException {
+    Mockito.when(userRepository.findByEmail(email)).thenReturn(null);
+    Mockito.when(userRepository.save(expected)).thenReturn(expected);
+
+    User actual = cut.grantRoleByEmail(email, role);
+    Assertions.assertEquals(expected, actual);
+  }
+
+  static Arguments[] grantRoleByEmailTestExcArgs(){
+    return new Arguments[]{
+        Arguments.arguments("test3@mail.com", Role.COORDINATOR, user3),
+        Arguments.arguments("test4@mail.com", Role.INTERVIEWER, user4)
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("grantRoleByEmailTestExcArgs")
+  void grantRoleByEmailTestException(String email, Role role, User user) {
+    Mockito.when(userRepository.findByEmail(email)).thenReturn(user);
+
+    Class<UserAlreadyHasRoleException> actual = UserAlreadyHasRoleException.class;
+    Assertions.assertThrows(actual, () -> cut.grantRoleByEmail(email, role));
+  }
 }
