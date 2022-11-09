@@ -2,12 +2,14 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.Users;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +55,12 @@ public class CoordinatorController {
   public ResponseEntity<User> grantCoordinatorByEmail(@RequestBody EmailDto request)
       throws UserAlreadyHasRoleException {
     return ResponseEntity.ok(userService.grantRoleByEmail(request.getEmail(), Role.COORDINATOR));
+  }
+
+  @GetMapping("/users/interviewers")
+  public ResponseEntity<Users> getAllInterviewers() {
+    Users users = new Users();
+    users.setUsers(userService.obtainUsersByRole(Role.INTERVIEWER));
+    return ResponseEntity.ok(users);
   }
 }

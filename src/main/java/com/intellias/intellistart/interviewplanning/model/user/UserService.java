@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,10 @@ public class UserService {
     user.setRole(roleOfUser);
 
     return userRepository.save(user);
+  }
+
+  public List<User> obtainUsersByRole(Role role) {
+    return userRepository.findByRole(role);
   }
 }
 
