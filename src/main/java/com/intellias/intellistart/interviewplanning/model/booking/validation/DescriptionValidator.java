@@ -6,7 +6,7 @@ import javax.validation.ConstraintValidatorContext;
 public class DescriptionValidator implements
     ConstraintValidator<DescriptionConstraint, String> {
 
-  private final static int MAX_DESCRIPTION_SIZE = 4;
+  private static final int MAX_DESCRIPTION_SIZE = 4;
 
   @Override
   public void initialize(DescriptionConstraint constraintAnnotation) {

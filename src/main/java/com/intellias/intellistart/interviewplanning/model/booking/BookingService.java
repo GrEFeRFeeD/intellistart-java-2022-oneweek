@@ -59,15 +59,15 @@ public class BookingService {
    * @throws SlotsAreNotIntersectingException if validation failed
    */
   public Booking getUpdatedBooking(Booking updatingBooking, BookingDto bookingDto) {
-    BookingData bookingData = createBookingData(bookingDto);
 
+    BookingData bookingData = createBookingData(bookingDto);
     bookingDataValidator.validate(updatingBooking, bookingData);
     populateFields(updatingBooking, bookingData);
 
     return bookingRepository.save(updatingBooking);
   }
 
-  BookingData createBookingData(BookingDto bookingDto){
+  BookingData createBookingData(BookingDto bookingDto) {
     InterviewerSlot interviewerSlot = interviewerSlotService
         .findById(bookingDto.getInterviewerSlotId());
 
@@ -87,7 +87,7 @@ public class BookingService {
   }
 
   //TODO : public private?
-  void populateFields(Booking booking, BookingData bookingData){
+  void populateFields(Booking booking, BookingData bookingData) {
     booking.setSubject(bookingData.getSubject());
     booking.setDescription(bookingData.getDescription());
     booking.setInterviewerSlot(bookingData.getInterviewerSlot());

@@ -49,6 +49,22 @@ class PeriodServiceTest {
     tenToTwoPeriod = createPeriod(LocalTime.of(10, 0), LocalTime.of(14,0));
   }
 
+  @Test
+  void exceptionWhenIncorrectValidation(){
+    String fromStr = "19:00";
+    String toStr = "23:00";
+    LocalTime from = LocalTime.of(19, 0);
+    LocalTime to = LocalTime.of(23, 0);
+
+    Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
+
+    Mockito.when(converter.convert(fromStr)).thenReturn(from);
+    Mockito.when(converter.convert(toStr)).thenReturn(to);
+
+    assertThrows(InvalidBoundariesException.class, () ->
+        cut.obtainPeriod(fromStr, toStr));
+  }
+
   static Stream<Arguments> provideObtainPeriodArguments(){
     return Stream.of(
         Arguments.of(
@@ -66,22 +82,6 @@ class PeriodServiceTest {
             "21:00",
             LocalTime.of(12, 30),
             LocalTime.of(21,0)));
-  }
-
-  @Test
-  void exceptionWhenIncorrectValidation(){
-    String fromStr = "19:00";
-    String toStr = "23:00";
-    LocalTime from = LocalTime.of(19, 0);
-    LocalTime to = LocalTime.of(23, 0);
-
-    Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
-
-    Mockito.when(converter.convert(fromStr)).thenReturn(from);
-    Mockito.when(converter.convert(toStr)).thenReturn(to);
-
-    assertThrows(InvalidBoundariesException.class, () ->
-        cut.obtainPeriod(fromStr, toStr));
   }
 
   @ParameterizedTest

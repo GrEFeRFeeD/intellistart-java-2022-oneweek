@@ -43,10 +43,7 @@ public class BookingDataValidator {
    *     new Period is overlapping with existing Periods of InterviewerSlot and CandidateSlot
    */
   public void validate(Booking updatingBooking, BookingData newData) {
-
     Period newPeriod = newData.getPeriod();
-    InterviewerSlot newInterviewerSlot = newData.getInterviewerSlot();
-    CandidateSlot newCandidateSlot = newData.getCandidateSlot();
 
     int periodDuration = timeService.calculateDurationMinutes(
         newPeriod.getFrom(), newPeriod.getTo());
@@ -54,20 +51,23 @@ public class BookingDataValidator {
       throw new InvalidBoundariesException();
     }
 
+    InterviewerSlot newInterviewerSlot = newData.getInterviewerSlot();
+    CandidateSlot newCandidateSlot = newData.getCandidateSlot();
+
     if (!periodService.isFirstInsideSecond(newPeriod, newInterviewerSlot.getPeriod())
         || !periodService.isFirstInsideSecond(newPeriod, newCandidateSlot.getPeriod())) {
       throw new SlotsAreNotIntersectingException();
     }
 
-    Collection<Booking> interviewSlotBookings = newInterviewerSlot.getBookings();
-    Collection<Booking> candidateSlotBookings = newCandidateSlot.getBookings();
-
-    if(newData.getSubject().length() <= SUBJECT_MAX_SIZE) {
+    if (newData.getSubject().length() <= SUBJECT_MAX_SIZE) {
       throw new InvalidSubjectException();
     }
     if (newData.getDescription().length() <= DESCRIPTION_MAX_SIZE) {
       throw new InvalidDescriptionException();
     }
+
+    Collection<Booking> interviewSlotBookings = newInterviewerSlot.getBookings();
+    Collection<Booking> candidateSlotBookings = newCandidateSlot.getBookings();
 
     validatePeriodNotOverlappingWithOtherBookingPeriods(
         updatingBooking, newPeriod, interviewSlotBookings);

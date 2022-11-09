@@ -10,7 +10,7 @@ import javax.validation.Payload;
 
 @Documented
 @Constraint(validatedBy = DescriptionValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DescriptionConstraint {
   String message() default "Sorry, passwords does not match";
