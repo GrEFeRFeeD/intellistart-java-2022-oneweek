@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -86,5 +87,21 @@ public class UserServiceTest {
 
     Class<UserAlreadyHasRoleException> actual = UserAlreadyHasRoleException.class;
     Assertions.assertThrows(actual, () -> cut.grantRoleByEmail(email, role));
+  }
+
+  static Arguments[] obtainUsersByRoleTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(Role.COORDINATOR, List.of(user1)),
+        Arguments.arguments(Role.INTERVIEWER, List.of(user2)),
+        Arguments.arguments(Role.INTERVIEWER, null)
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("obtainUsersByRoleTestArgs")
+  void obtainUsersByRoleTest(Role role, List<User> expected) {
+    Mockito.when(userRepository.findByRole(role)).thenReturn(expected);
+
+    List<User> actual = cut.obtainUsersByRole(role);
+    Assertions.assertEquals(expected, actual);
   }
 }
