@@ -1,7 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -12,4 +14,6 @@ public interface InterviewerSlotRepository extends CrudRepository<InterviewerSlo
       Long userId, Long weekId, DayOfWeek dayOfWeek);
 
   List<InterviewerSlot> getInterviewerSlotsByUserEmailAndWeekId(String userEmail, Long weekId);
+
+  Set<InterviewerSlot> findByWeek(Week week);
 }

@@ -27,25 +27,21 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Booking {
 
-  @EmbeddedId
-  private BookingKey id;
+  private Long id;
 
   private String subject;
 
   private String description;
 
   @ManyToOne
-  @MapsId("interviewerSlotId")
   @JoinColumn(name = "interviewer_slot_id")
   private InterviewerSlot interviewerSlot;
 
   @ManyToOne
-  @MapsId("candidateSlotId")
   @JoinColumn(name = "candidate_slot_id")
   private CandidateSlot candidateSlot;
 
   @ManyToOne
-  @MapsId("periodId")
   @JoinColumn(name = "period_id")
   private Period period;
 
