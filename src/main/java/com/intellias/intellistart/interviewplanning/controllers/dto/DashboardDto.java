@@ -21,7 +21,6 @@ import lombok.Setter;
 @Setter
 public class DashboardDto {
 
-  private DayOfWeek dayOfWeek;
   private Set<DashboardInterviewerSlot> interviewerSlots = new HashSet<>();
   private Set<DashboardCandidateSlot> candidateSlots = new HashSet<>();
   private Map<Long, Booking> bookings = new HashMap<>();
