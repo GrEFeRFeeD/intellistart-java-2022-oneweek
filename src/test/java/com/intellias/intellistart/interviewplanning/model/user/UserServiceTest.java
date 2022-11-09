@@ -1,9 +1,12 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -107,5 +110,52 @@ public class UserServiceTest {
 
     List<User> actual = cut.obtainUsersByRole(role);
     Assertions.assertEquals(expected, actual);
+  }
+
+  static Arguments[] deleteInterviewerTestTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(4L, user4),
+        Arguments.arguments(2L, user2),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteInterviewerTestTestArgs")
+  void deleteInterviewerTest(Long id, User expected)
+      throws UserNotFoundException, UserHasAnotherRoleException {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(expected));
+    Mockito.doNothing().when(interviewerSlotService).deleteSlotsByUser(expected);
+
+    User actual = cut.deleteInterviewer(id);
+    Assertions.assertEquals(expected, actual);
+  }
+
+  static Arguments[] deleteInterviewerTestUserNotFoundTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(4L),
+        Arguments.arguments(2L),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteInterviewerTestUserNotFoundTestArgs")
+  void deleteInterviewerUserNotFoundTest(Long id) {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+    Class<UserNotFoundException> actual = UserNotFoundException.class;
+    Assertions.assertThrows(actual, () -> cut.deleteInterviewer(id));
+  }
+
+  static Arguments[] deleteInterviewerUserAlreadyHasRoleTestTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(1L, user1),
+        Arguments.arguments(3L, user3),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteInterviewerUserAlreadyHasRoleTestTestArgs")
+  void deleteInterviewerUserAlreadyHasRoleTest(Long id, User user) {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+    Class<UserHasAnotherRoleException> actual = UserHasAnotherRoleException.class;
+    Assertions.assertThrows(actual, () -> cut.deleteInterviewer(id));
   }
 }
