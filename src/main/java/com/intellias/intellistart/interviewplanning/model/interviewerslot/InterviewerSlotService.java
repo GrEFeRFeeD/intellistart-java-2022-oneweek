@@ -64,7 +64,7 @@ public class InterviewerSlotService {
         interviewerSlotRepository.findInterviewerSlotsByUser(user);
 
     for (InterviewerSlot interviewerSlot : interviewerSlots) {
-      if (!interviewerSlot.getBookings().isEmpty()) {
+      if (interviewerSlot.getBookings() != null && !interviewerSlot.getBookings().isEmpty()) {
         bookingService.deleteBookings(interviewerSlot.getBookings());
       }
     }
