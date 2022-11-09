@@ -86,6 +86,16 @@ public class CoordinatorController {
     return ResponseEntity.ok(users);
   }
 
+  /**
+   * DELETE request for deleting interviewer.
+   *
+   * @param id - the interviewer's id to delete.
+   *
+   * @return ResponseEntity - the deleted user.
+   *
+   * @throws UserNotFoundException - when the user not found by given id.
+   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
+   */
   @DeleteMapping("/users/interviewers/{id}")
   public ResponseEntity<User> deleteInterviewerById(@PathVariable("id") Long id)
       throws UserNotFoundException, UserHasAnotherRoleException {
