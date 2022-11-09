@@ -1,16 +1,18 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
-
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.Users;
+import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
+import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,5 +101,24 @@ public class CoordinatorController {
   public ResponseEntity<User> deleteInterviewerById(@PathVariable("id") Long id)
       throws UserNotFoundException, UserHasAnotherRoleException {
     return ResponseEntity.ok(userService.deleteInterviewer(id));
+  }
+
+  /**
+   * DELETE request for deleting interviewer.
+   *
+   * @param id - the interviewer's id to delete.
+   *
+   * @return ResponseEntity - the deleted user.
+   *
+   * @throws UserNotFoundException - when the user not found by given id.
+   * @throws SelfRevokingException - when the coordinator removes himself.
+   */
+  @DeleteMapping("/users/coordinators/{id}")
+  public ResponseEntity<User> deleteCoordinatorById(@PathVariable("id") Long id,
+      Authentication authentication) throws UserNotFoundException, SelfRevokingException {
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+    String currentEmailCoordinator = jwtUserDetails.getEmail();
+    return ResponseEntity.ok(userService.deleteCoordinator(id, currentEmailCoordinator));
   }
 }

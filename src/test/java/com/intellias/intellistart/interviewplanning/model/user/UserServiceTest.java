@@ -3,7 +3,6 @@ package com.intellias.intellistart.interviewplanning.model.user;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
 import java.util.Optional;

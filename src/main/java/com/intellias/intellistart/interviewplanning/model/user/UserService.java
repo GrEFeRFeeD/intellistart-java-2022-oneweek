@@ -1,9 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
 import java.util.Optional;
@@ -100,6 +100,32 @@ public class UserService {
     }
 
     interviewerSlotService.deleteSlotsByUser(user);
+
+    userRepository.delete(user);
+    return user;
+  }
+
+  /**
+   * Method will return the coordinator whom we will delete.
+   * Before deleting, the method checks that the coordinator to be deleted is not himself.
+   *
+   * @param id - the coordinator's id to delete.
+   * @param currentEmailCoordinator - email of current user.
+   *
+   * @return User - the deleted user.
+   *
+   * @throws UserNotFoundException - when the user not found by given id.
+   * @throws SelfRevokingException - when the coordinator removes himself.
+   */
+  public User deleteCoordinator(Long id, String currentEmailCoordinator)
+      throws UserNotFoundException, SelfRevokingException {
+
+    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    User currentUser = userRepository.findByEmail(currentEmailCoordinator);
+
+    if (user.getId() == currentUser.getId()) {
+      throw new SelfRevokingException();
+    }
 
     userRepository.delete(user);
     return user;
