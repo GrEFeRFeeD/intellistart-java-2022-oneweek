@@ -116,12 +116,17 @@ public class UserService {
    *
    * @throws UserNotFoundException - when the user not found by given id.
    * @throws SelfRevokingException - when the coordinator removes himself.
+   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
    */
   public User deleteCoordinator(Long id, String currentEmailCoordinator)
-      throws UserNotFoundException, SelfRevokingException {
+      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
 
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     User currentUser = userRepository.findByEmail(currentEmailCoordinator);
+
+    if (user.getRole() != Role.COORDINATOR) {
+      throw new UserHasAnotherRoleException();
+    }
 
     if (user.getId() == currentUser.getId()) {
       throw new SelfRevokingException();

@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
@@ -22,6 +23,7 @@ public class UserServiceTest {
   private static User user2;
   private static User user3;
   private static User user4;
+  private static User user5;
 
   @BeforeAll
   static void initialize() {
@@ -46,6 +48,11 @@ public class UserServiceTest {
     user4 = new User();
     user4.setEmail("test4@mail.com");
     user4.setRole(Role.INTERVIEWER);
+
+    user5 = new User();
+    user5.setId(5L);
+    user5.setEmail("test5@mail.com");
+    user5.setRole(Role.COORDINATOR);
   }
 
   static Arguments[] getUserByEmailTestArgs(){
@@ -156,5 +163,70 @@ public class UserServiceTest {
 
     Class<UserHasAnotherRoleException> actual = UserHasAnotherRoleException.class;
     Assertions.assertThrows(actual, () -> cut.deleteInterviewer(id));
+  }
+
+  static Arguments[] deleteCoordinatorTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(4L, "test5@mail.com", user1),
+        Arguments.arguments(2L,"test5@mail.com", user3),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteCoordinatorTestArgs")
+  void deleteCoordinatorTest(Long id, String email, User expected)
+      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(expected));
+    Mockito.when(userRepository.findByEmail(email)).thenReturn(user5);
+    Mockito.doNothing().when(interviewerSlotService).deleteSlotsByUser(expected);
+
+    User actual = cut.deleteCoordinator(id, email);
+    Assertions.assertEquals(expected, actual);
+  }
+
+  static Arguments[] deleteCoordinatorUserNotFoundTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(44L, "test5@mail.com"),
+        Arguments.arguments(24L, "test5@mail.com"),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteCoordinatorUserNotFoundTestArgs")
+  void deleteCoordinatorUserNotFoundTest(Long id, String email) {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+    Class<UserNotFoundException> actual = UserNotFoundException.class;
+    Assertions.assertThrows(actual, () -> cut.deleteCoordinator(id, email));
+  }
+
+  static Arguments[] deleteCoordinatorSelfRevokingTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(1L, "test1@mail.com", user1),
+        Arguments.arguments(5L, "test5@mail.com", user5),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteCoordinatorSelfRevokingTestArgs")
+  void deleteCoordinatorSelfRevokingTest(Long id, String email, User user) {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+    Mockito.when(userRepository.findByEmail(email)).thenReturn(user);
+
+    Class<SelfRevokingException> actual = SelfRevokingException.class;
+    Assertions.assertThrows(actual, () -> cut.deleteCoordinator(id, email));
+  }
+
+  static Arguments[] deleteCoordinatorUserHasAnotherRoleTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(2L, "test5@mail.com", user2),
+        Arguments.arguments(4L, "test5@mail.com", user4),
+    };
+  }
+  @ParameterizedTest
+  @MethodSource("deleteCoordinatorUserHasAnotherRoleTestArgs")
+  void deleteCoordinatorUserHasAnotherRoleTest(Long id, String email, User user) {
+    Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+    Mockito.when(userRepository.findByEmail(email)).thenReturn(user5);
+
+    Class<UserHasAnotherRoleException> actual = UserHasAnotherRoleException.class;
+    Assertions.assertThrows(actual, () -> cut.deleteCoordinator(id, email));
   }
 }

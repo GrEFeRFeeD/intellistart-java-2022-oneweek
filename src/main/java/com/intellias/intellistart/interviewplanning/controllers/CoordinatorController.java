@@ -115,7 +115,8 @@ public class CoordinatorController {
    */
   @DeleteMapping("/users/coordinators/{id}")
   public ResponseEntity<User> deleteCoordinatorById(@PathVariable("id") Long id,
-      Authentication authentication) throws UserNotFoundException, SelfRevokingException {
+      Authentication authentication)
+      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     String currentEmailCoordinator = jwtUserDetails.getEmail();
