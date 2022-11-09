@@ -72,6 +72,13 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  /**
+   * Method returned the list of users by given role from DB.
+   *
+   * @param role - role on which the database will be searched.
+   *
+   * @return List of users by given role.
+   */
   public List<User> obtainUsersByRole(Role role) {
     return userRepository.findByRole(role);
   }

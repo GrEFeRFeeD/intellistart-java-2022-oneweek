@@ -57,10 +57,27 @@ public class CoordinatorController {
     return ResponseEntity.ok(userService.grantRoleByEmail(request.getEmail(), Role.COORDINATOR));
   }
 
+  /**
+   * GET request to get a list of users with the interviewer role.
+   *
+   * @return ResponseEntity - Response of the list of users with the interviewer role.
+   */
   @GetMapping("/users/interviewers")
   public ResponseEntity<Users> getAllInterviewers() {
     Users users = new Users();
     users.setUsers(userService.obtainUsersByRole(Role.INTERVIEWER));
+    return ResponseEntity.ok(users);
+  }
+
+  /**
+   * GET request to get a list of users with the coordinator role.
+   *
+   * @return ResponseEntity - Response of the list of users with the coordinator role.
+   */
+  @GetMapping("/users/coordinators")
+  public ResponseEntity<Users> getAllCoordinators() {
+    Users users = new Users();
+    users.setUsers(userService.obtainUsersByRole(Role.COORDINATOR));
     return ResponseEntity.ok(users);
   }
 }
