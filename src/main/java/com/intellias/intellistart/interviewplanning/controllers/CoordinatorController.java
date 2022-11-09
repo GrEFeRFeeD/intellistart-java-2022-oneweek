@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardInterviewerSlot;
+import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardMapDto;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
@@ -29,6 +30,7 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -164,38 +166,19 @@ public class CoordinatorController {
 
     Week week = weekService.getWeekByWeekNum(weekId);
 
+    DashboardMapDto dashboardMapDto = new DashboardMapDto();
+
     Set<InterviewerSlot> interviewerSlots = interviewerSlotService.getSlotsByWeek(week);
 
-    Map<DayOfWeek, DashboardDto> dashboard = initializeDashboard(interviewerSlots);
+    dashboardMapDto.addInterviewerSlots(interviewerSlots);
 
+    for (DayOfWeek dayOfWeek: DayOfWeek.values()) {
 
-
-    return ResponseEntity.ok(dashboard);
-  }
-
-  public Map<DayOfWeek, DashboardDto> initializeDashboard
-      (Set<InterviewerSlot> interviewerSlots) {
-
-    Map<DayOfWeek, DashboardDto> dashboard = new HashMap<>();
-
-    for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-      dashboard.put(dayOfWeek, new DashboardDto());
+      LocalDate date = weekService.convertToLocalDate(weekId, dayOfWeek);
+      Set<CandidateSlot> candidateSlots = candidateSlotService.getCandidateSlotsByDate(date);
+      dashboardMapDto.addCandidateSlots(candidateSlots);
     }
 
-    for (InterviewerSlot interviewerSlot : interviewerSlots) {
-
-      dashboard.get(interviewerSlot.getDayOfWeek())
-          .getInterviewerSlots()
-          .add(new DashboardInterviewerSlot(interviewerSlot));
-
-      Map<Long, Booking> bookingMap = interviewerSlot.getBookings().stream()
-          .collect(Collectors.toMap(Booking::getId, b -> b));
-
-      dashboard.get(interviewerSlot.getDayOfWeek())
-          .getBookings()
-          .putAll(bookingMap);
-    }
-
-    return dashboard;
+    return ResponseEntity.ok(dashboardMapDto);
   }
 }
