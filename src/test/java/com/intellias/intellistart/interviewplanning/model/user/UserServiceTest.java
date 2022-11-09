@@ -1,6 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +14,7 @@ import org.mockito.Mockito;
 public class UserServiceTest {
 
   private static UserRepository userRepository;
+  private static InterviewerSlotService interviewerSlotService;
   private static UserService cut;
   private static User user1;
   private static User user2;
@@ -21,7 +24,8 @@ public class UserServiceTest {
   @BeforeAll
   static void initialize() {
     userRepository = Mockito.mock(UserRepository.class);
-    cut = new UserService(userRepository);
+    interviewerSlotService = Mockito.mock(InterviewerSlotService.class);
+    cut = new UserService(userRepository, interviewerSlotService);
 
     user1 = new User();
     user1.setId(1L);

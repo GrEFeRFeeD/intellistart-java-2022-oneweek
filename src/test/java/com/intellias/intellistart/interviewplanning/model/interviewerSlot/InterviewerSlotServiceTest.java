@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
@@ -30,9 +31,10 @@ public class InterviewerSlotServiceTest {
 
   static InterviewerSlotRepository interviewerSlotRepository = Mockito.mock(
       InterviewerSlotRepository.class);
+  static BookingService bookingService = Mockito.mock(BookingService.class);
 
   InterviewerSlotService cut = new InterviewerSlotService(
-      interviewerSlotRepository
+      interviewerSlotRepository, bookingService
   );
 
 

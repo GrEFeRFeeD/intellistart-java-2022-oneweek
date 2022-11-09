@@ -1,6 +1,10 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +17,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final InterviewerSlotService interviewerSlotService;
 
   @Autowired
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository,
+      InterviewerSlotService interviewerSlotService) {
     this.userRepository = userRepository;
-  }
-
-  /**
-   * Method for gaining current authorized User object (not implemented yet).
-   *
-   * @return currently just newUser() without relationships.
-   */
-  public User getCurrentUser() {
-    User user = userRepository.findById(1L).get();
-    return user;
+    this.interviewerSlotService = interviewerSlotService;
   }
   
   /**
@@ -57,7 +54,7 @@ public class UserService {
    *
    * @return User - user to whom we granted the role.
    *
-   * @throws UserAlreadyHasRoleException - - when user already has role.
+   * @throws UserAlreadyHasRoleException - when user already has role.
    */
   public User grantRoleByEmail(String email, Role roleOfUser) throws UserAlreadyHasRoleException {
     User user = getUserByEmail(email);
@@ -81,6 +78,31 @@ public class UserService {
    */
   public List<User> obtainUsersByRole(Role role) {
     return userRepository.findByRole(role);
+  }
+
+  /**
+   * Method will return the interviewer whom we will delete.
+   * Before deleting, the method checks if the submitted id is really the interviewer.
+   * The method also deletes all the interviewer's bookings and slots before deleting.
+   *
+   * @param id - the interviewer's id to delete.
+   *
+   * @return User - the deleted user.
+   *
+   * @throws UserNotFoundException - when the user not found by given id.
+   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
+   */
+  public User deleteInterviewer(Long id) throws UserNotFoundException, UserHasAnotherRoleException {
+    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+
+    if (user.getRole() != Role.INTERVIEWER) {
+      throw new UserHasAnotherRoleException();
+    }
+
+    interviewerSlotService.deleteSlotsByUser(user);
+
+    userRepository.delete(user);
+    return user;
   }
 }
 
