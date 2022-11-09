@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @NoArgsConstructor
 public class CandidateSlotDto {
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate date;
 
   private String from;
