@@ -1,7 +1,6 @@
 package com.intellias.intellistart.interviewplanning.initialization;
 
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
-import com.intellias.intellistart.interviewplanning.model.booking.BookingKey;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingRepository;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitKey;
@@ -84,7 +83,7 @@ public class StartDataLoader implements ApplicationRunner {
         "candidate@gmail.com", "Facebook Candidate");
     p3.addCandidateSlot(cs1);
 
-    Booking b1 = new Booking(new BookingKey(), "Test subject", "Test description", is1, cs1, p4);
+    Booking b1 = new Booking(null, "Test subject", "Test description", is1, cs1, p4);
     is1.addBooking(b1);
     cs1.addBooking(b1);
 
