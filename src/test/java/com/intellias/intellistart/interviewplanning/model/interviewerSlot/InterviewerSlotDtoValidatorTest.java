@@ -42,10 +42,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class InterviewerSlotDtoValidatorTest {
 
   static UserRepository userRepository = Mockito.mock(UserRepository.class);
+  static InterviewerSlotService interviewerSlotService = Mockito.mock(InterviewerSlotService.class);
   static InterviewerSlotRepository interviewerSlotRepository =
       Mockito.mock(InterviewerSlotRepository.class);
+
   @MockBean
-  static UserService userService = new UserService(userRepository);
+  static UserService userService = new UserService(userRepository, interviewerSlotService);
   static PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
   static TimeConverter timeConverter = new TimeConverter();
   static PeriodValidator periodValidator = new PeriodValidator();
