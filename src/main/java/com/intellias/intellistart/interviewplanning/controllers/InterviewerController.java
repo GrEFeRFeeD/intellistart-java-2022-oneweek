@@ -3,6 +3,7 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingLimitDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -134,12 +136,13 @@ public class InterviewerController {
    * @param interviewerId   - user id from request
    * @return BookingLimitDto and HTTP status
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws InvalidBookingLimitException - invalid bookingLimit exception
    */
-  @PostMapping("/interviewers/{interviewerId}/bookinglimit")
+  @PostMapping("/interviewers/{interviewerId}/booking-limit")
   public ResponseEntity<BookingLimitDto> createBookingLimit(
       @RequestBody BookingLimitDto bookingLimitDto,
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException {
+      throws InvalidInterviewerException, InvalidBookingLimitException {
 
     bookingLimitDto.setUserId(interviewerId);
 
@@ -148,8 +151,42 @@ public class InterviewerController {
     return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
   }
 
-  private BookingLimit getBookingLimitFromDto(BookingLimitDto bookingLimitDto)
+  /**
+   * Request for getting booking limit for current week.
+   *
+   * @param interviewerId - user Id from request
+   * @return BookingLimitDto and HTTP status
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   */
+  @GetMapping("/interviewers/{interviewerId}/booking-limit/current-week")
+  public ResponseEntity<BookingLimitDto> getBookingLimitForCurrentWeek(
+      @PathVariable("interviewerId") Long interviewerId)
       throws InvalidInterviewerException {
+
+    BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(interviewerId);
+
+    return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
+  }
+
+  /**
+   * Request for getting booking limit for next week.
+   *
+   * @param interviewerId user Id from request
+   * @return BookingLimitDto and HTTP status
+   * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   */
+  @GetMapping("/interviewers/{interviewerId}/booking-limit/next-week")
+  public ResponseEntity<BookingLimitDto> getBookingLimitForNextWeek(
+      @PathVariable("interviewerId") Long interviewerId)
+      throws InvalidInterviewerException {
+
+    BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(interviewerId);
+
+    return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
+  }
+
+  private BookingLimit getBookingLimitFromDto(BookingLimitDto bookingLimitDto)
+      throws InvalidInterviewerException, InvalidBookingLimitException {
     return bookingLimitService.createBookingLimit(bookingLimitDto.getUserId(),
         bookingLimitDto.getBookingLimit());
   }

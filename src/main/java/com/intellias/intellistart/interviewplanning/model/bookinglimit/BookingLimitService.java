@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.bookinglimit;
 
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
@@ -34,33 +35,49 @@ public class BookingLimitService {
     this.userService = userService;
   }
 
+  public BookingLimit getBookingLimitForNextWeek(Long interviewerId)
+      throws InvalidInterviewerException {
+    return getBookingLimitByInterviewer(interviewerId, weekService.getNextWeek());
+  }
+
+  public BookingLimit getBookingLimitForCurrentWeek(Long interviewerId)
+      throws InvalidInterviewerException {
+    return getBookingLimitByInterviewer(interviewerId, weekService.getCurrentWeek());
+  }
+
   /**
-   * Return booking limit or create unlimited booking limit.
+   * Return booking limit of certain interviewer for certain week,
+   * or create infinite booking limit.
    *
-   * @param interviewerId - user id
-   * @param weekNum - number of week
+   * @param interviewerId - interviewer id
+   * @param week - certain week
    * @return BookingLimit
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    */
-  public BookingLimit getBookingLimitByInterviewer(Long interviewerId, Long weekNum)
+  public BookingLimit getBookingLimitByInterviewer(Long interviewerId, Week week)
       throws InvalidInterviewerException {
+
+    User user = userService.getUserById(interviewerId)
+        .orElseThrow(InvalidInterviewerException::new);
+
+    Long weekNum = week.getId();
+
     Optional<BookingLimit> bookingLimit = bookingLimitRepository
         .findById(new BookingLimitKey(interviewerId, weekNum));
 
-    if (bookingLimit.isPresent()) {
-      return bookingLimit.get();
-    } else if (weekNum > 0) {
-      return getBookingLimitByInterviewer(interviewerId, weekNum - 1);
+    while (weekNum > 0) {
+      if (bookingLimit.isPresent()) {
+        return bookingLimit.get();
+      }
+      weekNum--;
     }
-    return createInfiniteBookingLimit(interviewerId, weekService.getCurrentWeek());
+
+    return createInfiniteBookingLimit(user, week);
   }
 
-  private BookingLimit createInfiniteBookingLimit(Long interviewerId, Week currentWeek)
-      throws InvalidInterviewerException {
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
-    return new BookingLimit(new BookingLimitKey(interviewerId, currentWeek.getId()),
-        0, user, currentWeek);
+  private BookingLimit createInfiniteBookingLimit(User user, Week week) {
+    return bookingLimitRepository.save(new BookingLimit(new BookingLimitKey(user.getId(),
+        week.getId()), 0, user, week));
   }
 
   /**
@@ -72,15 +89,20 @@ public class BookingLimitService {
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    */
   public BookingLimit createBookingLimit(Long interviewerId, Integer bookingLimit)
-      throws InvalidInterviewerException {
+      throws InvalidInterviewerException, InvalidBookingLimitException {
+
     User user = userService.getUserById(interviewerId)
         .orElseThrow(InvalidInterviewerException::new);
 
-    Week nextWeekNum = weekService.getNextWeek();
+    if (bookingLimit <= 0) {
+      throw new InvalidBookingLimitException();
+    }
+
+    Week nextWeek = weekService.getNextWeek();
 
     BookingLimit newBookingLimit = new BookingLimit(
-        new BookingLimitKey(interviewerId, nextWeekNum.getId()),
-        bookingLimit, user, nextWeekNum);
+        new BookingLimitKey(interviewerId, nextWeek.getId()),
+        bookingLimit, user, nextWeek);
 
     return bookingLimitRepository.save(newBookingLimit);
   }
