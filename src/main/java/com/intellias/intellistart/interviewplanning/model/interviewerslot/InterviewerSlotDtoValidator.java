@@ -31,7 +31,6 @@ import org.springframework.util.ObjectUtils;
 /**
  * Service for validation of Interviewer Slot DTO.
  */
-@Component
 @Service
 public class InterviewerSlotDtoValidator {
 
