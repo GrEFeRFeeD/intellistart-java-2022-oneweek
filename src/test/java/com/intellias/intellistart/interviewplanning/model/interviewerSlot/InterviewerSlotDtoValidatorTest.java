@@ -51,8 +51,6 @@ public class InterviewerSlotDtoValidatorTest {
   static PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
   static TimeConverter timeConverter = new TimeConverter();
   static PeriodValidator periodValidator = new PeriodValidator();
-  static InterviewerSlotService interviewerSlotService =
-      new InterviewerSlotService(interviewerSlotRepository);
 
   @MockBean
   static PeriodService periodService = new PeriodService(
