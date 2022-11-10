@@ -26,7 +26,6 @@ public class CandidateSlotServiceTest {
   private static CandidateSlot candidateSlot2;
   private static Period period1;
   private static Period period2;
-  private static User user1;
 
   @BeforeAll
   static void initialize() {
@@ -44,19 +43,18 @@ public class CandidateSlotServiceTest {
     period2.setFrom(LocalTime.of(14,0));
     period2.setTo(LocalTime.of(20,30));
 
-    user1 = new User();
-    user1.setEmail("test@unit.com");
-    user1.setRole(Role.INTERVIEWER);
 
     candidateSlot1 = new CandidateSlot();
     candidateSlot1.setDate(LocalDate.of(2023, 1, 1));
     candidateSlot1.setPeriod(period1);
-    candidateSlot1.setUser(user1);
+    candidateSlot1.setEmail("test@mail.com");
+    candidateSlot1.setName("AAA");
 
     candidateSlot2 = new CandidateSlot();
     candidateSlot2.setDate(LocalDate.of(2023, 4, 24));
     candidateSlot2.setPeriod(period2);
-    candidateSlot2.setUser(user1);
+    candidateSlot2.setEmail("test@mail.com");
+    candidateSlot2.setName("AAA");
   }
 
   static Arguments[] createTestArgs(){
@@ -92,22 +90,21 @@ public class CandidateSlotServiceTest {
 
   static Arguments[] getAllSlotsOfCandidateArgs(){
     return new Arguments[]{
-        Arguments.arguments(List.of()),
-        Arguments.arguments(List.of(candidateSlot1, candidateSlot2))
+        Arguments.arguments("test@unit.com", List.of()),
+        Arguments.arguments("test@unit.com", List.of(candidateSlot1, candidateSlot2))
     };
   }
   @ParameterizedTest
   @MethodSource("getAllSlotsOfCandidateArgs")
-  void getAllSlotsOfCandidateTest(List<CandidateSlot> expected) {
-    Mockito.when(userService.getCurrentUser()).thenReturn(user1);
-    Mockito.when(candidateSlotRepository.findByUser(userService.getCurrentUser()))
+  void getAllSlotsOfCandidateTest(String email, List<CandidateSlot> expected) {
+    Mockito.when(candidateSlotRepository.findByEmail(email))
         .thenReturn(expected);
 
-    List<CandidateSlot> actual = cut.getAllSlotsOfCandidate();
+    List<CandidateSlot> actual = cut.getAllSlotsByEmail(email);
     Assertions.assertEquals(actual, expected);
   }
 
-  static Arguments[] getCandidateSlotsByUserAndDateArgs(){
+  static Arguments[] getCandidateSlotsByEmailAndDateTestArgs(){
     return new Arguments[]{
         Arguments.arguments(List.of(), LocalDate.of(2022,1,1)),
         Arguments.arguments(List.of(candidateSlot1), LocalDate.of(2023, 1, 1)),
@@ -115,13 +112,12 @@ public class CandidateSlotServiceTest {
     };
   }
   @ParameterizedTest
-  @MethodSource("getCandidateSlotsByUserAndDateArgs")
-  void getCandidateSlotsByUserAndDateTest(List<CandidateSlot> expected, LocalDate date) {
-    Mockito.when(userService.getCurrentUser()).thenReturn(user1);
-    Mockito.when(candidateSlotRepository.findByUserAndDate(userService.getCurrentUser(), date))
+  @MethodSource("getCandidateSlotsByEmailAndDateTestArgs")
+  void getCandidateSlotsByEmailAndDateTest(List<CandidateSlot> expected, LocalDate date) {
+    Mockito.when(candidateSlotRepository.findByEmailAndDate("test@mail.com", date))
         .thenReturn(expected);
 
-    List<CandidateSlot> actual = cut.getCandidateSlotsByUserAndDate(date);
+    List<CandidateSlot> actual = cut.getCandidateSlotsByEmailAndDate("test@mail.com", date);
     Assertions.assertEquals(actual, expected);
   }
 
@@ -144,19 +140,19 @@ public class CandidateSlotServiceTest {
   static Arguments[] createCandidateSlotArgs(){
     return new Arguments[]{
         Arguments.arguments(LocalDate.of(2023, 1, 1),
-            "9:00","10:30", candidateSlot1, period1),
+            "9:00","10:30", "test@mail.com", "AAA", candidateSlot1, period1),
         Arguments.arguments(LocalDate.of(2023, 4, 24),
-            "14:00","20:30", candidateSlot1, period2),
+            "14:00","20:30", "test@mail.com", "AAA",  candidateSlot1, period2),
     };
   }
   @ParameterizedTest
   @MethodSource("createCandidateSlotArgs")
-  void createCandidateSlotTest(LocalDate date, String from, String to,
+  void createCandidateSlotTest(LocalDate date, String from, String to, String email, String name,
       CandidateSlot expected, Period period) {
+      
     Mockito.when(periodService.obtainPeriod(from, to)).thenReturn(period);
-    Mockito.when(userService.getCurrentUser()).thenReturn(user1);
 
-    CandidateSlot actual = cut.createCandidateSlot(date, from, to);
+    CandidateSlot actual = cut.createCandidateSlot(date, from, to, email, name);
     Assertions.assertEquals(actual, expected);
   }
 }

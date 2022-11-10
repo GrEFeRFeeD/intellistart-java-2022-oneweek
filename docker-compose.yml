@@ -5,3 +5,19 @@ services:
     build: .
     ports:
       - "8080:8080"
+    volumes:
+      - ./:/app
+    env_file:
+      - api.env
+
+  postgresql:
+    ports:
+      - "5432:5432"
+    image: postgres:15.0
+    volumes:
+      - postgresql-data:/var/lib/postgres
+    env_file:
+      - api.env
+
+volumes:
+  postgresql-data:

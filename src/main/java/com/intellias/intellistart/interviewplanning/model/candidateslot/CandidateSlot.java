@@ -46,9 +46,8 @@ public class CandidateSlot {
   @OneToMany(mappedBy = "candidateSlot")
   private Set<Booking> bookings = new HashSet<>();
 
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private User user;
+  private String email;
+  private String name;
 
   public void addBooking(Booking booking) {
     bookings.add(booking);
@@ -60,8 +59,9 @@ public class CandidateSlot {
         + "id=" + id
         + ", date=" + date
         + ", period=" + period
-        + ", user=" + user.getId()
-        + '}';
+        + ", email='" + email
+        + '\'' + ", name='"
+        + name + '\'' + '}';
   }
 
   @Override

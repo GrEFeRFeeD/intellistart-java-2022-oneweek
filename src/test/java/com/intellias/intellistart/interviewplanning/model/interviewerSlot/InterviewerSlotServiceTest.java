@@ -37,7 +37,7 @@ public class InterviewerSlotServiceTest {
 
 
   @Test
-  void getSlotByIdTest(){
+  void getSlotsByWeekTest(){
     when(cut.getSlotById(1L)).thenReturn(Optional.of(is1));
     InterviewerSlot actual = cut.getSlotById(1L).get();
     InterviewerSlot expected = is1;
@@ -70,8 +70,4 @@ public class InterviewerSlotServiceTest {
   InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.TUE, p1, null, u1);
   static InterviewerSlot is2 = new InterviewerSlot(null, w2, DayOfWeek.TUE, p2, null, u1);
   static InterviewerSlot is3 = new InterviewerSlot(null, w3, DayOfWeek.TUE, p3, null, u2);
-
-
-
-
 }

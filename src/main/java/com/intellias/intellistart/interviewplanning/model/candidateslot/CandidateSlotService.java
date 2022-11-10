@@ -60,9 +60,8 @@ public class CandidateSlotService {
    *
    * @return List of CandidateSlot - the list of slots of current candidate.
    */
-  public List<CandidateSlot> getAllSlotsOfCandidate() {
-    return candidateSlotRepository.findByUser(
-        userService.getCurrentUser());
+  public List<CandidateSlot> getAllSlotsByEmail(String email) {
+    return candidateSlotRepository.findByEmail(email);
   }
 
   /**
@@ -72,9 +71,8 @@ public class CandidateSlotService {
    *
    * @return List of CandidateSlot - Slots that were found in the database by given parameters.
    */
-  public List<CandidateSlot> getCandidateSlotsByUserAndDate(LocalDate date) {
-    return candidateSlotRepository.findByUserAndDate(
-        userService.getCurrentUser(), date);
+  public List<CandidateSlot> getCandidateSlotsByEmailAndDate(String email, LocalDate date) {
+    return candidateSlotRepository.findByEmailAndDate(email, date);
   }
 
   /**
@@ -97,13 +95,15 @@ public class CandidateSlotService {
    *
    * @return CandidateSlot - created object by parameters.
    */
-  public CandidateSlot createCandidateSlot(LocalDate date, String from, String to) {
+  public CandidateSlot createCandidateSlot(LocalDate date, String from, String to, String email,
+      String name) {
     CandidateSlot candidateSlot = new CandidateSlot();
 
     candidateSlot.setDate(date);
     candidateSlot.setPeriod(periodService.obtainPeriod(from, to));
-    candidateSlot.setUser(userService.getCurrentUser());
-
+    candidateSlot.setEmail(email);
+    candidateSlot.setName(name);
+    
     return candidateSlot;
   }
 }

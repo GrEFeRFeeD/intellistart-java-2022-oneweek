@@ -46,7 +46,7 @@ public class StartDataLoader implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
 
-    User u1 = new User(null, "interviewer@gmail.com", Role.INTERVIEWER);
+    User u1 = new User(null, "interviewer1@gmail.com", Role.INTERVIEWER);
     User u2 = new User(null, "interviewer2@gmail.com", Role.INTERVIEWER);
     u1.setId(u1.getId()); // Don't mind. Just for maven validation. Is smells.
     u2.setId(u2.getId()); // Don't mind. Just for maven validation. Is smells.
@@ -79,7 +79,9 @@ public class StartDataLoader implements ApplicationRunner {
     InterviewerSlot is2 = new InterviewerSlot(null, w1, DayOfWeek.FRI, p2, new HashSet<>(), u1);
     p2.addInterviewerSlot(is2);
 
-    CandidateSlot cs1 = new CandidateSlot(null, LocalDate.of(2022, 10, 6), p3, new HashSet<>(), u4);
+    CandidateSlot cs1 = new CandidateSlot(null,
+        LocalDate.of(2022, 10, 6), p3, new HashSet<>(),
+        "candidate@gmail.com", "Facebook Candidate");
     p3.addCandidateSlot(cs1);
 
     Booking b1 = new Booking(new BookingKey(), "Test subject", "Test description", is1, cs1, p4);
