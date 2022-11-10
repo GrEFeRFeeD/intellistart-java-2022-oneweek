@@ -198,8 +198,8 @@ public class InterviewerController {
     return bookingLimitService.createBookingLimit(bookingLimitDto.getUserId(),
         bookingLimitDto.getBookingLimit());
   }
-}
 
+  /**
    * Request for getting Interviewer Slots of current user
    * for current week.
    *
