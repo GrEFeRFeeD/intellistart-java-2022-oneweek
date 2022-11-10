@@ -12,6 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Users {
+public class UsersDto {
   private List<User> users;
 }

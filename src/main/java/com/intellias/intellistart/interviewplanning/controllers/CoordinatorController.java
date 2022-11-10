@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
-import com.intellias.intellistart.interviewplanning.controllers.dto.Users;
+import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
 import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
@@ -69,10 +69,10 @@ public class CoordinatorController {
    * @return ResponseEntity - Response of the list of users with the interviewer role.
    */
   @GetMapping("/users/interviewers")
-  public ResponseEntity<Users> getAllInterviewers() {
-    Users users = new Users();
-    users.setUsers(userService.obtainUsersByRole(Role.INTERVIEWER));
-    return ResponseEntity.ok(users);
+  public ResponseEntity<UsersDto> getAllInterviewers() {
+    UsersDto usersDto = new UsersDto();
+    usersDto.setUsers(userService.obtainUsersByRole(Role.INTERVIEWER));
+    return ResponseEntity.ok(usersDto);
   }
 
   /**
@@ -81,10 +81,10 @@ public class CoordinatorController {
    * @return ResponseEntity - Response of the list of users with the coordinator role.
    */
   @GetMapping("/users/coordinators")
-  public ResponseEntity<Users> getAllCoordinators() {
-    Users users = new Users();
-    users.setUsers(userService.obtainUsersByRole(Role.COORDINATOR));
-    return ResponseEntity.ok(users);
+  public ResponseEntity<UsersDto> getAllCoordinators() {
+    UsersDto usersDto = new UsersDto();
+    usersDto.setUsers(userService.obtainUsersByRole(Role.COORDINATOR));
+    return ResponseEntity.ok(usersDto);
   }
 
   /**
