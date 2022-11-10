@@ -18,7 +18,8 @@ import org.springframework.stereotype.Component;
  * Business logic Booking validator.
  */
 @Component
-public class BookingDataValidator {
+public class BookingValidator {
+
   //TODO : fix javadoc
   private static final int BOOKING_PERIOD_DURATION_MINUTES = 90;
   private static final int DESCRIPTION_MAX_SIZE = 4000;
@@ -27,7 +28,7 @@ public class BookingDataValidator {
   private final TimeService timeService;
 
   @Autowired
-  public BookingDataValidator(PeriodService periodService, TimeService timeService) {
+  public BookingValidator(PeriodService periodService, TimeService timeService) {
     this.periodService = periodService;
     this.timeService = timeService;
   }
@@ -36,14 +37,14 @@ public class BookingDataValidator {
    * Perform business logic validation of Booking parameters.
    *
    * @param updatingBooking Booking with old parameters
-   *
-   * @throws InvalidBoundariesException if duration of new Period is invalid
-   * @throws SlotsAreNotIntersectingException if
-   *     periods of InterviewSlot, CandidateSlot do not intersect with new Period or
-   *     new Period is overlapping with existing Periods of InterviewerSlot and CandidateSlot
+   * @throws InvalidBoundariesException       if duration of new Period is invalid
+   * @throws SlotsAreNotIntersectingException if periods of InterviewSlot, CandidateSlot do not
+   *                                          intersect with new Period or new Period is overlapping
+   *                                          with existing Periods of InterviewerSlot and
+   *                                          CandidateSlot
    */
-  public void validate(Booking updatingBooking, BookingData newData) {
-    Period newPeriod = newData.getPeriod();
+  public void validateUpdating(Booking updatingBooking, Booking newDataBooking) {
+    Period newPeriod = newDataBooking.getPeriod();
 
     int periodDuration = timeService.calculateDurationMinutes(
         newPeriod.getFrom(), newPeriod.getTo());
@@ -51,18 +52,18 @@ public class BookingDataValidator {
       throw new InvalidBoundariesException();
     }
 
-    InterviewerSlot newInterviewerSlot = newData.getInterviewerSlot();
-    CandidateSlot newCandidateSlot = newData.getCandidateSlot();
+    InterviewerSlot newInterviewerSlot = newDataBooking.getInterviewerSlot();
+    CandidateSlot newCandidateSlot = newDataBooking.getCandidateSlot();
 
     if (!periodService.isFirstInsideSecond(newPeriod, newInterviewerSlot.getPeriod())
         || !periodService.isFirstInsideSecond(newPeriod, newCandidateSlot.getPeriod())) {
       throw new SlotsAreNotIntersectingException();
     }
 
-    if (newData.getSubject().length() <= SUBJECT_MAX_SIZE) {
+    if (newDataBooking.getSubject().length() <= SUBJECT_MAX_SIZE) {
       throw new InvalidSubjectException();
     }
-    if (newData.getDescription().length() <= DESCRIPTION_MAX_SIZE) {
+    if (newDataBooking.getDescription().length() <= DESCRIPTION_MAX_SIZE) {
       throw new InvalidDescriptionException();
     }
 
@@ -81,9 +82,16 @@ public class BookingDataValidator {
 
     for (Booking booking : bookings) {
       if (periodService.areOverlapping(booking.getPeriod(), period)
-          && !updatingBooking.equals(booking)) {
+          && !booking.equals(updatingBooking)) {
         throw new SlotsAreNotIntersectingException();
       }
     }
+  }
+
+  /**
+   * Alias for {@link #validateUpdating(Booking, Booking)}.
+   */
+  public void validateCreating(Booking newBooking) {
+    validateUpdating(newBooking, newBooking);
   }
 }

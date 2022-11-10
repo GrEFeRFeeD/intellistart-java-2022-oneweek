@@ -7,6 +7,10 @@ import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundaries
 import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
+import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
+import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,9 +26,20 @@ public class CoordinatorController {
 
   private final BookingService bookingService;
 
+  private final BookingValidator bookingValidator;
+  private final InterviewerSlotService interviewerSlotService;
+  private final CandidateSlotService candidateSlotService;
+  private final PeriodService periodService;
+
   @Autowired
-  public CoordinatorController(BookingService bookingService) {
+  public CoordinatorController(BookingService bookingService, BookingValidator bookingValidator,
+      InterviewerSlotService interviewerSlotService, CandidateSlotService candidateSlotService,
+      PeriodService periodService) {
     this.bookingService = bookingService;
+    this.bookingValidator = bookingValidator;
+    this.interviewerSlotService = interviewerSlotService;
+    this.candidateSlotService = candidateSlotService;
+    this.periodService = periodService;
   }
 
   /**
@@ -46,10 +61,13 @@ public class CoordinatorController {
       @PathVariable Long id) {
 
     Booking updatingBooking = bookingService.findById(id);
-    Booking updatedBooking = bookingService.getUpdatedBooking(updatingBooking, bookingDto);
+    Booking newDataBooking = getFromDto(bookingDto);
 
-    ///TODO: maybe repository explicitly here?
-    return ResponseEntity.ok(new BookingDto(updatedBooking));
+    bookingValidator.validateUpdating(updatingBooking, newDataBooking);
+    populateFields(updatingBooking, newDataBooking);
+
+    Booking savedBooking = bookingService.save(updatingBooking);
+    return ResponseEntity.ok(new BookingDto(savedBooking));
   }
 
   /**
@@ -69,9 +87,38 @@ public class CoordinatorController {
   public ResponseEntity<BookingDto> createBooking(
       @RequestBody BookingDto bookingDto) {
 
-    Booking newBooking = new Booking();
-    Booking updatedBooking = bookingService.getUpdatedBooking(newBooking, bookingDto);
+    Booking newBooking = getFromDto(bookingDto);
 
-    return ResponseEntity.ok(new BookingDto(updatedBooking));
+    bookingValidator.validateCreating(newBooking);
+    Booking savedBooking = bookingService.save(newBooking);
+
+    return ResponseEntity.ok(new BookingDto(savedBooking));
+  }
+
+  private Booking getFromDto(BookingDto bookingDto) {
+    Booking booking = new Booking();
+
+    booking.setSubject(booking.getSubject());
+    booking.setDescription(booking.getDescription());
+
+    booking.setInterviewerSlot(interviewerSlotService
+        .findById(bookingDto.getInterviewerSlotId()));
+
+    booking.setCandidateSlot(candidateSlotService
+        .findById(bookingDto.getCandidateSlotId()));
+
+    booking.setPeriod(periodService.obtainPeriod(
+        bookingDto.getFrom(),
+        bookingDto.getTo()));
+
+    return booking;
+  }
+
+  private void populateFields(Booking booking, Booking newDataBooking) {
+    booking.setSubject(newDataBooking.getSubject());
+    booking.setDescription(newDataBooking.getDescription());
+    booking.setInterviewerSlot(newDataBooking.getInterviewerSlot());
+    booking.setCandidateSlot(newDataBooking.getCandidateSlot());
+    booking.setPeriod(newDataBooking.getPeriod());
   }
 }
