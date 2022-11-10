@@ -20,8 +20,8 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -64,7 +64,6 @@ public class InterviewerSlotDtoValidator {
    * @throws InvalidInterviewerException - when invalid interviewer id, role not Interviewer
    * @throws SlotIsOverlappingException  - when overlap some slot
    * @throws InvalidBoundariesException  - when not in range 10:00 - 22:00, or less than 90 min
-
    */
   public void interviewerSlotValidateDtoAndCreate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId)
@@ -83,7 +82,6 @@ public class InterviewerSlotDtoValidator {
     User user = validateAndGetUser(userId, authentication);
     interviewerSlotDto.setInterviewerId(userId);
 
-    validateIfPeriodIsOverlapping(period, week, user, dayOfWeek);
 
     InterviewerSlot interviewerSlot = new InterviewerSlot(null, week,
         dayOfWeek, period, null, user);
@@ -91,6 +89,7 @@ public class InterviewerSlotDtoValidator {
     if (interviewerSlotDto.getInterviewerSlotId() != null) {
       interviewerSlot.setId(interviewerSlotDto.getInterviewerSlotId());
     }
+    validateIfPeriodIsOverlapping(interviewerSlot);
 
     interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlot = interviewerSlotService.create(interviewerSlot);
@@ -214,23 +213,31 @@ public class InterviewerSlotDtoValidator {
    * DayOfWeek. Get List of InterviewerSlots from database where Week, User and DayOfWeek match
    * parameters. Then check every slot if it overlaps our new Period.
    *
-   * @param period    from Controller's request
-   * @param week      from Controller's request
-   * @param user      from Controller's request
-   * @param dayOfWeek from Controller's request
+   * @param interviewerSlot - slot from dto
    * @throws SlotIsOverlappingException - SlotIsOverlappingException
    */
-  public void validateIfPeriodIsOverlapping(Period period, Week week,
-      User user, DayOfWeek dayOfWeek)
+  public void validateIfPeriodIsOverlapping(InterviewerSlot interviewerSlot)
       throws SlotIsOverlappingException {
+
     List<InterviewerSlot> interviewerSlotsList = interviewerSlotRepository
-        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(user.getId(), week.getId(), dayOfWeek);
+        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(interviewerSlot.getUser().getId(),
+            interviewerSlot.getWeek().getId(), interviewerSlot.getDayOfWeek());
+
     if (!interviewerSlotsList.isEmpty()) {
-      for (InterviewerSlot interviewerSlot : interviewerSlotsList) {
-        if (periodService.areOverlapping(interviewerSlot.getPeriod(), period)) {
+
+      if (interviewerSlot.getId() != null) {
+        interviewerSlotsList = interviewerSlotsList
+            .stream()
+            .filter(slot -> !slot.getId().equals(interviewerSlot.getId()))
+            .collect(Collectors.toList());
+      }
+
+      for (InterviewerSlot temp : interviewerSlotsList) {
+        if (periodService.areOverlapping(temp.getPeriod(), interviewerSlot.getPeriod())) {
           throw new SlotIsOverlappingException();
         }
       }
+
     }
   }
 }

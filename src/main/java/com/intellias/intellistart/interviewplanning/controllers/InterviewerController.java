@@ -13,7 +13,6 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +65,9 @@ public class InterviewerController {
   @PostMapping("/interviewers/{interviewerId}/slots")
   public ResponseEntity<InterviewerSlotDto> createInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
-      @PathVariable("interviewerId") Long interviewerId, Authentication authentication)
+      @PathVariable("interviewerId") Long interviewerId,
+      Authentication authentication
+  )
       throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException,
       SlotIsOverlappingException, CannotEditThisWeekException {
 
@@ -93,7 +94,9 @@ public class InterviewerController {
   public ResponseEntity<InterviewerSlotDto> updateInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
       @PathVariable("interviewerId") Long interviewerId,
-      @PathVariable("slotId") Long slotId, Authentication authentication)
+      @PathVariable("slotId") Long slotId,
+      Authentication authentication
+  )
       throws InvalidDayOfWeekException, InvalidBoundariesException,
       InvalidInterviewerException, SlotIsOverlappingException,
       CannotEditThisWeekException, SlotIsNotFoundException {
