@@ -14,6 +14,7 @@ import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
@@ -45,8 +46,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class InterviewerSlotDtoValidatorTest {
 
   static UserRepository userRepository = Mockito.mock(UserRepository.class);
+  static InterviewerSlotService interviewerSlotService = Mockito.mock(InterviewerSlotService.class);
+  static InterviewerSlotRepository interviewerSlotRepository =
+      Mockito.mock(InterviewerSlotRepository.class);
+
   @MockBean
-  static UserService userService = new UserService(userRepository);
+  static UserService userService = new UserService(userRepository, interviewerSlotService);
   static PeriodRepository periodRepository = Mockito.mock(PeriodRepository.class);
   static TimeConverter timeConverter = new TimeConverter();
   static PeriodValidator periodValidator = new PeriodValidator();
@@ -63,8 +68,6 @@ public class InterviewerSlotDtoValidatorTest {
 
 
 
-  static InterviewerSlotRepository interviewerSlotRepository =
-      Mockito.mock(InterviewerSlotRepository.class);
   InterviewerSlotDtoValidator cut = new InterviewerSlotDtoValidator(
       periodService, userService, weekService, interviewerSlotRepository
   );
