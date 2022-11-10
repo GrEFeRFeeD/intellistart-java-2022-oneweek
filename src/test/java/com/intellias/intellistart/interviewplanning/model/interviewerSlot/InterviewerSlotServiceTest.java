@@ -62,7 +62,7 @@ public class InterviewerSlotServiceTest {
   );
 
   @Test
-  void getSlotByIdTest(){
+  void getSlotsByWeekTest(){
     when(cut.getSlotById(1L)).thenReturn(Optional.of(is1));
     InterviewerSlot actual = cut.getSlotById(1L).get();
     InterviewerSlot expected = is1;

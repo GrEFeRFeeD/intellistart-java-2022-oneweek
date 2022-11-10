@@ -13,4 +13,6 @@ public interface InterviewerSlotRepository extends CrudRepository<InterviewerSlo
       Long userId, Long weekId, DayOfWeek dayOfWeek);
 
   List<InterviewerSlot> findInterviewerSlotsByUser(User user);
+
+  List<InterviewerSlot> getInterviewerSlotsByUserEmailAndWeekId(String userEmail, Long weekId);
 }
