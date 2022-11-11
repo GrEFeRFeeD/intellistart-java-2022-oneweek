@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoordinatorController {
 
   private final BookingService bookingService;
-
   private final BookingValidator bookingValidator;
   private final InterviewerSlotService interviewerSlotService;
   private final CandidateSlotService candidateSlotService;
   private final PeriodService periodService;
 
+  /**
+   * Constructor.
+   */
   @Autowired
   public CoordinatorController(BookingService bookingService, BookingValidator bookingValidator,
       InterviewerSlotService interviewerSlotService, CandidateSlotService candidateSlotService,
@@ -95,11 +97,11 @@ public class CoordinatorController {
     return ResponseEntity.ok(new BookingDto(savedBooking));
   }
 
-  private Booking getFromDto(BookingDto bookingDto) {
+  Booking getFromDto(BookingDto bookingDto) {
     Booking booking = new Booking();
 
-    booking.setSubject(booking.getSubject());
-    booking.setDescription(booking.getDescription());
+    booking.setSubject(bookingDto.getSubject());
+    booking.setDescription(bookingDto.getDescription());
 
     booking.setInterviewerSlot(interviewerSlotService
         .findById(bookingDto.getInterviewerSlotId()));
@@ -111,6 +113,7 @@ public class CoordinatorController {
         bookingDto.getFrom(),
         bookingDto.getTo()));
 
+    System.out.println(booking);
     return booking;
   }
 

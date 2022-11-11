@@ -3,6 +3,7 @@ package com.intellias.intellistart.interviewplanning.model.booking.validation;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -11,13 +12,12 @@ import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,20 +26,12 @@ import org.mockito.Mockito;
 class BookingValidatorTest {
   private static PeriodService periodService;
   private static TimeService timeService;
+  private static WeekService weekService;
   private static BookingValidator cut;
-
-  private static Booking invalidBooking1;
-
-  private static Booking invalidBooking2;
-
   private static Period wrongPeriod;
-
   private static Week week1;
   private static LocalDate week1TuesdayDate;
-  private static LocalDate week1WednesdayDate;
   private static InterviewerSlot interviewerSlot1;
-  private static InterviewerSlot interviewerSlot2;
-  private static InterviewerSlot interviewerSlot3;
   private static CandidateSlot candidateSlot1;
   private static CandidateSlot candidateSlot2;
   private static CandidateSlot candidateSlot3;
@@ -49,20 +41,16 @@ class BookingValidatorTest {
   private static Period bookingPeriod1;
   private static Period bookingPeriod2;
   private static Period bookingPeriod3;
-
   private static Booking booking1;
   private static Booking booking2;
-  private static Booking bookingCreated1;
-  private static Booking booking4;
-  private static Booking booking5;
-  private static Booking booking6;
 
 
-  @BeforeEach
-  void initialize(){
+  @BeforeAll
+  static void initialize(){
     periodService = Mockito.mock(PeriodService.class);
     timeService = Mockito.mock(TimeService.class);
-    cut = new BookingValidator(periodService, timeService);
+    weekService = Mockito.mock(WeekService.class);
+    cut = new BookingValidator(periodService, timeService, weekService);
 
     wrongPeriod = new Period();
     wrongPeriod.setFrom(LocalTime.of(10, 0));
@@ -70,14 +58,13 @@ class BookingValidatorTest {
 
     week1 = new Week(43L, null);
     week1TuesdayDate = LocalDate.of(2022, 1, 1);
-    week1WednesdayDate = LocalDate.of(2022, 1, 2);
 
     interviewerSlotPeriod1 = new Period();
     interviewerSlotPeriod1.setFrom(LocalTime.of(8, 0));
     interviewerSlotPeriod1.setTo(LocalTime.of(17, 30));
 
     candidateSlotPeriod1 = new Period();
-    candidateSlotPeriod1.setFrom(LocalTime.of(9, 30));
+    candidateSlotPeriod1.setFrom(LocalTime.of(8, 30));
     candidateSlotPeriod1.setTo(LocalTime.of(20, 0));
 
     slotPeriod3 = new Period();
@@ -98,89 +85,230 @@ class BookingValidatorTest {
 
     interviewerSlot1 = new InterviewerSlot(
         1L, week1, DayOfWeek.TUE, interviewerSlotPeriod1,
-        new HashSet<>(Arrays.asList(booking1, booking2)), null);
+        new LinkedHashSet<>(), null); //Arrays.asList(booking1, booking2)
 
     candidateSlot1 = new CandidateSlot(
         1L, week1TuesdayDate, candidateSlotPeriod1,
-        new HashSet<>(Arrays.asList(booking1)), null);
+        new LinkedHashSet<>(), null); //Arrays.asList(booking1)
 
     candidateSlot2 = new CandidateSlot(
         2L, week1TuesdayDate, candidateSlotPeriod1,
-        new HashSet<>(Arrays.asList(booking2)), null);
+        new LinkedHashSet<>(), null); //Arrays.asList(booking2)
 
     candidateSlot3 = new CandidateSlot(
         3L, week1TuesdayDate, candidateSlotPeriod1,
-        new HashSet<>(), null);
+        new LinkedHashSet<>(), null);
 
     booking1 = new Booking(
         1L, "interview", "Maks Kostyshen",
         interviewerSlot1, candidateSlot1, bookingPeriod1);
 
+    interviewerSlot1.getBookings().add(booking1);
+    candidateSlot1.getBookings().add(booking1);
+
     booking2 = new Booking(
         2L, "interview", "Daria Pavliuk",
         interviewerSlot1, candidateSlot2, bookingPeriod2);
 
-    bookingCreated1 = new Booking(
-        3L, "interview", "Anisimov1",
-        interviewerSlot1, candidateSlot3, bookingPeriod3);
+    interviewerSlot1.getBookings().add(booking2);
+    candidateSlot2.getBookings().add(booking2);
+  }
+
+  static Stream<Arguments> provideInvalidPeriodArguments(){
+    return Stream.of(
+        Arguments.arguments(
+            booking1,
+            new Booking(null, null, null,
+                null,null, wrongPeriod)));
   }
 
   @ParameterizedTest
-  @MethodSource("provideCorrectArguments")
-  void failWhenInvalidPeriodDuration(Booking booking){
-    Mockito.when(timeService.calculateDurationMinutes(
-        booking.getPeriod().getFrom(), booking.getPeriod().getTo())).thenReturn(120);
+  @MethodSource("provideInvalidPeriodArguments")
+  void failWhenInvalidPeriodDuration(Booking updatingBooking, Booking newDataBooking){
+    Mockito
+        .when(timeService.calculateDurationMinutes(
+            newDataBooking.getPeriod().getFrom(), newDataBooking.getPeriod().getTo()))
+        .thenReturn(120);
 
-    assertThrows(InvalidBoundariesException.class, () -> cut.validateCreating(booking));
+    assertThrows(InvalidBoundariesException.class,
+        () -> cut.validateUpdating(updatingBooking, newDataBooking));
   }
 
-  static Stream<Arguments> provideInvalidPeriodDurationArguments(){
-    return Stream.of(Arguments.arguments(
-        bookingCreated1));
-  }
-
-  @ParameterizedTest
-  @MethodSource("provideInvalidPeriodDurationArguments")
-  void notFailWhenCorrect(Booking booking){
-
-    Mockito.when(timeService.calculateDurationMinutes(
-        booking.getPeriod().getFrom(), booking.getPeriod().getTo())).thenReturn(90);
-    assertDoesNotThrow(() -> cut.validateCreating(booking));
-  }
 
   static Stream<Arguments> provideNotIntersectingSlotsArguments(){
-    return Stream.of(Arguments.arguments(
-        invalidBooking1,invalidBooking2));
+    Period period1 = new Period();
+    period1.setFrom(LocalTime.of(9, 30));
+    period1.setTo(LocalTime.of(11, 0));
+
+    return Stream.of(
+        Arguments.arguments(
+            booking1,
+            new Booking(null, "s", "d", interviewerSlot1, candidateSlot1, period1)),
+        Arguments.arguments(
+            booking2,
+            new Booking(null, "s", "d", interviewerSlot1, candidateSlot2, period1))
+        );
   }
 
   @ParameterizedTest
   @MethodSource("provideNotIntersectingSlotsArguments")
-  void failWhenSlotsDoNotIntersect(){
+  void failWhenSlotsDoNotIntersect(Booking updatingBooking, Booking newDataBooking){
+    Mockito
+        .when(timeService.calculateDurationMinutes(
+            newDataBooking.getPeriod().getFrom(), newDataBooking.getPeriod().getTo()))
+        .thenReturn(90);
 
+    Mockito
+        .when(weekService.convertToLocalDate(newDataBooking.getInterviewerSlot().getWeek().getId(),
+            newDataBooking.getInterviewerSlot().getDayOfWeek()))
+        .thenReturn(newDataBooking.getCandidateSlot().getDate());
+
+    Mockito
+        .when(periodService.isFirstInsideSecond(newDataBooking.getPeriod(),
+            newDataBooking.getInterviewerSlot().getPeriod()))
+        .thenReturn(true);
+
+    Mockito
+        .when(periodService.isFirstInsideSecond(newDataBooking.getPeriod(),
+            newDataBooking.getCandidateSlot().getPeriod()))
+        .thenReturn(true);
+
+    for (Booking candidateBooking : newDataBooking.getCandidateSlot().getBookings()) {
+      Mockito
+          .when(periodService.areOverlapping(newDataBooking.getPeriod(), candidateBooking.getPeriod()))
+          .thenReturn(true);
+    }
+
+    assertThrows(SlotsAreNotIntersectingException.class,
+        () -> cut.validateUpdating(updatingBooking, newDataBooking));
   }
 
-  static Stream<Arguments> provideInvalidSubjectArguments(){
-    return Stream.of(Arguments.arguments(
-        new Booking(null, "subject", "desc",
-            null, null, wrongPeriod),
-        new Booking(null, "invalid_subject", "desc",
-            null, null, wrongPeriod)));
+  static Stream<Arguments> provideInvalidTextArguments(){
+    return Stream.of(
+        Arguments.arguments(
+            new Booking(null, "s", "desc",
+                interviewerSlot1, candidateSlot2, bookingPeriod1),
+            new Booking(null, "s".repeat(256), "desc",
+                interviewerSlot1, candidateSlot2, bookingPeriod1)),
+        Arguments.arguments(
+            new Booking(null, "subject", "d",
+                interviewerSlot1, candidateSlot2, bookingPeriod1),
+            new Booking(null, "subject", "d".repeat(4001),
+                interviewerSlot1, candidateSlot2, bookingPeriod1)));
   }
 
   @ParameterizedTest
-  @MethodSource("provideInvalidSubjectArguments")
-  void failWhenInvalidSubject(){
-
+  @MethodSource("provideInvalidTextArguments")
+  void failWhenUpdateInvalidTestArguments(Booking updatingBooking, Booking newBookingData){
+    assertThrows(InvalidBoundariesException.class,
+        () -> cut.validateUpdating(updatingBooking, newBookingData));
   }
 
-  static Stream<Arguments> provideOverlappingWithOtherBookingPeriodsArguments(){
-    return Stream.of(Arguments.arguments(
-        invalidBooking1,invalidBooking2));
+  static Stream<Arguments> provideCorrectArgumentsUpdating(){
+    Period period1 = new Period();
+    period1.setFrom(LocalTime.of(11, 30));
+    period1.setTo(LocalTime.of(13, 0));
+
+    Period period2 = new Period();
+    period2.setFrom(LocalTime.of(8, 30));
+    period2.setTo(LocalTime.of(10, 0));
+
+    return Stream.of(
+        Arguments.arguments(
+            booking1,
+            new Booking(null, "s", "d",
+                interviewerSlot1, candidateSlot1, period1)),
+        Arguments.arguments(
+            booking2,
+            new Booking(
+                null, "s", "d",
+                interviewerSlot1, candidateSlot2, period2)));
   }
 
   @ParameterizedTest
-  @MethodSource("provideOverlappingWithOtherBookingPeriodsArguments")
-  void failWhenBookingPeriodOverlappingWithOtherBookingPeriods(){
+  @MethodSource("provideCorrectArgumentsUpdating")
+  void notFailWhenCorrectUpdating(Booking updatingBooking, Booking newDataBooking){
+    Mockito
+        .when(timeService.calculateDurationMinutes(
+            newDataBooking.getPeriod().getFrom(), newDataBooking.getPeriod().getTo()))
+        .thenReturn(90);
 
+    Mockito
+        .when(weekService.convertToLocalDate(newDataBooking.getInterviewerSlot().getWeek().getId(),
+            newDataBooking.getInterviewerSlot().getDayOfWeek()))
+        .thenReturn(newDataBooking.getCandidateSlot().getDate());
+
+    Mockito
+        .when(periodService.isFirstInsideSecond(newDataBooking.getPeriod(),
+            newDataBooking.getInterviewerSlot().getPeriod()))
+        .thenReturn(true);
+
+    Mockito
+        .when(periodService.isFirstInsideSecond(newDataBooking.getPeriod(),
+            newDataBooking.getCandidateSlot().getPeriod()))
+        .thenReturn(true);
+
+    for (Booking interviewerBooking : newDataBooking.getInterviewerSlot().getBookings()) {
+      Mockito
+          .when(periodService.areOverlapping(newDataBooking.getPeriod(), interviewerBooking.getPeriod()))
+          .thenReturn(false);
+    }
+
+    for (Booking candidateBooking : newDataBooking.getCandidateSlot().getBookings()) {
+      Mockito
+          .when(periodService.areOverlapping(newDataBooking.getPeriod(), candidateBooking.getPeriod()))
+          .thenReturn(false);
+    }
+
+    assertDoesNotThrow(() -> cut.validateUpdating(updatingBooking, newDataBooking));
+  }
+
+  static Stream<Arguments> provideCorrectArgumentsCreating(){
+    return Stream.of(Arguments.arguments(
+        new Booking(
+            4L, "interview", "Mali Sari",
+            interviewerSlot1, candidateSlot2, bookingPeriod3),
+        new Booking(
+            3L, "interview", "Anisimov Serhiy",
+            interviewerSlot1, candidateSlot3, bookingPeriod3)));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideCorrectArgumentsCreating")
+  void notFailWhenCorrectCreating(Booking booking){
+
+    Mockito
+        .when(timeService.calculateDurationMinutes(
+            booking.getPeriod().getFrom(), booking.getPeriod().getTo()))
+        .thenReturn(90);
+
+    Mockito
+        .when(weekService.convertToLocalDate(booking.getInterviewerSlot().getWeek().getId(),
+            booking.getInterviewerSlot().getDayOfWeek()))
+        .thenReturn(booking.getCandidateSlot().getDate());
+
+    Mockito
+        .when(periodService.isFirstInsideSecond(booking.getPeriod(),
+            booking.getInterviewerSlot().getPeriod()))
+        .thenReturn(true);
+
+    Mockito
+        .when(periodService.isFirstInsideSecond(booking.getPeriod(),
+            booking.getCandidateSlot().getPeriod()))
+        .thenReturn(true);
+
+    for (Booking interviewerBooking : booking.getInterviewerSlot().getBookings()) {
+      Mockito
+          .when(periodService.areOverlapping(booking.getPeriod(), interviewerBooking.getPeriod()))
+          .thenReturn(false);
+    }
+
+    for (Booking candidateBooking : booking.getCandidateSlot().getBookings()) {
+      Mockito
+          .when(periodService.areOverlapping(booking.getPeriod(), candidateBooking.getPeriod()))
+          .thenReturn(false);
+    }
+
+    assertDoesNotThrow(() -> cut.validateCreating(booking));
   }
 }

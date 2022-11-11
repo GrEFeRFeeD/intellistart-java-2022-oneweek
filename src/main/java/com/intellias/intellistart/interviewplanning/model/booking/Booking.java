@@ -1,6 +1,5 @@
 package com.intellias.intellistart.interviewplanning.model.booking;
 
-import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingNullable;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.period.Period;

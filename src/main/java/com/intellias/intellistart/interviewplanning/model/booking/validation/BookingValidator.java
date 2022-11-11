@@ -10,6 +10,8 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
+import java.time.LocalDate;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,16 +29,25 @@ public class BookingValidator {
   private final PeriodService periodService;
   private final TimeService timeService;
 
+  private final WeekService weekService;
+
+  /**
+   * Constructor.
+   */
   @Autowired
-  public BookingValidator(PeriodService periodService, TimeService timeService) {
+  public BookingValidator(PeriodService periodService, TimeService timeService,
+      WeekService weekService) {
     this.periodService = periodService;
     this.timeService = timeService;
+    this.weekService = weekService;
   }
 
   /**
-   * Perform business logic validation of Booking parameters.
+   * Perform business logic validation for updating Booking.
    *
    * @param updatingBooking Booking with old parameters
+   * @param newDataBooking Booking with new parameters
+   *
    * @throws InvalidBoundariesException       if duration of new Period is invalid
    * @throws SlotsAreNotIntersectingException if periods of InterviewSlot, CandidateSlot do not
    *                                          intersect with new Period or new Period is overlapping
@@ -52,19 +63,26 @@ public class BookingValidator {
       throw new InvalidBoundariesException();
     }
 
+    if (newDataBooking.getSubject().length() > SUBJECT_MAX_SIZE) {
+      throw new InvalidSubjectException();
+    }
+    if (newDataBooking.getDescription().length() > DESCRIPTION_MAX_SIZE) {
+      throw new InvalidDescriptionException();
+    }
+
     InterviewerSlot newInterviewerSlot = newDataBooking.getInterviewerSlot();
     CandidateSlot newCandidateSlot = newDataBooking.getCandidateSlot();
+
+    LocalDate interviewerSlotDate = weekService.convertToLocalDate(
+        newInterviewerSlot.getWeek().getId(), newInterviewerSlot.getDayOfWeek());
+
+    if (!interviewerSlotDate.equals(newCandidateSlot.getDate())) {
+      throw new SlotsAreNotIntersectingException();
+    }
 
     if (!periodService.isFirstInsideSecond(newPeriod, newInterviewerSlot.getPeriod())
         || !periodService.isFirstInsideSecond(newPeriod, newCandidateSlot.getPeriod())) {
       throw new SlotsAreNotIntersectingException();
-    }
-
-    if (newDataBooking.getSubject().length() <= SUBJECT_MAX_SIZE) {
-      throw new InvalidSubjectException();
-    }
-    if (newDataBooking.getDescription().length() <= DESCRIPTION_MAX_SIZE) {
-      throw new InvalidDescriptionException();
     }
 
     Collection<Booking> interviewSlotBookings = newInterviewerSlot.getBookings();
