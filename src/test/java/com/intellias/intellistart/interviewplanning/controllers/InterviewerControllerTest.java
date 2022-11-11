@@ -43,7 +43,6 @@ public class InterviewerControllerTest {
   @Getter
   @Setter
   static class JsonObj {
-
     Long week;
     String dayOfWeek;
     String from;
