@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
@@ -31,6 +32,10 @@ class BookingLimitServiceTest {
   private static Week week1;
   private static Week week2;
   private static Week week3;
+  private static User user1;
+  private static User user2;
+  private static User user3;
+  private static User user4;
   private static BookingLimit bookingLimit1;
   private static BookingLimit bookingLimit2;
   private static BookingLimit bookingLimit3;
@@ -47,13 +52,21 @@ class BookingLimitServiceTest {
   @BeforeAll
   static void initialize2() {
 
-    User user1 = new User();
+    user1 = new User();
     user1.setId(1L);
     user1.setRole(Role.INTERVIEWER);
 
-    User user2 = new User();
+    user2 = new User();
     user2.setId(2L);
     user2.setRole(Role.INTERVIEWER);
+
+    user3 = new User();
+    user3.setId(3L);
+    user3.setRole(Role.COORDINATOR);
+
+    user4 = new User();
+    user4.setId(4L);
+    user4.setRole(Role.COORDINATOR);
 
     week1 = new Week(40L,null);
     week2 = new Week(20L,null);
@@ -82,7 +95,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("getBookingLimitIfExistTestArgs")
   void getBookingLimitByInterviewerIfExistTest(Long interviewerId, Week week, BookingLimit expected)
-      throws InvalidInterviewerException {
+      throws InvalidInterviewerException, NotInterviewerException {
     given(userService.getUserById(interviewerId)).willReturn(Optional.of(expected.getUser()));
     given(bookingLimitRepository.findById(expected.getId())).willReturn(Optional.of(expected));
 
@@ -102,14 +115,13 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("getBookingLimitIfNotExistTestArgs")
   void getBookingLimitByInterviewerIfNotExistTest(Long interviewerId, Week week,
-      BookingLimit expected) throws InvalidInterviewerException {
+      BookingLimit expected) throws InvalidInterviewerException, NotInterviewerException {
     given(userService.getUserById(interviewerId)).willReturn(Optional.of(expected.getUser()));
     given(bookingLimitRepository.findById(expected.getId())).willReturn(Optional.empty());
     given(bookingLimitRepository.save(expected)).willReturn(expected);
 
     BookingLimit actual = cut.getBookingLimitByInterviewer(interviewerId,week);
 
-    verify(bookingLimitRepository).save(any());
     assertEquals(expected,actual);
   }
 
@@ -130,7 +142,7 @@ class BookingLimitServiceTest {
 
   static Arguments[] createBookingLimitInterviewerExceptionTestArgs(){
     return new Arguments[]{
-        Arguments.arguments(3L,123),
+        Arguments.arguments(5L,123),
         Arguments.arguments(6L,14)
     };
   }
@@ -143,17 +155,34 @@ class BookingLimitServiceTest {
         () -> cut.createBookingLimit(interviewerId,bookingLimit));
   }
 
+  static Arguments[] createBookingLimitNotInterviewerExceptionTestArgs(){
+    return new Arguments[]{
+        Arguments.arguments(user3.getId(),113,user3),
+        Arguments.arguments(user4.getId(),17,user4)
+    };
+  }
+
+  @ParameterizedTest
+  @MethodSource("createBookingLimitNotInterviewerExceptionTestArgs")
+  void createBookingLimitNotInterviewerExceptionTest(Long interviewerId, Integer bookingLimit,
+      User user){
+    given(userService.getUserById(interviewerId)).willReturn(Optional.of(user));
+    assertThrows(NotInterviewerException.class,
+        () -> cut.createBookingLimit(interviewerId,bookingLimit));
+  }
+
   static Arguments[] createBookingLimitExceptionTestArgs(){
     return new Arguments[]{
-        Arguments.arguments(1L,0),
-        Arguments.arguments(2L,-13)
+        Arguments.arguments(user1.getId(),0,user1),
+        Arguments.arguments(user2.getId(),-13,user2)
     };
   }
 
   @ParameterizedTest
   @MethodSource("createBookingLimitExceptionTestArgs")
-  void createBookingLimitInvalidBookingLimitExceptionTest(Long interviewerId, Integer bookingLimit){
-    given(userService.getUserById(interviewerId)).willReturn(Optional.of(new User()));
+  void createBookingLimitInvalidBookingLimitExceptionTest(Long interviewerId, Integer bookingLimit,
+      User user){
+    given(userService.getUserById(interviewerId)).willReturn(Optional.of(user));
     assertThrows(InvalidBookingLimitException.class,
         () -> cut.createBookingLimit(interviewerId,bookingLimit));
   }
@@ -168,7 +197,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("createBookingLimitTestArgs")
   void createBookingLimitTest(Long interviewerId, Integer bookingLimit, BookingLimit expected)
-      throws InvalidInterviewerException, InvalidBookingLimitException {
+      throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
     given(userService.getUserById(interviewerId)).willReturn(Optional.of(expected.getUser()));
     given(weekService.getNextWeek()).willReturn(expected.getWeek());
     given(bookingLimitRepository.save(expected)).willReturn(expected);

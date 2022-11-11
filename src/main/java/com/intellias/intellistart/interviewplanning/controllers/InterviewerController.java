@@ -7,6 +7,7 @@ import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLim
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
@@ -145,12 +146,13 @@ public class InterviewerController {
    * @return BookingLimitDto and HTTP status
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
    * @throws InvalidBookingLimitException - invalid bookingLimit exception
+   * @throws NotInterviewerException - not interviewer id
    */
-  @PostMapping("/interviewers/{interviewerId}/booking-limit")
+  @PostMapping("/interviewers/{interviewerId}/booking-limits")
   public ResponseEntity<BookingLimitDto> createBookingLimit(
       @RequestBody BookingLimitDto bookingLimitDto,
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException, InvalidBookingLimitException {
+      throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
 
     bookingLimitDto.setUserId(interviewerId);
 
@@ -165,11 +167,12 @@ public class InterviewerController {
    * @param interviewerId - user Id from request
    * @return BookingLimitDto and HTTP status
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws NotInterviewerException - not interviewer id
    */
-  @GetMapping("/interviewers/{interviewerId}/booking-limit/current-week")
+  @GetMapping("/interviewers/{interviewerId}/booking-limits/current-week")
   public ResponseEntity<BookingLimitDto> getBookingLimitForCurrentWeek(
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException {
+      throws InvalidInterviewerException, NotInterviewerException {
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(interviewerId);
 
@@ -182,11 +185,12 @@ public class InterviewerController {
    * @param interviewerId user Id from request
    * @return BookingLimitDto and HTTP status
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
+   * @throws NotInterviewerException - not interviewer id
    */
-  @GetMapping("/interviewers/{interviewerId}/booking-limit/next-week")
+  @GetMapping("/interviewers/{interviewerId}/booking-limits/next-week")
   public ResponseEntity<BookingLimitDto> getBookingLimitForNextWeek(
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException {
+      throws InvalidInterviewerException, NotInterviewerException {
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(interviewerId);
 
@@ -194,7 +198,7 @@ public class InterviewerController {
   }
 
   private BookingLimit getBookingLimitFromDto(BookingLimitDto bookingLimitDto)
-      throws InvalidInterviewerException, InvalidBookingLimitException {
+      throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
     return bookingLimitService.createBookingLimit(bookingLimitDto.getUserId(),
         bookingLimitDto.getBookingLimit());
   }
@@ -206,7 +210,7 @@ public class InterviewerController {
    * @param authentication - user
    * @return {@link List} of {@link InterviewerSlot}
    */
-  @GetMapping("/interviwers/current/slots")
+  @GetMapping("/interviewers/current/slots")
   public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForCurrentWeek(
       Authentication authentication) {
     JwtUserDetails jwtUserDetails  = (JwtUserDetails) authentication.getPrincipal();
@@ -226,7 +230,7 @@ public class InterviewerController {
    * @param authentication - user
    * @return {@link List} of {@link InterviewerSlot}
    */
-  @GetMapping("/interviwers/next/slots")
+  @GetMapping("/interviewers/next/slots")
   public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForNextWeek(
       Authentication authentication) {
     JwtUserDetails jwtUserDetails  = (JwtUserDetails) authentication.getPrincipal();
