@@ -9,12 +9,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Business logic validator class.
  */
-@Component
+@Service
 public class PeriodValidator {
 
   private final List<PeriodChainValidator> validators = new ArrayList<>(Arrays.asList(
