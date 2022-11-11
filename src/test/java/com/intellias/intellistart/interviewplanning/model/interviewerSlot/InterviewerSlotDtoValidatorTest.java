@@ -1,7 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerSlot;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -31,14 +30,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -65,11 +61,8 @@ public class InterviewerSlotDtoValidatorTest {
   @MockBean
   static WeekService weekService = new WeekService(weekRepository);
 
-
-
-
   InterviewerSlotDtoValidator cut = new InterviewerSlotDtoValidator(
-      periodService, userService, weekService, interviewerSlotRepository
+      periodService, userService, interviewerSlotService,  weekService, interviewerSlotRepository
   );
 
   @Test
@@ -89,8 +82,8 @@ public class InterviewerSlotDtoValidatorTest {
   @Test
   void canEditThisWeekTest() {
     when(weekService.getCurrentWeek()).thenReturn(new Week(43L,new HashSet<>()));
-    assertThrows(CannotEditThisWeekException.class, () -> cut.validateIfCanEditThisWeek(is2));
-    assertDoesNotThrow(() -> cut.validateIfCanEditThisWeek(is1));
+    assertThrows(CannotEditThisWeekException.class, () -> cut.validateIfCanEditThisWeek(w2));
+    assertDoesNotThrow(() -> cut.validateIfCanEditThisWeek(w1));
   }
 
   @Test
@@ -99,20 +92,16 @@ public class InterviewerSlotDtoValidatorTest {
     when(interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
             w1.getId(), DayOfWeek.TUE)).thenReturn(list);
-    assertDoesNotThrow(() -> cut.validateIfPeriodIsOverlapping(p1, w1, u1, DayOfWeek.TUE));
+    assertDoesNotThrow(() -> cut.validateIfPeriodIsOverlapping(is3));
   }
-
-  @ParameterizedTest
-  @ArgumentsSource(DtoSlotArgumentsProvider.class)
-  void InterviewerSlotValidationIdTest(InterviewerSlotDto dto, InterviewerSlot expected)
-      throws InvalidDayOfWeekException, SlotIsOverlappingException, InvalidInterviewerException {
-    when(userService.getUserById(1L)).thenReturn(Optional.of(expected.getUser()));
-    when(periodService.obtainPeriod(dto.getFrom(), dto.getTo())).thenReturn(expected.getPeriod());
-    when(weekService.getWeekByWeekNum(dto.getWeek())).thenReturn(expected.getWeek());
-    when(weekService.getCurrentWeek()).thenReturn(new Week(20L, new HashSet<>()));
-    InterviewerSlot actual = cut.interviewerSlotValidateDto(dto);
-    assertEquals(actual.getWeek(), expected.getWeek());
-    assertEquals(actual.getDayOfWeek(), expected.getDayOfWeek());
+  @Test
+  void isSlotOverlapTestThrow() {
+    List<InterviewerSlot> list = new ArrayList<>();
+    list.add(is3);
+    when(interviewerSlotRepository
+        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
+            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
+    assertThrows(SlotIsOverlappingException.class, () -> cut.validateIfPeriodIsOverlapping(is3));
   }
 
   static User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);
@@ -127,10 +116,6 @@ static Period p1 = new Period(null, LocalTime.of(12, 0), LocalTime.of(18, 0),
     new HashSet<>(), new HashSet<>(), new HashSet<>());
   static Period p2 = new Period(null, LocalTime.of(11, 0), LocalTime.of(17, 30),
       new HashSet<>(), new HashSet<>(), new HashSet<>());
-  static InterviewerSlot is1 = new InterviewerSlot(null, w1, DayOfWeek.THU, p1, new HashSet<>(),
-      u1);
-  static InterviewerSlot is2 = new InterviewerSlot(null, w2, DayOfWeek.FRI, p1, new HashSet<>(),
-      u1);
 
   static InterviewerSlotDto dto2 = new InterviewerSlotDto(1L, null, 100L,
       "TUE", "12:00", "18:00");
