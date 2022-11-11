@@ -72,7 +72,7 @@ public class InterviewerController {
       SlotIsOverlappingException, CannotEditThisWeekException {
 
     interviewerSlotDtoValidator
-        .interviewerSlotValidateDtoAndCreate(interviewerSlotDto, authentication, interviewerId);
+        .validateAndCreate(interviewerSlotDto, authentication, interviewerId);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
@@ -102,7 +102,7 @@ public class InterviewerController {
       CannotEditThisWeekException, SlotIsNotFoundException {
 
     interviewerSlotDtoValidator
-        .interviewerSlotValidateDtoAndUpdate(interviewerSlotDto, authentication, interviewerId,
+        .validateAndUpdate(interviewerSlotDto, authentication, interviewerId,
             slotId);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);

@@ -64,7 +64,7 @@ public class InterviewerSlotDtoValidator {
    * @throws SlotIsOverlappingException  - when overlap some slot
    * @throws InvalidBoundariesException  - when not in range 10:00 - 22:00, or less than 90 min
    */
-  public void interviewerSlotValidateDtoAndCreate(InterviewerSlotDto interviewerSlotDto,
+  public void validateAndCreate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException {
@@ -111,7 +111,7 @@ public class InterviewerSlotDtoValidator {
    * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
    * @throws SlotIsNotFoundException - when slot is not found by slotId
    */
-  public void interviewerSlotValidateDtoAndUpdate(InterviewerSlotDto interviewerSlotDto,
+  public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException {
@@ -130,7 +130,7 @@ public class InterviewerSlotDtoValidator {
 
     interviewerSlotDto.setInterviewerSlotId(slotId);
 
-    interviewerSlotValidateDtoAndCreate(interviewerSlotDto,
+    validateAndCreate(interviewerSlotDto,
         authentication, userId);
   }
 
