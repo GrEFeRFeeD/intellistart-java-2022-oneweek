@@ -42,12 +42,10 @@ public class Booking {
 
   @ManyToOne
   @JoinColumn(name = "interviewer_slot_id")
-  @JsonIgnore
   private InterviewerSlot interviewerSlot;
 
   @ManyToOne
   @JoinColumn(name = "candidate_slot_id")
-  @JsonIgnore
   private CandidateSlot candidateSlot;
 
   @ManyToOne
