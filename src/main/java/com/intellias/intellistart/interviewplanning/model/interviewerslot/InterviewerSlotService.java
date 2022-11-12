@@ -78,6 +78,10 @@ public class InterviewerSlotService {
     interviewerSlotRepository.deleteAll(interviewerSlots);
   }
 
+  public Set<InterviewerSlot> getSlotsByWeek(Week week) {
+    return interviewerSlotRepository.findByWeek(week);
+  }
+
   /**
    * Get slots of user by weekId.
    *
