@@ -18,10 +18,10 @@ import lombok.Setter;
 @Setter
 public class DashboardMapDto {
 
-  @JsonIgnore
-  private Long weekNum;
+  // TODO: remove this when refactor weekService to weekUtils
   @JsonIgnore
   private final WeekService weekService;
+  private Long weekNum;
   private Map<LocalDate, DashboardDto> dashboard;
 
   public DashboardMapDto(Long weekNum, WeekService weekService) {

@@ -1,11 +1,11 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -125,7 +124,7 @@ public class InterviewerSlotDtoValidator {
     Long ownerOfSlotId = interviewerSlotOptional.get().getUser().getId();
 
     if (!(ownerOfSlotId.equals(userId))) {
-      throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
+      throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
     }
 
     interviewerSlotDto.setInterviewerSlotId(slotId);
@@ -154,8 +153,8 @@ public class InterviewerSlotDtoValidator {
       validateIfInterviewerRoleInterviewer(userById);
       return userById;
     }
-    //TODO resolve without valueOf
-    throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
+
+    throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
   }
 
   /**
