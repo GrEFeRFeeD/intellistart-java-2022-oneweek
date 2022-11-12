@@ -1,17 +1,13 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
-import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
-import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 /**
  * Service for InterviewSlot entity.
@@ -76,10 +72,6 @@ public class InterviewerSlotService {
     }
 
     interviewerSlotRepository.deleteAll(interviewerSlots);
-  }
-
-  public Set<InterviewerSlot> getSlotsByWeek(Week week) {
-    return interviewerSlotRepository.findByWeek(week);
   }
 
   /**

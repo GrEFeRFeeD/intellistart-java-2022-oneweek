@@ -1,9 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,18 +14,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DashboardCandidateSlot {
+public class DashboardCandidateSlotDto {
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
-  private LocalDate date;
   private String from;
   private String to;
   private String candidateEmail;
   private String candidateName;
   private Set<Long> bookings;
 
-  public DashboardCandidateSlot(CandidateSlot candidateSlot) {
-    this.date = candidateSlot.getDate();
+  public DashboardCandidateSlotDto(CandidateSlot candidateSlot) {
     this.from = candidateSlot.getPeriod().getFrom().toString();
     this.to = candidateSlot.getPeriod().getTo().toString();
     this.candidateEmail = candidateSlot.getEmail();
@@ -46,8 +41,8 @@ public class DashboardCandidateSlot {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    DashboardCandidateSlot that = (DashboardCandidateSlot) o;
-    return Objects.equals(date, that.date) && Objects.equals(from, that.from)
+    DashboardCandidateSlotDto that = (DashboardCandidateSlotDto) o;
+    return Objects.equals(from, that.from)
         && Objects.equals(to, that.to) && Objects.equals(candidateEmail,
         that.candidateEmail) && Objects.equals(candidateName, that.candidateName)
         && Objects.equals(bookings, that.bookings);
@@ -55,6 +50,6 @@ public class DashboardCandidateSlot {
 
   @Override
   public int hashCode() {
-    return Objects.hash(date, from, to, candidateEmail, candidateName, bookings);
+    return Objects.hash(from, to, candidateEmail, candidateName, bookings);
   }
 }

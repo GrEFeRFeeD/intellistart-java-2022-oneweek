@@ -14,21 +14,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DashboardInterviewerSlot {
+public class DashboardInterviewerSlotDto {
 
-  private Long interviewerSlotId;
-  private Long interviewerId;
-  private Long weekNum;
-  private String dayOfWeek;
   private String from;
   private String to;
+  private Long interviewerSlotId;
+  private Long interviewerId;
   private Set<Long> bookings;
 
-  public DashboardInterviewerSlot(InterviewerSlot interviewerSlot) {
+  public DashboardInterviewerSlotDto(InterviewerSlot interviewerSlot) {
     this.interviewerSlotId = interviewerSlot.getId();
     this.interviewerId = interviewerSlot.getUser().getId();
-    this.weekNum = interviewerSlot.getWeek().getId();
-    this.dayOfWeek = interviewerSlot.getDayOfWeek().toString();
     this.from = interviewerSlot.getPeriod().getFrom().toString();
     this.to = interviewerSlot.getPeriod().getTo().toString();
 
@@ -45,7 +41,7 @@ public class DashboardInterviewerSlot {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    DashboardInterviewerSlot that = (DashboardInterviewerSlot) o;
+    DashboardInterviewerSlotDto that = (DashboardInterviewerSlotDto) o;
     return Objects.equals(interviewerSlotId, that.interviewerSlotId);
   }
 

@@ -1,9 +1,12 @@
 package com.intellias.intellistart.interviewplanning.controllers.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,13 +18,20 @@ import lombok.Setter;
 @Setter
 public class DashboardMapDto {
 
-  private Map<DayOfWeek, DashboardDto> dashboardDtoMap;
+  @JsonIgnore
+  private Long weekNum;
+  @JsonIgnore
+  private final WeekService weekService;
+  private Map<LocalDate, DashboardDto> dashboard;
 
-  public DashboardMapDto() {
-    this.dashboardDtoMap = new HashMap<>();
+  public DashboardMapDto(Long weekNum, WeekService weekService) {
+    this.dashboard = new HashMap<>();
+    this.weekNum = weekNum;
+    this.weekService = weekService;
 
     for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-      dashboardDtoMap.put(dayOfWeek, new DashboardDto());
+      LocalDate date = weekService.convertToLocalDate(weekNum, dayOfWeek);
+      dashboard.put(date, new DashboardDto());
     }
   }
 
@@ -29,16 +39,16 @@ public class DashboardMapDto {
 
     for (InterviewerSlot interviewerSlot : interviewerSlots) {
 
-      dashboardDtoMap.get(interviewerSlot.getDayOfWeek())
+      dashboard.get(weekService.convertToLocalDate(weekNum, interviewerSlot.getDayOfWeek()))
           .getInterviewerSlots()
-          .add(new DashboardInterviewerSlot(interviewerSlot));
+          .add(new DashboardInterviewerSlotDto(interviewerSlot));
 
-      Map<Long, Booking> bookingMap = interviewerSlot.getBookings().stream()
-          .collect(Collectors.toMap(Booking::getId, b -> b));
+      Map<Long, DashboardBookingDto> bookingDtoMap = interviewerSlot.getBookings().stream()
+          .collect(Collectors.toMap(Booking::getId, DashboardBookingDto::new));
 
-      dashboardDtoMap.get(interviewerSlot.getDayOfWeek())
+      dashboard.get(weekService.convertToLocalDate(weekNum, interviewerSlot.getDayOfWeek()))
           .getBookings()
-          .putAll(bookingMap);
+          .putAll(bookingDtoMap);
     }
   }
 
@@ -46,22 +56,16 @@ public class DashboardMapDto {
 
     for (CandidateSlot candidateSlot: candidateSlots) {
 
-      DayOfWeek dayOfWeek = DayOfWeek.valueOf(candidateSlot
-          .getDate()
-          .getDayOfWeek()
-          .toString()
-          .substring(0, 3));
-
-      dashboardDtoMap.get(dayOfWeek)
+      dashboard.get(candidateSlot.getDate())
           .getCandidateSlots()
-          .add(new DashboardCandidateSlot(candidateSlot));
+          .add(new DashboardCandidateSlotDto(candidateSlot));
 
-      Map<Long, Booking> bookingMap = candidateSlot.getBookings().stream()
-          .collect(Collectors.toMap(Booking::getId, b -> b));
+      Map<Long, DashboardBookingDto> bookingDtoMap = candidateSlot.getBookings().stream()
+          .collect(Collectors.toMap(Booking::getId, DashboardBookingDto::new));
 
-      dashboardDtoMap.get(dayOfWeek)
+      dashboard.get(candidateSlot.getDate())
           .getBookings()
-          .putAll(bookingMap);;
+          .putAll(bookingDtoMap);;
     }
   }
 }

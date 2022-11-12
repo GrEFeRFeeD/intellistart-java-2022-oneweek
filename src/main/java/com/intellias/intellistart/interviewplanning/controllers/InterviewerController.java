@@ -114,7 +114,7 @@ public class InterviewerController {
    * @param authentication - user
    * @return {@link List} of {@link InterviewerSlot}
    */
-  @GetMapping("/interviwers/current/slots")
+  @GetMapping("/interviewers/current/slots")
   public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForCurrentWeek(
       Authentication authentication) {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
@@ -133,7 +133,7 @@ public class InterviewerController {
    * @param authentication - user
    * @return {@link List} of {@link InterviewerSlot}
    */
-  @GetMapping("/interviwers/next/slots")
+  @GetMapping("/interviewers/next/slots")
   public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForNextWeek(
       Authentication authentication) {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
