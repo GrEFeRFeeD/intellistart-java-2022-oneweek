@@ -3,6 +3,7 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @SpringBootTest
 public class InterviewerControllerTest {
   static UserRepository userRepository = Mockito.mock(UserRepository.class);
+  static BookingService bookingService = Mockito.mock(BookingService.class);
 
   static InterviewerSlotRepository interviewerSlotRepository =
       Mockito.mock(InterviewerSlotRepository.class);
@@ -41,7 +43,6 @@ public class InterviewerControllerTest {
   @Getter
   @Setter
   static class JsonObj {
-
     Long week;
     String dayOfWeek;
     String from;
@@ -52,7 +53,7 @@ public class InterviewerControllerTest {
   static void initialize() {
     interviewerSlotRepository = Mockito.mock(InterviewerSlotRepository.class);
     interviewerSlotService = new InterviewerSlotService(
-        interviewerSlotRepository
+        interviewerSlotRepository, bookingService
     );
   }
 

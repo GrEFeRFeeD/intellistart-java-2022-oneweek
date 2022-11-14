@@ -20,7 +20,6 @@ import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,32 +69,25 @@ public class InterviewerController {
    * Post Request for creating slot.
    *
    * @param interviewerSlotDto - DTO from request
-   * @param interviewerId - user Id from request
+   * @param interviewerId      - user Id from request
    * @return interviewerSlotDto - and/or HTTP status
-   * @throws InvalidDayOfWeekException - invalid day of week
+   * @throws InvalidDayOfWeekException   - invalid day of week
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws SlotIsOverlappingException - slot is overlapping exception
-   * @throws InvalidBoundariesException - invalid boundaries exception
+   * @throws SlotIsOverlappingException  - slot is overlapping exception
+   * @throws InvalidBoundariesException  - invalid boundaries exception
    * @throws CannotEditThisWeekException - can not edit this week
    */
   @PostMapping("/interviewers/{interviewerId}/slots")
   public ResponseEntity<InterviewerSlotDto> createInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
-      @PathVariable("interviewerId") Long interviewerId)
+      @PathVariable("interviewerId") Long interviewerId,
+      Authentication authentication
+  )
       throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException,
       SlotIsOverlappingException, CannotEditThisWeekException {
 
-    interviewerSlotDto.setInterviewerId(interviewerId);
-
-    InterviewerSlot interviewerSlot = interviewerSlotDtoValidator
-        .interviewerSlotValidateDto(interviewerSlotDto);
-
-    interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
-
-    interviewerSlotService.create(interviewerSlot);
-
-    interviewerSlotDto.setInterviewerSlotId(interviewerSlot.getId());
-
+    interviewerSlotDtoValidator
+        .validateAndCreate(interviewerSlotDto, authentication, interviewerId);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
@@ -104,42 +96,29 @@ public class InterviewerController {
    * Post Request for updating slot.
    *
    * @param interviewerSlotDto - DTO from request
-   * @param interviewerId - user Id from request
-   * @param slotId - slot Id from request
+   * @param interviewerId      - user Id from request
+   * @param slotId             - slot Id from request
    * @return interviewerSlotDto - and/or HTTP status
-   * @throws InvalidDayOfWeekException - invalid day of week
+   * @throws InvalidDayOfWeekException   - invalid day of week
    * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws SlotIsOverlappingException - slot is overlapping exception
-   * @throws InvalidBoundariesException - invalid boundaries exception
+   * @throws SlotIsOverlappingException  - slot is overlapping exception
+   * @throws InvalidBoundariesException  - invalid boundaries exception
    * @throws CannotEditThisWeekException - can not edit this week
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public ResponseEntity<InterviewerSlotDto> updateInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
       @PathVariable("interviewerId") Long interviewerId,
-      @PathVariable("slotId") Long slotId)
+      @PathVariable("slotId") Long slotId,
+      Authentication authentication
+  )
       throws InvalidDayOfWeekException, InvalidBoundariesException,
       InvalidInterviewerException, SlotIsOverlappingException,
       CannotEditThisWeekException, SlotIsNotFoundException {
 
-    Optional<InterviewerSlot> interviewerSlotOptional = interviewerSlotService.getSlotById(slotId);
-
-    if (interviewerSlotOptional.isEmpty()) {
-      throw new SlotIsNotFoundException();
-    }
-    Long id = interviewerSlotOptional.get().getId();
-
-    interviewerSlotDto.setInterviewerId(interviewerId);
-
-    InterviewerSlot interviewerSlotNew = interviewerSlotDtoValidator
-        .interviewerSlotValidateDto(interviewerSlotDto);
-    interviewerSlotNew.setId(id);
-
-    interviewerSlotService.create(interviewerSlotNew);
-
-    interviewerSlotDto.setInterviewerSlotId(interviewerSlotNew.getId());
-
-    interviewerSlotNew.getWeek().addInterviewerSlot(interviewerSlotNew);
+    interviewerSlotDtoValidator
+        .validateAndUpdate(interviewerSlotDto, authentication, interviewerId,
+            slotId);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
@@ -214,8 +193,7 @@ public class InterviewerController {
   }
 
   /**
-   * Request for getting Interviewer Slots of current user
-   * for current week.
+   * Request for getting Interviewer Slots of current user for current week.
    *
    * @param authentication - user
    * @return {@link List} of {@link InterviewerSlot}
@@ -223,7 +201,7 @@ public class InterviewerController {
   @GetMapping("/interviewers/current/slots")
   public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForCurrentWeek(
       Authentication authentication) {
-    JwtUserDetails jwtUserDetails  = (JwtUserDetails) authentication.getPrincipal();
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
 
     String email = jwtUserDetails.getEmail();
     Long currentWeekId = weekService.getCurrentWeek().getId();
@@ -234,8 +212,7 @@ public class InterviewerController {
   }
 
   /**
-   * Request for getting Interviewer Slots of current user
-   * for next week.
+   * Request for getting Interviewer Slots of current user for next week.
    *
    * @param authentication - user
    * @return {@link List} of {@link InterviewerSlot}
@@ -243,7 +220,7 @@ public class InterviewerController {
   @GetMapping("/interviewers/next/slots")
   public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForNextWeek(
       Authentication authentication) {
-    JwtUserDetails jwtUserDetails  = (JwtUserDetails) authentication.getPrincipal();
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
 
     String email = jwtUserDetails.getEmail();
     Long nextWeekId = weekService.getNextWeek().getId();
