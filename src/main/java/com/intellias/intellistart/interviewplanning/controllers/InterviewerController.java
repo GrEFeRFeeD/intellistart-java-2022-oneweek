@@ -15,6 +15,8 @@ import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLi
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
+import com.intellias.intellistart.interviewplanning.model.user.User;
+import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.util.List;
@@ -36,9 +38,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterviewerController {
 
   private final InterviewerSlotService interviewerSlotService;
-  private final WeekService weekService;
   private final InterviewerSlotDtoValidator interviewerSlotDtoValidator;
   private final BookingLimitService bookingLimitService;
+  private final WeekService weekService;
+  private final UserService userService;
 
   /**
    * Constructor.
@@ -46,18 +49,21 @@ public class InterviewerController {
    * @param interviewerSlotService      - interviewerSlotService
    * @param interviewerSlotDtoValidator - interviewerSlotDtoValidator
    * @param bookingLimitService         - bookingLimitService
-   * @param weekService - weekService
+   * @param weekService                 - weekService
+   * @param userService                 - userService
    */
   @Autowired
   public InterviewerController(
       InterviewerSlotService interviewerSlotService,
       InterviewerSlotDtoValidator interviewerSlotDtoValidator,
       BookingLimitService bookingLimitService,
-      WeekService weekService) {
+      WeekService weekService,
+      UserService userService) {
     this.interviewerSlotService = interviewerSlotService;
     this.interviewerSlotDtoValidator = interviewerSlotDtoValidator;
     this.bookingLimitService = bookingLimitService;
     this.weekService = weekService;
+    this.userService = userService;
   }
 
   /**
@@ -154,9 +160,13 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
 
+    User user = userService.getUserById(interviewerId)
+        .orElseThrow(InvalidInterviewerException::new);
+
     bookingLimitDto.setUserId(interviewerId);
 
-    BookingLimit bookingLimit = getBookingLimitFromDto(bookingLimitDto);
+    BookingLimit bookingLimit = bookingLimitService.createBookingLimit(user,
+        bookingLimitDto.getBookingLimit());
 
     return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
   }
@@ -174,7 +184,10 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws InvalidInterviewerException, NotInterviewerException {
 
-    BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(interviewerId);
+    User user = userService.getUserById(interviewerId)
+        .orElseThrow(InvalidInterviewerException::new);
+
+    BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(user);
 
     return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
   }
@@ -192,15 +205,12 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws InvalidInterviewerException, NotInterviewerException {
 
-    BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(interviewerId);
+    User user = userService.getUserById(interviewerId)
+        .orElseThrow(InvalidInterviewerException::new);
+
+    BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(user);
 
     return ResponseEntity.ok(new BookingLimitDto(bookingLimit));
-  }
-
-  private BookingLimit getBookingLimitFromDto(BookingLimitDto bookingLimitDto)
-      throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
-    return bookingLimitService.createBookingLimit(bookingLimitDto.getUserId(),
-        bookingLimitDto.getBookingLimit());
   }
 
   /**
