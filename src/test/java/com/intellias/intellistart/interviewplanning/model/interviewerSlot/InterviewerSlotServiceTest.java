@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -62,9 +63,9 @@ public class InterviewerSlotServiceTest {
   );
 
   @Test
-  void getSlotsByWeekTest(){
-    when(cut.getSlotById(1L)).thenReturn(Optional.of(is1));
-    InterviewerSlot actual = cut.getSlotById(1L).get();
+  void getSlotsByWeekTest() throws SlotIsNotFoundException {
+    when(cut.getSlotById(1L)).thenReturn(is1);
+    InterviewerSlot actual = cut.getSlotById(1L);
     InterviewerSlot expected = is1;
     assertEquals(expected, actual);
   }

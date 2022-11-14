@@ -6,7 +6,9 @@ import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWee
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -20,11 +22,9 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -110,22 +110,22 @@ public class InterviewerSlotDtoValidator {
    * @throws SlotIsOverlappingException - when overlap some slot
    * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
    * @throws SlotIsNotFoundException - when slot is not found by slotId
+   * @throws SlotIsBookedException - when slot has at least one booking
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
-      SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException {
+      SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException,
+      SlotIsBookedException {
 
-    Optional<InterviewerSlot> interviewerSlotOptional = interviewerSlotService.getSlotById(slotId);
+    InterviewerSlot interviewerSlot = interviewerSlotService.getSlotById(slotId);
 
-    if (interviewerSlotOptional.isEmpty()) {
-      throw new SlotIsNotFoundException();
+    if (!(interviewerSlot.getUser().getId().equals(userId))) {
+      throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
     }
 
-    Long ownerOfSlotId = interviewerSlotOptional.get().getUser().getId();
-
-    if (!(ownerOfSlotId.equals(userId))) {
-      throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
+    if (interviewerSlot.getBookings() != null) {
+      throw new SlotIsBookedException();
     }
 
     interviewerSlotDto.setInterviewerSlotId(slotId);
@@ -154,8 +154,8 @@ public class InterviewerSlotDtoValidator {
       validateIfInterviewerRoleInterviewer(userById);
       return userById;
     }
-    //TODO resolve without valueOf
-    throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
+
+    throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
   }
 
   /**

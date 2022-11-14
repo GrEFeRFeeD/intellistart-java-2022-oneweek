@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -40,8 +41,8 @@ public class InterviewerSlotService {
    *
    * @return {@link Optional} of {@link InterviewerSlot}
    */
-  public Optional<InterviewerSlot> getSlotById(Long id) {
-    return interviewerSlotRepository.findById(id);
+  public InterviewerSlot getSlotById(Long id) throws SlotIsNotFoundException {
+    return interviewerSlotRepository.findById(id).orElseThrow(SlotIsNotFoundException::new);
   }
 
   /**
