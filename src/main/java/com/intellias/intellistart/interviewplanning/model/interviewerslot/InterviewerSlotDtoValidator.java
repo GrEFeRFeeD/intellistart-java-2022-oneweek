@@ -110,7 +110,7 @@ public class InterviewerSlotDtoValidator {
    * @throws SlotIsOverlappingException - when overlap some slot
    * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
    * @throws SlotIsNotFoundException - when slot is not found by slotId
-   * @throws SlotIsBookedException - when slot has at least one booking
+   * @throws SlotIsBookedException - when slot has at least one or more bookings
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
