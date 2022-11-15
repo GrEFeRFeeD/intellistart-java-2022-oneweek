@@ -89,15 +89,15 @@ class BookingValidatorTest {
 
     candidateSlot1 = new CandidateSlot(
         1L, week1TuesdayDate, candidateSlotPeriod1,
-        new LinkedHashSet<>(), null); //Arrays.asList(booking1)
+        new LinkedHashSet<>(), null, null); //Arrays.asList(booking1)
 
     candidateSlot2 = new CandidateSlot(
         2L, week1TuesdayDate, candidateSlotPeriod1,
-        new LinkedHashSet<>(), null); //Arrays.asList(booking2)
+        new LinkedHashSet<>(), null, null); //Arrays.asList(booking2)
 
     candidateSlot3 = new CandidateSlot(
         3L, week1TuesdayDate, candidateSlotPeriod1,
-        new LinkedHashSet<>(), null);
+        new LinkedHashSet<>(), null, null);
 
     booking1 = new Booking(
         1L, "interview", "Maks Kostyshen",

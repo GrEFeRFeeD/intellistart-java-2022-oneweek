@@ -22,13 +22,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookingValidator {
 
-  //TODO : fix javadoc
   private static final int BOOKING_PERIOD_DURATION_MINUTES = 90;
   private static final int DESCRIPTION_MAX_SIZE = 4000;
   private static final int SUBJECT_MAX_SIZE = 255;
   private final PeriodService periodService;
   private final TimeService timeService;
-
   private final WeekService weekService;
 
   /**

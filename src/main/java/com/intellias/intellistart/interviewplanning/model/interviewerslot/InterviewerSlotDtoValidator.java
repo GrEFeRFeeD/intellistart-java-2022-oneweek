@@ -20,11 +20,9 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -116,13 +114,9 @@ public class InterviewerSlotDtoValidator {
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException {
 
-    Optional<InterviewerSlot> interviewerSlotOptional = interviewerSlotService.getSlotById(slotId);
+    InterviewerSlot interviewerSlotOptional = interviewerSlotService.findById(slotId);
 
-    if (interviewerSlotOptional.isEmpty()) {
-      throw new SlotIsNotFoundException();
-    }
-
-    Long ownerOfSlotId = interviewerSlotOptional.get().getUser().getId();
+    Long ownerOfSlotId = interviewerSlotOptional.getUser().getId();
 
     if (!(ownerOfSlotId.equals(userId))) {
       throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
