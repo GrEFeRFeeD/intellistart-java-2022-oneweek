@@ -2,7 +2,6 @@ package com.intellias.intellistart.interviewplanning.model.interviewerSlot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
@@ -17,7 +16,6 @@ import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -60,14 +58,6 @@ public class InterviewerSlotServiceTest {
   InterviewerSlotService cut = new InterviewerSlotService(
       interviewerSlotRepository, bookingService
   );
-
-  @Test
-  void getSlotsByWeekTest(){
-    when(cut.getSlotById(1L)).thenReturn(Optional.of(is1));
-    InterviewerSlot actual = cut.getSlotById(1L).get();
-    InterviewerSlot expected = is1;
-    assertEquals(expected, actual);
-  }
 
   @Test
   void createInterviewerSlotsTest() {
