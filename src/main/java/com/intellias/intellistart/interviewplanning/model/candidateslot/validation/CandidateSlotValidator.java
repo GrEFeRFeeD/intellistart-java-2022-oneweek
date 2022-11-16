@@ -1,16 +1,15 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot.validation;
 
+import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +51,12 @@ public class CandidateSlotValidator {
    * @param id - the number of slot that we must update.
    *
    * @throws InvalidBoundariesException - when parameters are incorrect.
-   * @throws SlotNotFoundException - when the slot not found in DB by given id.
+   * @throws CandidateSlotNotFoundException - when the slot not found in DB by given id.
    * @throws SlotIsBookedException - when updated slot is booked.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   public void validateUpdating(CandidateSlot candidateSlot, Long id)
-      throws InvalidBoundariesException, SlotNotFoundException, SlotIsBookedException,
+      throws InvalidBoundariesException, CandidateSlotNotFoundException, SlotIsBookedException,
       SlotIsOverlappingException {
     validateSlotIsBookingAndTheSlotExists(id);
     validateCreating(candidateSlot);
@@ -108,14 +107,12 @@ public class CandidateSlotValidator {
    *
    * @param id - - the number of slot that we must check.
    *
-   * @throws SlotNotFoundException - when id not found in DB.
+   * @throws CandidateSlotNotFoundException - when id not found in DB.
    * @throws SlotIsBookedException - when slot is booked.
    */
   private void validateSlotIsBookingAndTheSlotExists(Long id)
-      throws SlotNotFoundException, SlotIsBookedException {
-    Optional<CandidateSlot> candidateSlotOptional = candidateSlotService.getCandidateSlotById(id);
-
-    CandidateSlot candidateSlot = candidateSlotOptional.orElseThrow(SlotNotFoundException::new);
+      throws CandidateSlotNotFoundException, SlotIsBookedException {
+    CandidateSlot candidateSlot = candidateSlotService.findById(id);
 
     if (!candidateSlot.getBookings().isEmpty()) {
       throw new SlotIsBookedException();

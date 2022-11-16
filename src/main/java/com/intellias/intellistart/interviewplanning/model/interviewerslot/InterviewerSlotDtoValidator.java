@@ -118,7 +118,7 @@ public class InterviewerSlotDtoValidator {
       SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException,
       SlotIsBookedException {
 
-    InterviewerSlot interviewerSlot = interviewerSlotService.getSlotById(slotId);
+    InterviewerSlot interviewerSlot = interviewerSlotService.findById(slotId);
 
     if (!(interviewerSlot.getUser().getId().equals(userId))) {
       throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);

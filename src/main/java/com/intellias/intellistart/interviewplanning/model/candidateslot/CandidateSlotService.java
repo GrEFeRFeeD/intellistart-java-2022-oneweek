@@ -1,10 +1,10 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
+import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,14 +76,16 @@ public class CandidateSlotService {
   }
 
   /**
-   * Returned slot of current Candidate by id.
+   * Find CandidateSlot of current Candidate in database by id.
    *
    * @param id - The slot number to search for in the database.
    *
-   * @return Optional of CandidateSlot - Optional object of find slot by id.
+   * @throws CandidateSlotNotFoundException if slot with given id is not present
    */
-  public Optional<CandidateSlot> getCandidateSlotById(Long id) {
-    return candidateSlotRepository.findById(id);
+  public CandidateSlot findById(Long id) {
+    return candidateSlotRepository
+        .findById(id)
+        .orElseThrow(CandidateSlotNotFoundException::new);
   }
 
   /**
