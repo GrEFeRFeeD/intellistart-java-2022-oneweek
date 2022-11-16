@@ -37,9 +37,13 @@ public class BookingService {
     return bookingRepository.save(booking);
   }
 
+
   /**
-   * TODO: implement this method.
+   * Delete the given bookings from DB.
+   *
+   * @param bookings - bookings that need to be removed from the database.
    */
   public void deleteBookings(Set<Booking> bookings) {
+    bookingRepository.deleteAll(bookings);
   }
 }
