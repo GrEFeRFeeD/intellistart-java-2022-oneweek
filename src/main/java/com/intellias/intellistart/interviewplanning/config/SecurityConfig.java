@@ -69,10 +69,11 @@ public class SecurityConfig {
 
     http.csrf().disable()
 
-        // TODO: Enable security
-        // .authorizeRequests().antMatchers("/authenticate").permitAll()
-        // .antMatchers("/candidates/**").hasRole("CANDIDATE").anyRequest()
-        // .authenticated().and()
+        .authorizeRequests().antMatchers("/authenticate").permitAll()
+        .antMatchers("/candidates/**").hasRole("CANDIDATE")
+        .antMatchers("/interviewers/**").hasAnyRole("INTERVIEWER", "COORDINATOR")
+        .antMatchers("/bookings", "/bookings/**", "/users", "/users/**").hasRole("COORDINATOR")
+        .anyRequest().authenticated().and()
 
         // Add custom handling for unauthenticated and access denied errors
         .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
