@@ -8,6 +8,7 @@ import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundaries
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
@@ -104,6 +105,7 @@ public class InterviewerController {
    * @throws SlotIsOverlappingException  - slot is overlapping exception
    * @throws InvalidBoundariesException  - invalid boundaries exception
    * @throws CannotEditThisWeekException - can not edit this week
+   * @throws SlotIsBookedException - when slot has at least one booking
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public ResponseEntity<InterviewerSlotDto> updateInterviewerSlot(
@@ -114,7 +116,7 @@ public class InterviewerController {
   )
       throws InvalidDayOfWeekException, InvalidBoundariesException,
       InvalidInterviewerException, SlotIsOverlappingException,
-      CannotEditThisWeekException, SlotIsNotFoundException {
+      CannotEditThisWeekException, SlotIsNotFoundException, SlotIsBookedException {
 
     interviewerSlotDtoValidator
         .validateAndUpdate(interviewerSlotDto, authentication, interviewerId,

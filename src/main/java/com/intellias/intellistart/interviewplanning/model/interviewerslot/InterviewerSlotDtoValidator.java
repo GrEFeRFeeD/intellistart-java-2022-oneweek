@@ -6,7 +6,9 @@ import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWee
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -108,18 +110,22 @@ public class InterviewerSlotDtoValidator {
    * @throws SlotIsOverlappingException - when overlap some slot
    * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
    * @throws SlotIsNotFoundException - when slot is not found by slotId
+   * @throws SlotIsBookedException - when slot has at least one or more bookings
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
       throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
-      SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException {
+      SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException,
+      SlotIsBookedException {
 
-    InterviewerSlot interviewerSlotOptional = interviewerSlotService.findById(slotId);
+    InterviewerSlot interviewerSlot = interviewerSlotService.findById(slotId);
 
-    Long ownerOfSlotId = interviewerSlotOptional.getUser().getId();
+    if (!(interviewerSlot.getUser().getId().equals(userId))) {
+      throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
+    }
 
-    if (!(ownerOfSlotId.equals(userId))) {
-      throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
+    if (interviewerSlot.getBookings() != null) {
+      throw new SlotIsBookedException();
     }
 
     interviewerSlotDto.setInterviewerSlotId(slotId);
@@ -148,8 +154,8 @@ public class InterviewerSlotDtoValidator {
       validateIfInterviewerRoleInterviewer(userById);
       return userById;
     }
-    //TODO resolve without valueOf
-    throw new SecurityException(String.valueOf(SecurityExceptionProfile.ACCESS_DENIED));
+
+    throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
   }
 
   /**
