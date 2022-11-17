@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
@@ -27,6 +29,8 @@ class BookingValidatorTest {
   private static PeriodService periodService;
   private static TimeService timeService;
   private static WeekService weekService;
+  private static BookingLimitService bookingLimitService;
+  private static InterviewerSlotService interviewerSlotService;
   private static BookingValidator cut;
   private static Period wrongPeriod;
   private static Week week1;
@@ -50,7 +54,11 @@ class BookingValidatorTest {
     periodService = Mockito.mock(PeriodService.class);
     timeService = Mockito.mock(TimeService.class);
     weekService = Mockito.mock(WeekService.class);
-    cut = new BookingValidator(periodService, timeService, weekService);
+    bookingLimitService = Mockito.mock(BookingLimitService.class);
+    interviewerSlotService = Mockito.mock(InterviewerSlotService.class);
+
+    cut = new BookingValidator(periodService, timeService, weekService, bookingLimitService,
+        interviewerSlotService);
 
     wrongPeriod = new Period();
     wrongPeriod.setFrom(LocalTime.of(10, 0));

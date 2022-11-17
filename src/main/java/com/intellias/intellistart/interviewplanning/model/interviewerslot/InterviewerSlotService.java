@@ -2,7 +2,9 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
+import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.user.User;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,5 +80,17 @@ public class InterviewerSlotService {
    */
   public List<InterviewerSlot> getSlotsByWeek(String userEmail, Long weekId) {
     return interviewerSlotRepository.getInterviewerSlotsByUserEmailAndWeekId(userEmail, weekId);
+  }
+
+  /**
+   * Alias for {@link InterviewerSlotRepository} method.
+   */
+  public List<InterviewerSlot> getInterviewerSlotsByUserAndWeekAndDayOfWeek(
+      User user, Week week, DayOfWeek dayOfWeek) {
+    Long userId = user.getId();
+    Long weekId = week.getId();
+
+    return interviewerSlotRepository
+        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(userId, weekId, dayOfWeek);
   }
 }

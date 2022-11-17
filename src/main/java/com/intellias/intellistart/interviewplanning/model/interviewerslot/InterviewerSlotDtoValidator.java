@@ -38,7 +38,6 @@ public class InterviewerSlotDtoValidator {
   private final UserService userService;
   private final InterviewerSlotService interviewerSlotService;
   private final WeekService weekService;
-  private final InterviewerSlotRepository interviewerSlotRepository;
 
   /**
    * Constructor.
@@ -46,12 +45,11 @@ public class InterviewerSlotDtoValidator {
   @Autowired
   public InterviewerSlotDtoValidator(PeriodService periodService,
       UserService userService, InterviewerSlotService interviewerSlotService,
-      WeekService weekService, InterviewerSlotRepository interviewerSlotRepository) {
+      WeekService weekService) {
     this.periodService = periodService;
     this.userService = userService;
     this.interviewerSlotService = interviewerSlotService;
     this.weekService = weekService;
-    this.interviewerSlotRepository = interviewerSlotRepository;
   }
 
   /**
@@ -218,9 +216,9 @@ public class InterviewerSlotDtoValidator {
   public void validateIfPeriodIsOverlapping(InterviewerSlot interviewerSlot)
       throws SlotIsOverlappingException {
 
-    List<InterviewerSlot> interviewerSlotsList = interviewerSlotRepository
-        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(interviewerSlot.getUser().getId(),
-            interviewerSlot.getWeek().getId(), interviewerSlot.getDayOfWeek());
+    List<InterviewerSlot> interviewerSlotsList = interviewerSlotService
+        .getInterviewerSlotsByUserAndWeekAndDayOfWeek(interviewerSlot.getUser(),
+            interviewerSlot.getWeek(), interviewerSlot.getDayOfWeek());
 
     if (!interviewerSlotsList.isEmpty()) {
 

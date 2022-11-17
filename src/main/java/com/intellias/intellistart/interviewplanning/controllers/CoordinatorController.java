@@ -6,6 +6,7 @@ import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
 import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
@@ -166,7 +167,7 @@ public class CoordinatorController {
   @PostMapping("bookings/{id}")
   public ResponseEntity<BookingDto> updateBooking(
       @RequestBody BookingDto bookingDto,
-      @PathVariable Long id) throws SlotIsNotFoundException {
+      @PathVariable Long id) throws SlotIsNotFoundException, NotInterviewerException {
 
     Booking updatingBooking = bookingService.findById(id);
     Booking newDataBooking = getFromDto(bookingDto);
@@ -193,7 +194,7 @@ public class CoordinatorController {
    */
   @PostMapping("bookings")
   public ResponseEntity<BookingDto> createBooking(
-      @RequestBody BookingDto bookingDto) throws SlotIsNotFoundException {
+      @RequestBody BookingDto bookingDto) throws SlotIsNotFoundException, NotInterviewerException {
 
     Booking newBooking = getFromDto(bookingDto);
 

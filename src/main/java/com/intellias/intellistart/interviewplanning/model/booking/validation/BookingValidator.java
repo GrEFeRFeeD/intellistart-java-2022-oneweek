@@ -1,18 +1,24 @@
 package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
+import com.intellias.intellistart.interviewplanning.exceptions.ExceededBookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidDescriptionException;
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidSubjectException;
+import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
+import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,16 +34,21 @@ public class BookingValidator {
   private final PeriodService periodService;
   private final TimeService timeService;
   private final WeekService weekService;
+  private final BookingLimitService bookingLimitService;
+  private final InterviewerSlotService interviewerSlotService;
 
   /**
    * Constructor.
    */
   @Autowired
   public BookingValidator(PeriodService periodService, TimeService timeService,
-      WeekService weekService) {
+      WeekService weekService, BookingLimitService bookingLimitService,
+      InterviewerSlotService interviewerSlotService) {
     this.periodService = periodService;
     this.timeService = timeService;
     this.weekService = weekService;
+    this.bookingLimitService = bookingLimitService;
+    this.interviewerSlotService = interviewerSlotService;
   }
 
   /**
@@ -52,7 +63,8 @@ public class BookingValidator {
    *                                          with existing Periods of InterviewerSlot and
    *                                          CandidateSlot
    */
-  public void validateUpdating(Booking updatingBooking, Booking newDataBooking) {
+  public void validateUpdating(Booking updatingBooking, Booking newDataBooking)
+      throws NotInterviewerException {
     Period newPeriod = newDataBooking.getPeriod();
 
     int periodDuration = timeService.calculateDurationMinutes(
@@ -91,6 +103,25 @@ public class BookingValidator {
 
     validatePeriodNotOverlappingWithOtherBookingPeriods(
         updatingBooking, newPeriod, candidateSlotBookings);
+
+    if (!newInterviewerSlot.equals(updatingBooking.getInterviewerSlot())) {
+      User newInterviewer = newInterviewerSlot.getUser();
+      List<InterviewerSlot> interviewerSlotsNewInterviewer = interviewerSlotService
+          .getInterviewerSlotsByUserAndWeekAndDayOfWeek(
+              newInterviewer, newInterviewerSlot.getWeek(), newInterviewerSlot.getDayOfWeek());
+
+      long bookingsNumber = interviewerSlotsNewInterviewer.stream()
+          .map(InterviewerSlot::getBookings)
+          .flatMap(Collection::stream)
+          .count();
+
+      long bookingLimit = bookingLimitService
+          .getBookingLimitForCurrentWeek(newInterviewer).getBookingLimit();
+
+      if (bookingsNumber >= bookingLimit) {
+        throw new ExceededBookingLimitException();
+      }
+    }
   }
 
   private void validatePeriodNotOverlappingWithOtherBookingPeriods(
@@ -107,7 +138,7 @@ public class BookingValidator {
   /**
    * Alias for {@link #validateUpdating(Booking, Booking)}.
    */
-  public void validateCreating(Booking newBooking) {
-    validateUpdating(newBooking, newBooking);
+  public void validateCreating(Booking newBooking) throws NotInterviewerException {
+    validateUpdating(new BookingNullable(), newBooking);
   }
 }
