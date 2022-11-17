@@ -91,10 +91,8 @@ public class CandidateSlotValidator {
 
     if (!candidateSlotList.isEmpty()) {
       for (CandidateSlot item : candidateSlotList) {
-        if (candidateSlot.getId() != null && candidateSlot.getId().equals(item.getId())) {
-          continue;
-        }
-        if (periodService.areOverlapping(period, item.getPeriod())) {
+        if (!candidateSlot.getId().equals(item.getId())
+                && periodService.areOverlapping(period, item.getPeriod())) {
           throw new SlotIsOverlappingException();
         }
       }
