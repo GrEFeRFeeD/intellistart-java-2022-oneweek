@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.exceptions;
+package com.intellias.intellistart.interviewplanning.exceptions.old;
 
 /**
  * Is thrown in obtaining periods when parameters are invalid.

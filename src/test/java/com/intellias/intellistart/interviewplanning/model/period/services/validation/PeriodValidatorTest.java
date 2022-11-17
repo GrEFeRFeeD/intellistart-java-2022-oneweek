@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.model.period.services.valid
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import java.time.LocalTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

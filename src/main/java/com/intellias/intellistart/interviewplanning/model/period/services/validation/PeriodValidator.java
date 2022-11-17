@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.period.services.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.DurationValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.ExtremeValuesValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.PeriodChainValidator;

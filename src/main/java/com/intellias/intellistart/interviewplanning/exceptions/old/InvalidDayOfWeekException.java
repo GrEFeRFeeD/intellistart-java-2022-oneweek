@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.exceptions;
+package com.intellias.intellistart.interviewplanning.exceptions.old;
 
 /**
  * Thrown when we get invalid day of week from DTO.

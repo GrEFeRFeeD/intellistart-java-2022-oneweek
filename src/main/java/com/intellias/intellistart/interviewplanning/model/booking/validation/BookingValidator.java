@@ -1,9 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDescriptionException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidSubjectException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDescriptionException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidSubjectException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;

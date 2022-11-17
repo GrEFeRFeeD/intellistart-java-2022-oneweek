@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import java.util.List;

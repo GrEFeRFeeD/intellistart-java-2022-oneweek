@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
@@ -74,8 +74,8 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void isInterviewerRoleINTERVIEWERTest() {
-    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
-    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
+    assertThrows(UserException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
+    assertThrows(UserException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
     assertDoesNotThrow(() -> cut.validateIfInterviewerRoleInterviewer(u1));
   }
 

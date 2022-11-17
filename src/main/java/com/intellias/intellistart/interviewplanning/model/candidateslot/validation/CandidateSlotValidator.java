@@ -1,9 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;

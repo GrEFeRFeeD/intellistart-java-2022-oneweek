@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;

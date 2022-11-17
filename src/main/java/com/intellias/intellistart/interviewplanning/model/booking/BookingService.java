@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.booking;
 
-import com.intellias.intellistart.interviewplanning.exceptions.BookingNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.BookingNotFoundException;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

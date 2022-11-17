@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.exceptions.handlers;
 
-import com.intellias.intellistart.interviewplanning.exceptions.ExceptionResponse;
+import com.intellias.intellistart.interviewplanning.exceptions.old.ExceptionResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

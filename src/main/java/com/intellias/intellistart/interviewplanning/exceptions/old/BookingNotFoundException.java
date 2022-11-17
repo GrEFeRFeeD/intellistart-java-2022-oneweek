@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.exceptions;
+package com.intellias.intellistart.interviewplanning.exceptions.old;
 
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 

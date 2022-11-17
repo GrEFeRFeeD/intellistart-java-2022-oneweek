@@ -3,15 +3,12 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InterviewerSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
@@ -67,11 +64,11 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the granted User.
    *
-   * @throws UserAlreadyHasRoleException - when user already has role.
+   * @throws UserException - when user already has role.
    */
   @PostMapping("/users/interviewers")
   public ResponseEntity<User> grantInterviewerByEmail(@RequestBody EmailDto request)
-      throws UserAlreadyHasRoleException {
+      throws UserException {
     return ResponseEntity.ok(userService.grantRoleByEmail(request.getEmail(), Role.INTERVIEWER));
   }
 
@@ -82,11 +79,11 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the granted User.
    *
-   * @throws UserAlreadyHasRoleException - - when user already has role.
+   * @throws UserException - - when user already has role.
    */
   @PostMapping("/users/coordinators")
   public ResponseEntity<User> grantCoordinatorByEmail(@RequestBody EmailDto request)
-      throws UserAlreadyHasRoleException {
+      throws UserException {
     return ResponseEntity.ok(userService.grantRoleByEmail(request.getEmail(), Role.COORDINATOR));
   }
 
@@ -121,12 +118,12 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - the deleted user.
    *
-   * @throws UserNotFoundException - when the user not found by given id.
-   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
+   * @throws UserException -
+  when the user not found by given id or has not interviewer role.
    */
   @DeleteMapping("/users/interviewers/{id}")
   public ResponseEntity<User> deleteInterviewerById(@PathVariable("id") Long id)
-      throws UserNotFoundException, UserHasAnotherRoleException {
+      throws UserException {
     return ResponseEntity.ok(userService.deleteInterviewer(id));
   }
 
@@ -137,13 +134,13 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - the deleted user.
    *
-   * @throws UserNotFoundException - when the user not found by given id.
-   * @throws SelfRevokingException - when the coordinator removes himself.
+   * @throws UserException -
+  when the user not found by given id or the coordinator removes himself
    */
   @DeleteMapping("/users/coordinators/{id}")
   public ResponseEntity<User> deleteCoordinatorById(@PathVariable("id") Long id,
       Authentication authentication)
-      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
+      throws UserException {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     String currentEmailCoordinator = jwtUserDetails.getEmail();

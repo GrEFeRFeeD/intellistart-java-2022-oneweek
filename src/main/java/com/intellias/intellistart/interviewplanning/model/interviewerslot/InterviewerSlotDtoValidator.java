@@ -2,15 +2,15 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
@@ -60,13 +60,13 @@ public class InterviewerSlotDtoValidator {
    *
    * @param interviewerSlotDto from Controller's request
    * @throws InvalidDayOfWeekException   - when invalid day of week
-   * @throws InvalidInterviewerException - when invalid interviewer id, role not Interviewer
+   * @throws UserException - when invalid interviewer id, role not Interviewer
    * @throws SlotIsOverlappingException  - when overlap some slot
    * @throws InvalidBoundariesException  - when not in range 10:00 - 22:00, or less than 90 min
    */
   public void validateAndCreate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId)
-      throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
+      throws InvalidDayOfWeekException, UserException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException {
 
     validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
@@ -105,7 +105,7 @@ public class InterviewerSlotDtoValidator {
    * @param userId - from request
    * @param slotId - from request
    * @throws InvalidDayOfWeekException - when invalid day of week
-   * @throws InvalidInterviewerException - when invalid interviewer id, role not Interviewer
+   * @throws UserException - when invalid interviewer id, role not Interviewer
    * @throws InvalidBoundariesException - when not in range 10:00 - 22:00, or less than 90 min
    * @throws SlotIsOverlappingException - when overlap some slot
    * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
@@ -114,7 +114,7 @@ public class InterviewerSlotDtoValidator {
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
-      throws InvalidDayOfWeekException, InvalidInterviewerException, InvalidBoundariesException,
+      throws InvalidDayOfWeekException, UserException, InvalidBoundariesException,
       SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException,
       SlotIsBookedException {
 
@@ -142,14 +142,15 @@ public class InterviewerSlotDtoValidator {
    * @param userId         - id from request
    * @param authentication - authentication
    * @return User
-   * @throws InvalidInterviewerException - when user by id and by authentication is not the same
+   * @throws UserException - when user by id and by authentication is not the same
    */
   public User validateAndGetUser(Long userId, Authentication authentication)
-      throws InvalidInterviewerException, SecurityException {
+      throws UserException, SecurityException {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     String email = jwtUserDetails.getEmail();
     User userById = userService.getUserById(userId)
-        .orElseThrow(InvalidInterviewerException::new);
+        .orElseThrow(() ->
+                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
     if (email.equals(userById.getEmail())) {
       validateIfInterviewerRoleInterviewer(userById);
       return userById;
@@ -162,11 +163,11 @@ public class InterviewerSlotDtoValidator {
    * Get User and check if User's role is INTERVIEWER.
    *
    * @param user Interviewer
-   * @throws InvalidInterviewerException - InvalidInterviewerException
+   * @throws UserException - InvalidInterviewerException
    */
-  public void validateIfInterviewerRoleInterviewer(User user) throws InvalidInterviewerException {
+  public void validateIfInterviewerRoleInterviewer(User user) throws UserException {
     if (!user.getRole().equals(Role.INTERVIEWER)) {
-      throw new InvalidInterviewerException();
+      throw new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER);
     }
   }
 
