@@ -1,7 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model.bookinglimit;
 
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException.BookingLimitExceptionProfile;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBookingLimitException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
@@ -84,18 +85,18 @@ public class BookingLimitService {
    * @param user - interviewer
    * @param bookingLimit - booking limit
    * @return BookingLimit
-   * @throws InvalidBookingLimitException - invalid bookingLimit exception
+   * @throws BookingLimitException - invalid bookingLimit exception
    * @throws UserException - not interviewer id
    */
   public BookingLimit createBookingLimit(User user, Integer bookingLimit)
-      throws InvalidBookingLimitException, UserException {
+      throws BookingLimitException, UserException {
 
     if (user.getRole() != Role.INTERVIEWER) {
       throw new UserException(UserException.UserExceptionProfile.NOT_INTERVIEWER);
     }
 
     if (bookingLimit <= 0) {
-      throw new InvalidBookingLimitException();
+      throw new BookingLimitException(BookingLimitExceptionProfile.INVALID_BOOKING_LIMIT);
     }
 
     Week nextWeek = weekService.getNextWeek();

@@ -2,9 +2,6 @@ package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.user.Role;
-import com.intellias.intellistart.interviewplanning.model.user.User;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -20,7 +17,6 @@ public class CandidateSlotServiceTest {
 
   private static CandidateSlotRepository candidateSlotRepository;
   private static PeriodService periodService;
-  private static UserService userService;
   private static CandidateSlotService cut;
   private static CandidateSlot candidateSlot1;
   private static CandidateSlot candidateSlot2;
@@ -31,9 +27,8 @@ public class CandidateSlotServiceTest {
   static void initialize() {
     candidateSlotRepository = Mockito.mock(CandidateSlotRepository.class);
     periodService = Mockito.mock(PeriodService.class);
-    userService = Mockito.mock(UserService.class);
     cut = new CandidateSlotService(candidateSlotRepository,
-        periodService, userService);
+        periodService);
 
     period1 = new Period();
     period1.setFrom(LocalTime.of(9,0));

@@ -5,9 +5,9 @@ import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerS
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;

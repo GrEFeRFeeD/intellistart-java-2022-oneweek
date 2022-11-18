@@ -2,9 +2,9 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingLimitDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
@@ -131,13 +131,13 @@ public class InterviewerController {
    * @param interviewerId   - user id from request
    * @return BookingLimitDto and HTTP status
    * @throws UserException - invalid user (interviewer) exception or not interviewer id
-   * @throws InvalidBookingLimitException - invalid bookingLimit exception
+   * @throws BookingLimitException - invalid bookingLimit exception
    */
   @PostMapping("/interviewers/{interviewerId}/booking-limits")
   public ResponseEntity<BookingLimitDto> createBookingLimit(
       @RequestBody BookingLimitDto bookingLimitDto,
       @PathVariable("interviewerId") Long interviewerId)
-      throws UserException, InvalidBookingLimitException {
+      throws UserException, BookingLimitException {
 
     User user = userService.getUserById(interviewerId)
         .orElseThrow(() ->

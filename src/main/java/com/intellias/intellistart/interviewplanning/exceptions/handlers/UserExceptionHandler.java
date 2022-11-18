@@ -20,11 +20,11 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = UserException.class)
     public ResponseEntity<Object> handleUserException(UserException exception,
-                                                          WebRequest webRequest) {
+        WebRequest webRequest) {
 
-        var exceptionBody = new ExceptionResponse(exception.getName(), exception.getMessage());
+    var exceptionBody = new ExceptionResponse(exception.getName(), exception.getMessage());
 
-        return handleExceptionInternal(exception, exceptionBody, new HttpHeaders(),
-                exception.getResponseStatus(), webRequest);
+    return handleExceptionInternal(exception, exceptionBody, new HttpHeaders(),
+            exception.getResponseStatus(), webRequest);
     }
 }

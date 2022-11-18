@@ -7,8 +7,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBookingLimitException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
@@ -158,7 +158,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("createBookingLimitExceptionTestArgs")
   void createBookingLimitInvalidBookingLimitExceptionTest(User user, Integer bookingLimit){
-    assertThrows(InvalidBookingLimitException.class,
+    assertThrows(BookingLimitException.class,
         () -> cut.createBookingLimit(user,bookingLimit));
   }
 
@@ -172,7 +172,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("createBookingLimitTestArgs")
   void createBookingLimitTest(User user, Integer bookingLimit, BookingLimit expected)
-      throws InvalidBookingLimitException, UserException {
+      throws BookingLimitException, UserException {
     given(weekService.getNextWeek()).willReturn(expected.getWeek());
     given(bookingLimitRepository.save(expected)).willReturn(expected);
 
