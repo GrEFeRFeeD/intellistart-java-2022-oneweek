@@ -5,9 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -67,8 +66,8 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void isCorrectDayTest() {
-    assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("friday"));
-    assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("february"));
+    assertThrows(SlotException.class, () -> cut.validateIfCorrectDay("friday"));
+    assertThrows(SlotException.class, () -> cut.validateIfCorrectDay("february"));
     assertDoesNotThrow(() -> cut.validateIfCorrectDay("TUE"));
   }
 
@@ -82,7 +81,7 @@ public class InterviewerSlotDtoValidatorTest {
   @Test
   void canEditThisWeekTest() {
     when(weekService.getCurrentWeek()).thenReturn(new Week(43L,new HashSet<>()));
-    assertThrows(CannotEditThisWeekException.class, () -> cut.validateIfCanEditThisWeek(w2));
+    assertThrows(SlotException.class, () -> cut.validateIfCanEditThisWeek(w2));
     assertDoesNotThrow(() -> cut.validateIfCanEditThisWeek(w1));
   }
 

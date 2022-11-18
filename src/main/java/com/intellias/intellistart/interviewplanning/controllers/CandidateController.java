@@ -2,8 +2,8 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotsDto;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
@@ -46,13 +46,13 @@ public class CandidateController {
    *
    * @return ResponseEntity - Response of the saved object converted to a DTO.
    *
-   * @throws InvalidBoundariesException - when parameters are incorrect.
+   * @throws SlotException - when parameters are incorrect.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots")
   public ResponseEntity<CandidateSlotDto> createCandidateSlot(@RequestBody CandidateSlotDto request,
       Authentication authentication)
-      throws InvalidBoundariesException, SlotIsOverlappingException {
+      throws SlotException, SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlotValidator.validateCreating(candidateSlot);
 
@@ -73,13 +73,13 @@ public class CandidateController {
    *
    * @throws CandidateSlotNotFoundException - when updated slot id not found.
    * @throws SlotIsBookedException - when updated slot is booked.
-   * @throws InvalidBoundariesException - when parameters are incorrect.
+   * @throws SlotException - when parameters are incorrect.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
   @PostMapping("/candidates/current/slots/{slotId}")
   public ResponseEntity<CandidateSlotDto> updateCandidateSlot(@RequestBody CandidateSlotDto request,
       @PathVariable("slotId") Long id, Authentication authentication)
-      throws CandidateSlotNotFoundException, SlotIsBookedException, InvalidBoundariesException,
+      throws CandidateSlotNotFoundException, SlotIsBookedException, SlotException,
       SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlot.setId(id);
@@ -114,7 +114,7 @@ public class CandidateController {
    * @return CandidateSlot object by given DTO.
    */
   private CandidateSlot getCandidateSlotFromDto(CandidateSlotDto candidateSlotDto,
-      Authentication authentication) {
+      Authentication authentication) throws SlotException {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
 

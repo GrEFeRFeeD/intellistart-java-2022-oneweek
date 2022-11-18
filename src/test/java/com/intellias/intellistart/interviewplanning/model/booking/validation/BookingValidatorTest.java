@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
@@ -130,7 +130,7 @@ class BookingValidatorTest {
             newDataBooking.getPeriod().getFrom(), newDataBooking.getPeriod().getTo()))
         .thenReturn(120);
 
-    assertThrows(InvalidBoundariesException.class,
+    assertThrows(SlotException.class,
         () -> cut.validateUpdating(updatingBooking, newDataBooking));
   }
 
@@ -200,7 +200,7 @@ class BookingValidatorTest {
   @ParameterizedTest
   @MethodSource("provideInvalidTextArguments")
   void failWhenUpdateInvalidTestArguments(Booking updatingBooking, Booking newBookingData){
-    assertThrows(InvalidBoundariesException.class,
+    assertThrows(SlotException .class,
         () -> cut.validateUpdating(updatingBooking, newBookingData));
   }
 

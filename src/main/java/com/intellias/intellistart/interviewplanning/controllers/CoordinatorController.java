@@ -3,10 +3,10 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.InterviewerSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
@@ -154,7 +154,7 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the saved updated object converted to a DTO.
    *
-   * @throws InvalidBoundariesException if Period boundaries are Invalid
+   * @throws SlotException  if Period boundaries are Invalid
    * @throws CandidateSlotNotFoundException if CandidateSlot is not found
    * @throws InterviewerSlotNotFoundException if InterviewerSlot is not found
    * @throws SlotsAreNotIntersectingException if CandidateSlot, InterviewerSlot
@@ -163,7 +163,7 @@ public class CoordinatorController {
   @PostMapping("bookings/{id}")
   public ResponseEntity<BookingDto> updateBooking(
       @RequestBody BookingDto bookingDto,
-      @PathVariable Long id) throws SlotIsNotFoundException {
+      @PathVariable Long id) throws SlotIsNotFoundException, SlotException {
 
     Booking updatingBooking = bookingService.findById(id);
     Booking newDataBooking = getFromDto(bookingDto);
@@ -182,7 +182,7 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the saved created object converted to a DTO.
    *
-   * @throws InvalidBoundariesException if Period boundaries are Invalid
+   * @throws SlotException  if Period boundaries are Invalid
    * @throws CandidateSlotNotFoundException if CandidateSlot is not found
    * @throws InterviewerSlotNotFoundException if InterviewerSlot is not found
    * @throws SlotsAreNotIntersectingException if CandidateSlot, InterviewerSlot
@@ -190,7 +190,7 @@ public class CoordinatorController {
    */
   @PostMapping("bookings")
   public ResponseEntity<BookingDto> createBooking(
-      @RequestBody BookingDto bookingDto) throws SlotIsNotFoundException {
+      @RequestBody BookingDto bookingDto) throws SlotIsNotFoundException, SlotException {
 
     Booking newBooking = getFromDto(bookingDto);
 
@@ -200,7 +200,7 @@ public class CoordinatorController {
     return ResponseEntity.ok(new BookingDto(savedBooking));
   }
 
-  Booking getFromDto(BookingDto bookingDto) throws SlotIsNotFoundException {
+  Booking getFromDto(BookingDto bookingDto) throws SlotIsNotFoundException, SlotException {
     Booking booking = new Booking();
 
     booking.setSubject(bookingDto.getSubject());

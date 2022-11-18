@@ -2,12 +2,11 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
@@ -59,15 +58,18 @@ public class InterviewerSlotDtoValidator {
    * save InterviewerSlot in database. If not - throws one of the exceptions.
    *
    * @param interviewerSlotDto from Controller's request
-   * @throws InvalidDayOfWeekException   - when invalid day of week
-   * @throws UserException - when invalid interviewer id, role not Interviewer
-   * @throws SlotIsOverlappingException  - when overlap some slot
-   * @throws InvalidBoundariesException  - when not in range 10:00 - 22:00, or less than 90 min
+   *
+   * @throws SlotException when:
+   *     <ul>
+   *     <li>invalid interviewer id, role not Interviewer
+   *     <li>slots are overlapping
+   *     <li>invalid boundaries of time period
+   *     </ul>
    */
   public void validateAndCreate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId)
-      throws InvalidDayOfWeekException, UserException, InvalidBoundariesException,
-      SlotIsOverlappingException, CannotEditThisWeekException {
+      throws UserException, SlotException,
+      SlotIsOverlappingException {
 
     validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
 
@@ -104,18 +106,23 @@ public class InterviewerSlotDtoValidator {
    * @param authentication - from springSecurity
    * @param userId - from request
    * @param slotId - from request
-   * @throws InvalidDayOfWeekException - when invalid day of week
+   * @throws SlotException - when:
+   *     <ul>
+   *     <li>extreme values validation
+   *     <li>invalid boundaries of time period
+   *     <li>when slot is not found by slotId
+   *     <li>slot is overlapping
+   *     <li>invalid day of week
+   *     </ul>
+   *
    * @throws UserException - when invalid interviewer id, role not Interviewer
-   * @throws InvalidBoundariesException - when not in range 10:00 - 22:00, or less than 90 min
-   * @throws SlotIsOverlappingException - when overlap some slot
-   * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
-   * @throws SlotIsNotFoundException - when slot is not found by slotId
+   *
    * @throws SlotIsBookedException - when slot has at least one or more bookings
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
-      throws InvalidDayOfWeekException, UserException, InvalidBoundariesException,
-      SlotIsOverlappingException, CannotEditThisWeekException, SlotIsNotFoundException,
+      throws UserException, SlotException,
+      SlotIsOverlappingException, SlotIsNotFoundException,
       SlotIsBookedException {
 
     InterviewerSlot interviewerSlot = interviewerSlotService.findById(slotId);
@@ -175,11 +182,12 @@ public class InterviewerSlotDtoValidator {
    * Get DayOfWeek in String and check if it is one of Enums DayOfWeek.
    *
    * @param dayOfWeek dayOfWeek from interviewerSlotDTO
-   * @throws InvalidDayOfWeekException - InvalidDayOfWeekException
+   *
+   * @throws SlotException invalid day of week
    */
-  public void validateIfCorrectDay(String dayOfWeek) throws InvalidDayOfWeekException {
+  public void validateIfCorrectDay(String dayOfWeek) throws SlotException {
     if (!ObjectUtils.containsConstant(DayOfWeek.values(), dayOfWeek)) {
-      throw new InvalidDayOfWeekException();
+      throw new SlotException(SlotExceptionProfile.INVALID_DAY_OF_WEEK);
     }
   }
 
@@ -189,21 +197,21 @@ public class InterviewerSlotDtoValidator {
    * past or if it's week is current week Finally, check if dayOfWeek is not Saturday or Sunday.
    *
    * @param week from Controller's request
-   * @throws CannotEditThisWeekException - CannotEditThisWeekException
+   * @throws SlotException - CannotEditThisWeekException
    */
   public void validateIfCanEditThisWeek(Week week)
-      throws CannotEditThisWeekException {
+      throws SlotException {
 
     Week currentWeek = weekService.getCurrentWeek();
     if (week.getId() <= currentWeek.getId()) {
-      throw new CannotEditThisWeekException();
+      throw new SlotException(SlotExceptionProfile.CANNOT_EDIT_THIS_WEEK);
     }
     LocalDate currentDate = LocalDate.now();
     DayOfWeek currentDayOfWeek = weekService.getDayOfWeek(currentDate);
     if (week.getId() == currentWeek.getId() + 1) {
       if (currentDayOfWeek.equals(DayOfWeek.SAT)
           || currentDayOfWeek.equals(DayOfWeek.SUN)) {
-        throw new CannotEditThisWeekException();
+        throw new SlotException(SlotExceptionProfile.CANNOT_EDIT_THIS_WEEK);
       }
     }
   }

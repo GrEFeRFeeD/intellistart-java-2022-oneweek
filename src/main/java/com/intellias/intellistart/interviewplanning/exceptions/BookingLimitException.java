@@ -21,6 +21,7 @@ public class BookingLimitException extends Exception {
     private final String exceptionMessage;
     private final HttpStatus responseStatus;
   }
+
   private final BookingLimitException.BookingLimitExceptionProfile bookingLimitExceptionProfile;
 
   public BookingLimitException(BookingLimitExceptionProfile bookingLimitExceptionProfile) {

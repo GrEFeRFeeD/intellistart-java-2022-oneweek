@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.model.period;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 
@@ -50,18 +50,18 @@ class PeriodServiceTest {
   }
 
   @Test
-  void exceptionWhenIncorrectValidation(){
+  void exceptionWhenIncorrectValidation() throws SlotException {
     String fromStr = "19:00";
     String toStr = "23:00";
     LocalTime from = LocalTime.of(19, 0);
     LocalTime to = LocalTime.of(23, 0);
 
-    Mockito.doThrow(InvalidBoundariesException.class).when(validator).validate(from, to);
+    Mockito.doThrow(SlotException.class).when(validator).validate(from, to);
 
     Mockito.when(converter.convert(fromStr)).thenReturn(from);
     Mockito.when(converter.convert(toStr)).thenReturn(to);
 
-    assertThrows(InvalidBoundariesException.class, () ->
+    assertThrows(SlotException .class, () ->
         cut.obtainPeriod(fromStr, toStr));
   }
 
@@ -87,7 +87,7 @@ class PeriodServiceTest {
   @ParameterizedTest
   @MethodSource("provideObtainPeriodArguments")
   void returnPeriodWhenPeriodNotExists(String fromStr, String toStr,
-      LocalTime from, LocalTime to){
+      LocalTime from, LocalTime to) throws SlotException {
 
     Period expected = createPeriod(from, to);
 
@@ -109,7 +109,7 @@ class PeriodServiceTest {
   @ParameterizedTest
   @MethodSource("provideObtainPeriodArguments")
   void returnPeriodWhenPeriodExists(String fromStr, String toStr,
-  LocalTime from, LocalTime to){
+  LocalTime from, LocalTime to) throws SlotException {
 
     Period expected = createPeriod(from, to);
 

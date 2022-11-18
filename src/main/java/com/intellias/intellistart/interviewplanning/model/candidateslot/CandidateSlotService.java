@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import java.time.LocalDate;
@@ -94,7 +95,7 @@ public class CandidateSlotService {
    * @return CandidateSlot - created object by parameters.
    */
   public CandidateSlot createCandidateSlot(LocalDate date, String from, String to, String email,
-      String name) {
+      String name) throws SlotException {
     CandidateSlot candidateSlot = new CandidateSlot();
 
     candidateSlot.setDate(date);

@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDescriptionException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidSubjectException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotsAreNotIntersectingException;
@@ -46,19 +47,20 @@ public class BookingValidator {
    * @param updatingBooking Booking with old parameters
    * @param newDataBooking Booking with new parameters
    *
-   * @throws InvalidBoundariesException       if duration of new Period is invalid
+   * @throws SlotException        if duration of new Period is invalid
    * @throws SlotsAreNotIntersectingException if periods of InterviewSlot, CandidateSlot do not
    *                                          intersect with new Period or new Period is overlapping
    *                                          with existing Periods of InterviewerSlot and
    *                                          CandidateSlot
    */
-  public void validateUpdating(Booking updatingBooking, Booking newDataBooking) {
+  public void validateUpdating(Booking updatingBooking, Booking newDataBooking)
+      throws SlotException {
     Period newPeriod = newDataBooking.getPeriod();
 
     int periodDuration = timeService.calculateDurationMinutes(
         newPeriod.getFrom(), newPeriod.getTo());
     if (periodDuration != BOOKING_PERIOD_DURATION_MINUTES) {
-      throw new InvalidBoundariesException();
+      throw new SlotException(SlotExceptionProfile.INVALID_BOUNDARIES);
     }
 
     if (newDataBooking.getSubject().length() > SUBJECT_MAX_SIZE) {
@@ -107,7 +109,7 @@ public class BookingValidator {
   /**
    * Alias for {@link #validateUpdating(Booking, Booking)}.
    */
-  public void validateCreating(Booking newBooking) {
+  public void validateCreating(Booking newBooking) throws SlotException {
     validateUpdating(newBooking, newBooking);
   }
 }

@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import java.time.LocalDate;
@@ -144,7 +145,7 @@ public class CandidateSlotServiceTest {
   @ParameterizedTest
   @MethodSource("createCandidateSlotArgs")
   void createCandidateSlotTest(LocalDate date, String from, String to, String email, String name,
-      CandidateSlot expected, Period period) {
+      CandidateSlot expected, Period period) throws SlotException {
       
     Mockito.when(periodService.obtainPeriod(from, to)).thenReturn(period);
 

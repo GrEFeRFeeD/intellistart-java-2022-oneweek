@@ -16,7 +16,7 @@ public class UserException extends Exception {
   public enum UserExceptionProfile {
 
       INVALID_INTERVIEWER("interviewer_not_found",
-              "Invalid interviewer`s id in the path.", HttpStatus.NOT_FOUND),
+              "Invalid interviewer's id in the path.", HttpStatus.NOT_FOUND),
 
       SELF_REVOKING("self_revoking",
               "The user cannot change or delete himself.", HttpStatus.BAD_REQUEST),
@@ -31,7 +31,7 @@ public class UserException extends Exception {
               "Provided user is not interviewer.", HttpStatus.BAD_REQUEST),
 
       NOT_COORDINATOR("not_coordinator",
-                              "Provided user is not coordinator.", HttpStatus.BAD_REQUEST);
+          "Provided user is not coordinator.", HttpStatus.BAD_REQUEST);
 
     private final String exceptionName;
     private final String exceptionMessage;

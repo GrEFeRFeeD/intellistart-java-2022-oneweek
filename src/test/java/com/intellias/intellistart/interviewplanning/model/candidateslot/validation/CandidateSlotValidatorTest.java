@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot.validation;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
@@ -116,7 +116,7 @@ public class CandidateSlotValidatorTest {
   @ParameterizedTest
   @MethodSource("validateCreateCandidateSlotArgs")
   void validateCreateCandidateSlotTest(CandidateSlot candidateSlot)
-      throws SlotIsOverlappingException, InvalidBoundariesException {
+      throws SlotIsOverlappingException, SlotException {
     Mockito.when(candidateSlotService.getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
         candidateSlot.getDate())).thenReturn(List.of());
 
@@ -128,8 +128,8 @@ public class CandidateSlotValidatorTest {
 
   static Arguments[] validateCreateCandidateSlotExc1Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot1, InvalidBoundariesException.class),
-        Arguments.arguments(candidateSlot2, InvalidBoundariesException.class)
+        Arguments.arguments(candidateSlot1, SlotException.class),
+        Arguments.arguments(candidateSlot2, SlotException.class)
     };
   }
   @ParameterizedTest
@@ -174,7 +174,7 @@ public class CandidateSlotValidatorTest {
   @MethodSource("validateUpdateCandidateSlotArgs")
   void validateUpdateCandidateSlotTest(CandidateSlot candidateSlot, long id)
       throws CandidateSlotNotFoundException, SlotIsOverlappingException, SlotIsBookedException,
-      InvalidBoundariesException {
+      SlotException {
     Mockito.when(candidateSlotService.getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
         candidateSlot.getDate())).thenReturn(List.of());
     Mockito.when(candidateSlotService.findById(id))

@@ -3,10 +3,8 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingLimitDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
@@ -71,11 +69,16 @@ public class InterviewerController {
    * @param interviewerSlotDto - DTO from request
    * @param interviewerId      - user Id from request
    * @return interviewerSlotDto - and/or HTTP status
-   * @throws InvalidDayOfWeekException   - invalid day of week
-   * @throws UserException - invalid user (interviewer) exception
-   * @throws SlotIsOverlappingException  - slot is overlapping exception
-   * @throws InvalidBoundariesException  - invalid boundaries exception
-   * @throws CannotEditThisWeekException - can not edit this week
+   *
+   * @throws SlotException when:
+   *     <ul>
+   *     <li>cannot edit this week
+   *     <li>invalid boundaries of time period
+   *     <li>when slot is not found by slotId
+   *     <li>slot is overlapping
+   *     </ul>
+   *
+   * @throws UserException invalid user (interviewer) exception
    */
   @PostMapping("/interviewers/{interviewerId}/slots")
   public ResponseEntity<InterviewerSlotDto> createInterviewerSlot(
@@ -83,8 +86,8 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId,
       Authentication authentication
   )
-      throws InvalidDayOfWeekException, InvalidBoundariesException, UserException,
-      SlotIsOverlappingException, CannotEditThisWeekException {
+      throws SlotException, UserException,
+      SlotIsOverlappingException, SlotException {
 
     interviewerSlotDtoValidator
         .validateAndCreate(interviewerSlotDto, authentication, interviewerId);
@@ -98,12 +101,17 @@ public class InterviewerController {
    * @param interviewerSlotDto - DTO from request
    * @param interviewerId      - user Id from request
    * @param slotId             - slot Id from request
+   *
    * @return interviewerSlotDto - and/or HTTP status
-   * @throws InvalidDayOfWeekException   - invalid day of week
-   * @throws UserException - invalid user (interviewer) exception
+   *
+   * @throws UserException when:
+   *     <ul>
+   *     <li>cannot edit this week
+   *     <li>invalid boundaries of time period
+   *     <li>when slot is not found by slotId
+   *     </ul>
+   *
    * @throws SlotIsOverlappingException  - slot is overlapping exception
-   * @throws InvalidBoundariesException  - invalid boundaries exception
-   * @throws CannotEditThisWeekException - can not edit this week
    * @throws SlotIsBookedException - when slot has at least one booking
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
@@ -113,9 +121,8 @@ public class InterviewerController {
       @PathVariable("slotId") Long slotId,
       Authentication authentication
   )
-      throws InvalidDayOfWeekException, InvalidBoundariesException,
-      UserException, SlotIsOverlappingException,
-      CannotEditThisWeekException, SlotIsNotFoundException, SlotIsBookedException {
+      throws SlotException, UserException, SlotIsOverlappingException,
+      SlotIsNotFoundException, SlotIsBookedException {
 
     interviewerSlotDtoValidator
         .validateAndUpdate(interviewerSlotDto, authentication, interviewerId,
