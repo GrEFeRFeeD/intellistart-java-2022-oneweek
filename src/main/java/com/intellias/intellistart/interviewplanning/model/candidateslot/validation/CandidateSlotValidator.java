@@ -48,17 +48,16 @@ public class CandidateSlotValidator {
    * whether the slot exists, whether the slot is not booking.
    *
    * @param candidateSlot - the updated slot that we will validate.
-   * @param id - the number of slot that we must update.
    *
    * @throws InvalidBoundariesException - when parameters are incorrect.
    * @throws CandidateSlotNotFoundException - when the slot not found in DB by given id.
    * @throws SlotIsBookedException - when updated slot is booked.
    * @throws SlotIsOverlappingException - when the slot is overlapping.
    */
-  public void validateUpdating(CandidateSlot candidateSlot, Long id)
+  public void validateUpdating(CandidateSlot candidateSlot)
       throws InvalidBoundariesException, CandidateSlotNotFoundException, SlotIsBookedException,
       SlotIsOverlappingException {
-    validateSlotIsBookingAndTheSlotExists(id);
+    validateSlotIsBookingAndTheSlotExists(candidateSlot.getId());
     validateCreating(candidateSlot);
   }
 

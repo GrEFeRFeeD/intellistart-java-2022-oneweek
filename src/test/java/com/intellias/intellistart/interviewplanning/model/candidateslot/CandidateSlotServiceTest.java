@@ -20,7 +20,6 @@ public class CandidateSlotServiceTest {
 
   private static CandidateSlotRepository candidateSlotRepository;
   private static PeriodService periodService;
-  private static UserService userService;
   private static CandidateSlotService cut;
   private static CandidateSlot candidateSlot1;
   private static CandidateSlot candidateSlot2;
@@ -31,9 +30,8 @@ public class CandidateSlotServiceTest {
   static void initialize() {
     candidateSlotRepository = Mockito.mock(CandidateSlotRepository.class);
     periodService = Mockito.mock(PeriodService.class);
-    userService = Mockito.mock(UserService.class);
     cut = new CandidateSlotService(candidateSlotRepository,
-        periodService, userService);
+        periodService);
 
     period1 = new Period();
     period1.setFrom(LocalTime.of(9,0));
@@ -74,18 +72,17 @@ public class CandidateSlotServiceTest {
 
   static Arguments[] updateTestArgs(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot1, 1L),
-        Arguments.arguments(candidateSlot2, 4L)
+        Arguments.arguments(candidateSlot1),
+        Arguments.arguments(candidateSlot2)
     };
   }
   @ParameterizedTest
   @MethodSource("updateTestArgs")
-  void updateTest(CandidateSlot expected, Long id) {
+  void updateTest(CandidateSlot expected) {
     Mockito.when(candidateSlotRepository.save(expected)).thenReturn(expected);
 
-    CandidateSlot actual = cut.update(expected, id);
+    CandidateSlot actual = cut.update(expected);
     Assertions.assertEquals(actual, expected);
-    Assertions.assertEquals(id, expected.getId());
   }
 
   static Arguments[] getAllSlotsOfCandidateArgs(){
