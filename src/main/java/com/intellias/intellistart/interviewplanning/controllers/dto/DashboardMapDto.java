@@ -9,6 +9,7 @@ import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -89,7 +90,25 @@ public class DashboardMapDto {
 
       dashboard.get(candidateSlot.getDate())
           .getBookings()
-          .putAll(bookingDtoMap);;
+          .putAll(bookingDtoMap);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    DashboardMapDto that = (DashboardMapDto) o;
+    return Objects.equals(weekNum, that.weekNum) && Objects.equals(dashboard,
+        that.dashboard);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(weekNum, dashboard);
   }
 }
