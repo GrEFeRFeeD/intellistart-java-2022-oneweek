@@ -7,6 +7,7 @@ import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundExc
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -16,6 +17,7 @@ import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.LinkedHashSet;
@@ -38,6 +40,8 @@ class CoordinatorControllerTest {
   private static CandidateSlot candidateSlot;
   private static InterviewerSlot interviewerSlot;
   private static Period bookingPeriod;
+  private static WeekService weekService;
+  private static BookingLimitService bookingLimitService;
 
   @BeforeAll
   static void initialize(){
@@ -47,6 +51,8 @@ class CoordinatorControllerTest {
     candidateSlotService = Mockito.mock(CandidateSlotService.class);
     periodService = Mockito.mock(PeriodService.class);
     userService = Mockito.mock(UserService.class);
+    weekService = Mockito.mock(WeekService.class);
+    bookingLimitService = Mockito.mock(BookingLimitService.class);
 
     cut = new CoordinatorController(
         bookingService,
@@ -54,7 +60,9 @@ class CoordinatorControllerTest {
         interviewerSlotService,
         candidateSlotService,
         periodService,
-        userService);
+        userService,
+        weekService,
+        bookingLimitService);
 
     slotPeriod = new Period();
     slotPeriod.setFrom(LocalTime.of(18, 0));

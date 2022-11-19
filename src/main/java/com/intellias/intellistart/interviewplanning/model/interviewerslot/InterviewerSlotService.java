@@ -5,9 +5,7 @@ import com.intellias.intellistart.interviewplanning.model.booking.BookingService
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

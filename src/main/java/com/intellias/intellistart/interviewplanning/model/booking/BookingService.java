@@ -22,17 +22,6 @@ public class BookingService {
   }
 
   /**
-   * Finds Booking object in DB by id and returns it wrapped in Optional.
-   *
-   * @param id id of needed Booking object.
-   * @return Optional&lt;Booking&gt; with persisted Booking objects if
-   *          such object with given id exists and with null if not.
-   */
-  public Optional<Booking> findById(Long id) {
-    return bookingRepository.findById(id);
-  }
-
-  /**
    * Finds all Booking objects in DB and returns Set of them.
    *
    * @return Set&lt;Booking&gt; set with all Booking objects from the DB.
