@@ -64,8 +64,8 @@ public class InterviewerSlotServiceTest {
 
   @Test
   void getSlotsByWeekTest() throws SlotIsNotFoundException {
-    when(cut.getSlotById(1L)).thenReturn(is1);
-    InterviewerSlot actual = cut.getSlotById(1L);
+    when(interviewerSlotRepository.findById(1L)).thenReturn(Optional.of(is1));
+    InterviewerSlot actual = cut.findById(1L);
     InterviewerSlot expected = is1;
     assertEquals(expected, actual);
   }

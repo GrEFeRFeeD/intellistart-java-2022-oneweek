@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
 import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.model.period.services.TimeConverter;
+import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -15,34 +15,40 @@ import org.springframework.stereotype.Service;
 public class PeriodService {
 
   private final PeriodRepository periodRepository;
-  private final TimeConverter timeConverter;
   private final PeriodValidator periodValidator;
+  private final TimeService timeService;
 
   /**
    * Constructor.
    */
   @Autowired
-  public PeriodService(PeriodRepository periodRepository,
-      TimeConverter timeConverter,
-      PeriodValidator periodValidator) {
+  public PeriodService(
+      PeriodRepository periodRepository,
+      PeriodValidator periodValidator,
+      TimeService timeService) {
 
     this.periodRepository = periodRepository;
-    this.timeConverter = timeConverter;
     this.periodValidator = periodValidator;
+    this.timeService = timeService;
   }
 
 
   /**
   * Alias for {@link #obtainPeriod(LocalTime, LocalTime)} with time conversion.
   *
-  * @throws InvalidBoundariesException when parameters are incorrect:
+  * @throws InvalidBoundariesException when parameters are invalid:
   *     can't be read as time
   *     wrong business logic
   */
   public Period obtainPeriod(String fromString, String toString) {
-    LocalTime from = timeConverter.convert(fromString);
-    LocalTime to = timeConverter.convert(toString);
-
+    LocalTime from;
+    LocalTime to;
+    try {
+      from = timeService.convert(fromString);
+      to = timeService.convert(toString);
+    } catch (IllegalArgumentException iae) {
+      throw new InvalidBoundariesException();
+    }
     return obtainPeriod(from, to);
   }
 
@@ -54,7 +60,7 @@ public class PeriodService {
    *
    * @throws InvalidBoundariesException when wrong business logic.
    */
-  public Period obtainPeriod(LocalTime from, LocalTime to) {
+  private Period obtainPeriod(LocalTime from, LocalTime to) {
     periodValidator.validate(from, to);
 
     Optional<Period> periodOptional = periodRepository.findPeriodByFromAndTo(from, to);
@@ -77,7 +83,17 @@ public class PeriodService {
   }
 
   /**
-   * Tell if given time isn't smaller than "from" and lower time is smaller than "to".
+   * Boundaries are inclusive.
+   *
+   * @return true if first period is inside the second period.
+   */
+  public boolean isFirstInsideSecond(Period first, Period second) {
+    return first.getFrom().compareTo(second.getFrom()) >= 0
+        && first.getTo().compareTo(second.getTo()) <= 0;
+  }
+
+  /**
+   * Tell if given time isn't smaller than "from" and smaller than "to".
    */
   private boolean isTimeInPeriod(LocalTime time, Period period) {
     return time.compareTo(period.getFrom()) >= 0

@@ -1,10 +1,8 @@
 package com.intellias.intellistart.interviewplanning.exceptions;
 
 /**
- * Thrown when we get invalid User from DTO.
+ * Comment to prevent checkstyle violation.
  */
-public class InvalidInterviewerException extends Exception {
-  public InvalidInterviewerException() {
-    super();
-  }
+public class InvalidInterviewerException extends
+    IllegalArgumentException {
 }

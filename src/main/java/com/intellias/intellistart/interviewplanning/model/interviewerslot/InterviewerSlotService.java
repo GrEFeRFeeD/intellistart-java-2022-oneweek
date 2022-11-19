@@ -2,13 +2,8 @@ package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
 import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
-import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
-import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.user.User;
-import com.intellias.intellistart.interviewplanning.model.week.Week;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +30,14 @@ public class InterviewerSlotService {
   }
 
   /**
-   * Get Optional of InterviewerSlot from database.
+   * Find instance of InterviewerSlot by id in database.
    *
-   * @param id - Long id of InterviewerSlot to find
-   *
-   * @return {@link Optional} of {@link InterviewerSlot}
+   * @throws SlotIsNotFoundException if no instance with given id
    */
-  public InterviewerSlot getSlotById(Long id) throws SlotIsNotFoundException {
-    return interviewerSlotRepository.findById(id).orElseThrow(SlotIsNotFoundException::new);
+  public InterviewerSlot findById(Long id) throws SlotIsNotFoundException {
+    return interviewerSlotRepository
+        .findById(id)
+        .orElseThrow(SlotIsNotFoundException::new);
   }
 
   /**
