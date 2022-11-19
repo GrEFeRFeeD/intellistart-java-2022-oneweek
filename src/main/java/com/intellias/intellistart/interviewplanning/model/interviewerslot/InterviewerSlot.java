@@ -9,7 +9,6 @@ import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;

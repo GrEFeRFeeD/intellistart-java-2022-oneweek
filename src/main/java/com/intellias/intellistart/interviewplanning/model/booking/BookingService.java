@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.booking;
 
-import java.util.Optional;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingNotFoundException;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,9 @@ public class BookingService {
 
   private final BookingRepository bookingRepository;
 
+  /**
+   * Constructor.
+   */
   @Autowired
   public BookingService(BookingRepository bookingRepository) {
     this.bookingRepository = bookingRepository;
@@ -39,45 +42,19 @@ public class BookingService {
   }
 
   /**
-   * Created Booking object with by given parameters.
+   * Find Booking by id from repository.
    *
-   * @return persisted Booking object.
+   * @throws BookingNotFoundException if no booking with given id
    */
-  public Booking createBooking() { // TODO: implement creating Builder object as a Factory method
-    return null;
+  public Booking findById(Long id) {
+    return bookingRepository.findById(id).orElseThrow(BookingNotFoundException::new);
   }
 
   /**
-   * Saves and returns saved Booking object.
-   *
-   * @param booking object to save.
-   * @return saved Booking object.
+   * Alias for method in {@link BookingRepository}.
    */
   public Booking save(Booking booking) {
     return bookingRepository.save(booking);
-  }
-
-  /**
-   * Deletes Booking object from DB.
-   *
-   * @param booking persisted Booking object that will be deleted.
-   */
-  public void delete(Booking booking) { // TODO: is that action is enough to delete booking?
-    bookingRepository.delete(booking);
-  }
-
-  /**
-   * Deletes Booking object from DB by id.
-   *
-   * @param id id of Booking object that will be deleted.
-   */
-  public void deleteById(Long id) {
-    Optional<Booking> booking = bookingRepository.findById(id);
-    if (booking.isPresent()) {
-      delete(booking.get());
-    } else {
-      // throw smth
-    }
   }
 
   /**
