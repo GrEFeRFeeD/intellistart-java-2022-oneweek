@@ -51,10 +51,6 @@ public class InterviewerSlotService {
     return interviewerSlotRepository.save(interviewerSlot);
   }
 
-  public Set<InterviewerSlot> getSlotsByWeek(Week week) {
-    return interviewerSlotRepository.findByWeek(week);
-  }
-
   /**
    * Method deletes all slots of the given user,
    * before deleting a slot it deletes all bookings in the slots being deleted.
@@ -72,6 +68,16 @@ public class InterviewerSlotService {
     }
 
     interviewerSlotRepository.deleteAll(interviewerSlots);
+  }
+
+  /**
+   * Get slots of user by {@link Week}.
+   *
+   * @param week object to get slots with
+   * @return {@link List} of {@link InterviewerSlot}
+   */
+  public Set<InterviewerSlot> getSlotsByWeek(Week week) {
+    return interviewerSlotRepository.findByWeek(week);
   }
 
   /**

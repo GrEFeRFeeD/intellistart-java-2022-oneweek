@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers.dto;
 
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import java.util.Objects;
 import java.util.Set;
@@ -10,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Dto object for mapping {@link InterviewerSlot} into a part of Dashboard.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -22,6 +26,12 @@ public class DashboardInterviewerSlotDto {
   private Long interviewerId;
   private Set<Long> bookings;
 
+  /**
+   * Constructor for DashboardBookingDto initialization from
+   * InterviewerSlot object.
+   *
+   * @param interviewerSlot object to initialize from
+   */
   public DashboardInterviewerSlotDto(InterviewerSlot interviewerSlot) {
     this.interviewerSlotId = interviewerSlot.getId();
     this.interviewerId = interviewerSlot.getUser().getId();

@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Dto object for mapping {@link CandidateSlot} into a part of Dashboard.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -22,6 +25,12 @@ public class DashboardCandidateSlotDto {
   private String candidateName;
   private Set<Long> bookings;
 
+  /**
+   * Constructor for DashboardBookingDto initialization from
+   * CandidateSlot object.
+   *
+   * @param candidateSlot object to initialize from
+   */
   public DashboardCandidateSlotDto(CandidateSlot candidateSlot) {
     this.from = candidateSlot.getPeriod().getFrom().toString();
     this.to = candidateSlot.getPeriod().getTo().toString();

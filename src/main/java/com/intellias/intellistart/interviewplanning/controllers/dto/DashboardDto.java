@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Dto object for representation of all slots and bookings per certain time period.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

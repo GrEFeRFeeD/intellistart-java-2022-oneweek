@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Dto object for mapping {@link Booking} into a part of Dashboard.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,6 +23,12 @@ public class DashboardBookingDto {
   private String from;
   private String to;
 
+  /**
+   * Constructor for DashboardBookingDto initialization from
+   * Booking object.
+   *
+   * @param booking object to initialize from
+   */
   public DashboardBookingDto(Booking booking) {
     this.bookingId = booking.getId();
     this.subject = booking.getSubject();

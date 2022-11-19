@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Dto object for representation all candidate, interviewer slots
+ * and bookings for certain week.
+ */
 @Getter
 @Setter
 public class DashboardMapDto {
@@ -24,6 +28,14 @@ public class DashboardMapDto {
   private Long weekNum;
   private Map<LocalDate, DashboardDto> dashboard;
 
+  /**
+   * Constructor to initialize object with given weekNum.
+   * Needs {@link WeekService} instance to access weeks logic
+   * (gaining date from week number and day, etc).
+   *
+   * @param weekNum number of week
+   * @param weekService instance of service object to access logic from
+   */
   public DashboardMapDto(Long weekNum, WeekService weekService) {
     this.dashboard = new HashMap<>();
     this.weekNum = weekNum;
@@ -35,6 +47,12 @@ public class DashboardMapDto {
     }
   }
 
+  /**
+   * Mapping all given interviewer slots to inner map
+   * within all bookings from them.
+   *
+   * @param interviewerSlots set of InterviewerSlot objects to map information from
+   */
   public void addInterviewerSlots(Set<InterviewerSlot> interviewerSlots) {
 
     for (InterviewerSlot interviewerSlot : interviewerSlots) {
@@ -52,9 +70,15 @@ public class DashboardMapDto {
     }
   }
 
+  /**
+   * Mapping all given candidate slots to inner map
+   * within all bookings from them.
+   *
+   * @param candidateSlots set of CandidateSlot objects to map information from
+   */
   public void addCandidateSlots(Set<CandidateSlot> candidateSlots) {
 
-    for (CandidateSlot candidateSlot: candidateSlots) {
+    for (CandidateSlot candidateSlot : candidateSlots) {
 
       dashboard.get(candidateSlot.getDate())
           .getCandidateSlots()

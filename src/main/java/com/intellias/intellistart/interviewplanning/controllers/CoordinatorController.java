@@ -1,15 +1,26 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
+import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardMapDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
 import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
+import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
+import java.time.LocalDate;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,17 +29,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardMapDto;
-import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
-import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
-import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
-import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
-import com.intellias.intellistart.interviewplanning.model.week.Week;
-import com.intellias.intellistart.interviewplanning.model.week.WeekService;
-import java.time.LocalDate;
-import java.util.Set;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -43,8 +43,12 @@ public class CoordinatorController {
   private final InterviewerSlotService interviewerSlotService;
   private final CandidateSlotService candidateSlotService;
 
+  /**
+   * Constructor.
+   */
   @Autowired
-  public CoordinatorController(UserService userService, WeekService weekService, BookingLimitService bookingLimitService,
+  public CoordinatorController(UserService userService, WeekService weekService,
+      BookingLimitService bookingLimitService,
       InterviewerSlotService interviewerSlotService, CandidateSlotService candidateSlotService) {
     this.userService = userService;
     this.weekService = weekService;
@@ -57,9 +61,7 @@ public class CoordinatorController {
    * POST request to grant a INTERVIEWER role by email.
    *
    * @param request - Request body of POST mapping.
-   *
    * @return ResponseEntity - Response of the granted User.
-   *
    * @throws UserAlreadyHasRoleException - when user already has role.
    */
   @PostMapping("/users/interviewers")
@@ -72,9 +74,7 @@ public class CoordinatorController {
    * POST request to grant a COORDINATOR role by email.
    *
    * @param request - Request body of POST mapping.
-   *
    * @return ResponseEntity - Response of the granted User.
-   *
    * @throws UserAlreadyHasRoleException - - when user already has role.
    */
   @PostMapping("/users/coordinators")
@@ -111,10 +111,8 @@ public class CoordinatorController {
    * DELETE request for deleting interviewer.
    *
    * @param id - the interviewer's id to delete.
-   *
    * @return ResponseEntity - the deleted user.
-   *
-   * @throws UserNotFoundException - when the user not found by given id.
+   * @throws UserNotFoundException       - when the user not found by given id.
    * @throws UserHasAnotherRoleException - when the user has not interviewer role;
    */
   @DeleteMapping("/users/interviewers/{id}")
@@ -127,9 +125,7 @@ public class CoordinatorController {
    * DELETE request for deleting interviewer.
    *
    * @param id - the interviewer's id to delete.
-   *
    * @return ResponseEntity - the deleted user.
-   *
    * @throws UserNotFoundException - when the user not found by given id.
    * @throws SelfRevokingException - when the coordinator removes himself.
    */
@@ -143,8 +139,16 @@ public class CoordinatorController {
     return ResponseEntity.ok(userService.deleteCoordinator(id, currentEmailCoordinator));
   }
 
+  /**
+   * Returns {@link DashboardMapDto} object with week num and map of
+   * LocalDate with DashboardDto which contains all candidate, interviewer
+   * slots and booking for the certain date.
+   *
+   * @param weekId number of week to get all slots from
+   * @return all candidate, interviewer slots and bookings for certain week
+   */
   @GetMapping("/weeks/{weekId}/dashboard")
-  public ResponseEntity<?> getDashboard(@PathVariable("weekId") Long weekId) {
+  public ResponseEntity<DashboardMapDto> getDashboard(@PathVariable("weekId") Long weekId) {
 
     Week week = weekService.getWeekByWeekNum(weekId);
     DashboardMapDto dashboard = new DashboardMapDto(weekId, weekService);
@@ -152,7 +156,7 @@ public class CoordinatorController {
     Set<InterviewerSlot> interviewerSlots = interviewerSlotService.getSlotsByWeek(week);
     dashboard.addInterviewerSlots(interviewerSlots);
 
-    for (DayOfWeek dayOfWeek: DayOfWeek.values()) {
+    for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
 
       LocalDate date = weekService.convertToLocalDate(weekId, dayOfWeek);
       Set<CandidateSlot> candidateSlots = candidateSlotService.getCandidateSlotsByDate(date);
