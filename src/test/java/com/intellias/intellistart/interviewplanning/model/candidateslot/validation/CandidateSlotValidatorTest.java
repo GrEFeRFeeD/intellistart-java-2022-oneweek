@@ -32,6 +32,8 @@ public class CandidateSlotValidatorTest {
   private static CandidateSlot candidateSlot6;
   private static CandidateSlot candidateSlot7;
   private static CandidateSlot candidateSlot8;
+  private static CandidateSlot candidateSlot9;
+  private static CandidateSlot candidateSlot10;
 
   @BeforeAll
   static void initialize() {
@@ -105,6 +107,22 @@ public class CandidateSlotValidatorTest {
     candidateSlot8.setPeriod(period2);
     candidateSlot8.setEmail("test@mail.com");
     candidateSlot8.setName("AAA");
+
+    candidateSlot9 = new CandidateSlot();
+    candidateSlot9.setId(9L);
+    candidateSlot9.setDate(LocalDate.of(LocalDate.now().getYear()+1,8,30));
+    candidateSlot9.setPeriod(period2);
+    candidateSlot9.setEmail("test@mail.com");
+    candidateSlot9.setName("AAA");
+    candidateSlot9.addBooking(new Booking());
+
+    candidateSlot10 = new CandidateSlot();
+    candidateSlot10.setId(10L);
+    candidateSlot10.setDate(LocalDate.of(LocalDate.now().getYear()+1,1,20));
+    candidateSlot10.setPeriod(period2);
+    candidateSlot10.setEmail("test@mail.com");
+    candidateSlot10.setName("AAA");
+    candidateSlot10.addBooking(new Booking());
   }
 
   static Arguments[] validateCreateCandidateSlotArgs(){
@@ -172,53 +190,52 @@ public class CandidateSlotValidatorTest {
   }
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotArgs")
-  void validateUpdateCandidateSlotTest(CandidateSlot candidateSlot, long id)
+  void validateUpdateCandidateSlotTest(CandidateSlot candidateSlot)
       throws CandidateSlotNotFoundException, SlotIsOverlappingException, SlotIsBookedException,
       InvalidBoundariesException {
     Mockito.when(candidateSlotService.getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
         candidateSlot.getDate())).thenReturn(List.of());
-    Mockito.when(candidateSlotService.findById(id))
+    Mockito.when(candidateSlotService.findById(candidateSlot.getId()))
         .thenReturn(candidateSlot);
 
-    cut.validateUpdating(candidateSlot, id);
+    cut.validateUpdating(candidateSlot);
 
     Mockito.verify(candidateSlotService).getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
         candidateSlot.getDate());
-    Mockito.verify(candidateSlotService).findById(id);
+    Mockito.verify(candidateSlotService).findById(candidateSlot.getId());
   }
 
   static Arguments[] validateUpdateCandidateSlotExc1Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot5, CandidateSlotNotFoundException.class, 4),
-        Arguments.arguments(candidateSlot6, CandidateSlotNotFoundException.class, 5)
+        Arguments.arguments(candidateSlot5, CandidateSlotNotFoundException.class),
+        Arguments.arguments(candidateSlot6, CandidateSlotNotFoundException.class)
     };
   }
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotExc1Args")
   void validateUpdateCandidateSlotSlotNotFoundExceptionTest(CandidateSlot candidateSlot,
-      Class<Exception> actual, long id) {
-    Mockito.when(candidateSlotService.findById(id)).thenThrow(CandidateSlotNotFoundException.class);
+      Class<Exception> actual) {
+    Mockito.when(candidateSlotService.findById(candidateSlot.getId())).thenThrow(CandidateSlotNotFoundException.class);
 
     Assertions.assertThrows(actual,
-        ()-> cut.validateUpdating(candidateSlot, id));
+        ()-> cut.validateUpdating(candidateSlot));
   }
 
   static Arguments[] validateUpdateCandidateSlotExc2Args(){
     return new Arguments[]{
-        //TODO: Arthur fix is needed
-        //Arguments.arguments(candidateSlot5, SlotIsBookedException.class, 5),
-        Arguments.arguments(candidateSlot6, SlotIsBookedException.class, 6)
+        Arguments.arguments(candidateSlot9, SlotIsBookedException.class),
+        Arguments.arguments(candidateSlot10, SlotIsBookedException.class)
     };
   }
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotExc2Args")
   void validateUpdateCandidateSlotSlotIsBookedExceptionTest(CandidateSlot candidateSlot,
-      Class<Exception> actual, long id) {
-    Mockito.when(candidateSlotService.findById(id))
+      Class<Exception> actual) {
+    Mockito.when(candidateSlotService.findById(candidateSlot.getId()))
         .thenReturn(candidateSlot);
 
     Assertions.assertThrows(actual,
-        ()-> cut.validateUpdating(candidateSlot, id));
+        ()-> cut.validateUpdating(candidateSlot));
   }
 }
 
