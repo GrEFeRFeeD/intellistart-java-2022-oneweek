@@ -119,6 +119,26 @@ public class InterviewerSlotDtoValidator {
 
     InterviewerSlot interviewerSlot = interviewerSlotService.findById(slotId);
 
+    if(isCoordinator(authentication)) {
+      Week currentWeek = weekService.getCurrentWeek();
+      if (interviewerSlotDto.getWeek() < currentWeek.getId()) {
+        throw new CannotEditThisWeekException();
+      }
+
+      LocalDate dateFromDto = weekService.convertToLocalDate(interviewerSlotDto.getWeek(),
+          DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek()));
+      if(LocalDate.now().isAfter(dateFromDto)) {
+        throw new CannotEditThisWeekException();
+      }
+
+      if(interviewerSlot.getBookings() != null) {
+        throw new SlotIsBookedException();
+      }
+
+      validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
+
+    }
+
     if (!(interviewerSlot.getUser().getId().equals(userId))) {
       throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
     }
@@ -131,6 +151,13 @@ public class InterviewerSlotDtoValidator {
 
     validateAndCreate(interviewerSlotDto,
         authentication, userId);
+  }
+
+  public boolean isCoordinator(Authentication authentication){
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
+    String email = jwtUserDetails.getEmail();
+    User user= userService.getUserByEmail(email);
+    return user.getRole().equals(Role.COORDINATOR);
   }
 
   /**
