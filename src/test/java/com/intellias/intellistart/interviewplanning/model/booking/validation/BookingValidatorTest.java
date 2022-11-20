@@ -2,8 +2,8 @@ package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotsAreNotIntersectingException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -179,7 +179,7 @@ class BookingValidatorTest {
           .thenReturn(true);
     }
 
-    assertThrows(SlotsAreNotIntersectingException.class,
+    assertThrows(BookingException.class,
         () -> cut.validateUpdating(updatingBooking, newDataBooking));
   }
 

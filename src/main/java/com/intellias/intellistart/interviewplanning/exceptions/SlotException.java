@@ -23,7 +23,19 @@ public class SlotException extends Exception {
         "Time boundaries of slot or booking are invalid.", HttpStatus.BAD_REQUEST),
 
     INVALID_DAY_OF_WEEK("invalid_day_of_week",
-        "Cannot arrange booking on this day", HttpStatus.BAD_REQUEST);
+        "Cannot arrange booking on this day.", HttpStatus.BAD_REQUEST),
+
+    CANDIDATE_SLOT_NOT_FOUND("candidate_slot_not_found",
+        "Candidate slot by given id was not found.", HttpStatus.NOT_FOUND),
+
+    INTERVIEWER_SLOT_NOT_FOUND("interviewer_slot_not_found",
+        "Interviewer slot by given id was not found.", HttpStatus.NOT_FOUND),
+
+    SLOT_IS_BOOKED("slot_is_booked",
+        "Slot you are trying to occur is booked.", HttpStatus.BAD_REQUEST),
+
+    SLOT_IS_OVERLAPPING("slot_is_overlapping",
+        "Slot overlaps already existed one.", HttpStatus.BAD_REQUEST);
 
     private final String exceptionName;
     private final String exceptionMessage;

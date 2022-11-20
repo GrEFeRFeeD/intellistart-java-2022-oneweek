@@ -7,9 +7,6 @@ import com.intellias.intellistart.interviewplanning.exceptions.SecurityException
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
@@ -68,8 +65,7 @@ public class InterviewerSlotDtoValidator {
    */
   public void validateAndCreate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId)
-      throws UserException, SlotException,
-      SlotIsOverlappingException {
+      throws UserException, SlotException {
 
     validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
 
@@ -116,14 +112,11 @@ public class InterviewerSlotDtoValidator {
    *     </ul>
    *
    * @throws UserException - when invalid interviewer id, role not Interviewer
-   *
-   * @throws SlotIsBookedException - when slot has at least one or more bookings
+   * @throws SlotException - when slot has at least one or more bookings
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
-      throws UserException, SlotException,
-      SlotIsOverlappingException, SlotIsNotFoundException,
-      SlotIsBookedException {
+      throws UserException, SlotException {
 
     InterviewerSlot interviewerSlot = interviewerSlotService.findById(slotId);
 
@@ -132,7 +125,7 @@ public class InterviewerSlotDtoValidator {
     }
 
     if (interviewerSlot.getBookings() != null) {
-      throw new SlotIsBookedException();
+      throw new SlotException(SlotExceptionProfile.SLOT_IS_BOOKED);
     }
 
     interviewerSlotDto.setInterviewerSlotId(slotId);
@@ -222,10 +215,10 @@ public class InterviewerSlotDtoValidator {
    * parameters. Then check every slot if it overlaps our new Period.
    *
    * @param interviewerSlot - slot from dto
-   * @throws SlotIsOverlappingException - SlotIsOverlappingException
+   * @throws SlotException - when given slot is overlapping another one
    */
   public void validateIfPeriodIsOverlapping(InterviewerSlot interviewerSlot)
-      throws SlotIsOverlappingException {
+      throws SlotException {
 
     List<InterviewerSlot> interviewerSlotsList = interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(interviewerSlot.getUser().getId(),
@@ -242,7 +235,7 @@ public class InterviewerSlotDtoValidator {
 
       for (InterviewerSlot temp : interviewerSlotsList) {
         if (periodService.areOverlapping(temp.getPeriod(), interviewerSlot.getPeriod())) {
-          throw new SlotIsOverlappingException();
+          throw new SlotException(SlotExceptionProfile.SLOT_IS_OVERLAPPING);
         }
       }
 

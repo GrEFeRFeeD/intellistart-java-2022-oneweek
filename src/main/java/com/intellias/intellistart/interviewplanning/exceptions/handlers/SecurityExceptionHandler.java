@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.exceptions.handlers;
 
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.ExceptionResponse;
+import com.intellias.intellistart.interviewplanning.exceptions.handlers.dto.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

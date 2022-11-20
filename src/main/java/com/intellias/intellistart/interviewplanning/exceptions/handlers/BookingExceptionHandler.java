@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.exceptions.handlers;
 
-import com.intellias.intellistart.interviewplanning.exceptions.UserException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.handlers.dto.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -10,21 +11,21 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
- * Handler for user's exceptions.
+ * Handler for booking's exceptions.
  */
 @ControllerAdvice
-public class UserExceptionHandler extends ResponseEntityExceptionHandler {
+public class BookingExceptionHandler extends ResponseEntityExceptionHandler {
 
   /**
-  * Method for handling UserException.
-  */
-  @ExceptionHandler(value = UserException.class)
-  public ResponseEntity<Object> handleUserException(UserException exception,
+   * Method for handling BookingException.
+   */
+  @ExceptionHandler(value = BookingException.class)
+  public ResponseEntity<Object> handleBookingException(BookingException exception,
       WebRequest webRequest) {
 
     var exceptionBody = new ExceptionResponse(exception.getName(), exception.getMessage());
 
     return handleExceptionInternal(exception, exceptionBody, new HttpHeaders(),
-            exception.getResponseStatus(), webRequest);
+        exception.getResponseStatus(), webRequest);
   }
 }

@@ -3,9 +3,6 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateSlotsDto;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.validation.CandidateSlotValidator;
@@ -46,13 +43,12 @@ public class CandidateController {
    *
    * @return ResponseEntity - Response of the saved object converted to a DTO.
    *
-   * @throws SlotException - when parameters are incorrect.
-   * @throws SlotIsOverlappingException - when the slot is overlapping.
+   * @throws SlotException - when parameters are incorrect or slot is overlapping.
    */
   @PostMapping("/candidates/current/slots")
   public ResponseEntity<CandidateSlotDto> createCandidateSlot(@RequestBody CandidateSlotDto request,
       Authentication authentication)
-      throws SlotException, SlotIsOverlappingException {
+      throws SlotException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlotValidator.validateCreating(candidateSlot);
 
@@ -71,16 +67,13 @@ public class CandidateController {
    *
    * @return ResponseEntity - Response of the updated object converted to a DTO.
    *
-   * @throws CandidateSlotNotFoundException - when updated slot id not found.
-   * @throws SlotIsBookedException - when updated slot is booked.
-   * @throws SlotException - when parameters are incorrect.
-   * @throws SlotIsOverlappingException - when the slot is overlapping.
+   * @throws SlotException - when parameters are incorrect or updated slot is booked
+   *     or slot is overlapping.
    */
   @PostMapping("/candidates/current/slots/{slotId}")
   public ResponseEntity<CandidateSlotDto> updateCandidateSlot(@RequestBody CandidateSlotDto request,
       @PathVariable("slotId") Long id, Authentication authentication)
-      throws CandidateSlotNotFoundException, SlotIsBookedException, SlotException,
-      SlotIsOverlappingException {
+      throws SlotException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlot.setId(id);
     candidateSlotValidator.validateUpdating(candidateSlot, id);

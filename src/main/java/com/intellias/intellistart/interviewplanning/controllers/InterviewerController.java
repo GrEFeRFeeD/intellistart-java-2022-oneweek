@@ -5,9 +5,6 @@ import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerS
 import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -85,9 +82,7 @@ public class InterviewerController {
       @RequestBody InterviewerSlotDto interviewerSlotDto,
       @PathVariable("interviewerId") Long interviewerId,
       Authentication authentication
-  )
-      throws SlotException, UserException,
-      SlotIsOverlappingException, SlotException {
+  ) throws SlotException, UserException {
 
     interviewerSlotDtoValidator
         .validateAndCreate(interviewerSlotDto, authentication, interviewerId);
@@ -111,8 +106,7 @@ public class InterviewerController {
    *     <li>when slot is not found by slotId
    *     </ul>
    *
-   * @throws SlotIsOverlappingException  - slot is overlapping exception
-   * @throws SlotIsBookedException - when slot has at least one booking
+   * @throws SlotException - when slot has at least one booking or slot overlaps
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public ResponseEntity<InterviewerSlotDto> updateInterviewerSlot(
@@ -120,13 +114,10 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId,
       @PathVariable("slotId") Long slotId,
       Authentication authentication
-  )
-      throws SlotException, UserException, SlotIsOverlappingException,
-      SlotIsNotFoundException, SlotIsBookedException {
+  ) throws SlotException, UserException {
 
-    interviewerSlotDtoValidator
-        .validateAndUpdate(interviewerSlotDto, authentication, interviewerId,
-            slotId);
+    interviewerSlotDtoValidator.validateAndUpdate(interviewerSlotDto,
+        authentication, interviewerId, slotId);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }

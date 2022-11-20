@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
@@ -100,7 +99,7 @@ public class InterviewerSlotDtoValidatorTest {
     when(interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
             w1.getId(), DayOfWeek.TUE)).thenReturn(list);
-    assertThrows(SlotIsOverlappingException.class, () -> cut.validateIfPeriodIsOverlapping(is3));
+    assertThrows(SlotException.class, () -> cut.validateIfPeriodIsOverlapping(is3));
   }
 
   static User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);

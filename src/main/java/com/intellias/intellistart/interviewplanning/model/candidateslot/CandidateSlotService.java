@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
-import com.intellias.intellistart.interviewplanning.exceptions.old.CandidateSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import java.time.LocalDate;
 import java.util.List;
@@ -77,12 +77,12 @@ public class CandidateSlotService {
    *
    * @param id - The slot number to search for in the database.
    *
-   * @throws CandidateSlotNotFoundException if slot with given id is not present
+   * @throws SlotException if slot with given id is not present
    */
-  public CandidateSlot findById(Long id) {
+  public CandidateSlot findById(Long id) throws SlotException {
     return candidateSlotRepository
         .findById(id)
-        .orElseThrow(CandidateSlotNotFoundException::new);
+        .orElseThrow(() -> new SlotException(SlotExceptionProfile.CANDIDATE_SLOT_NOT_FOUND));
   }
 
   /**

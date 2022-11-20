@@ -125,7 +125,7 @@ public class CandidateSlotServiceTest {
   }
   @ParameterizedTest
   @MethodSource("getCandidateSlotByIdArgs")
-  void getCandidateSlotByIdTest(CandidateSlot expected, Long id) {
+  void getCandidateSlotByIdTest(CandidateSlot expected, Long id) throws SlotException {
 //    Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
     Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
 
