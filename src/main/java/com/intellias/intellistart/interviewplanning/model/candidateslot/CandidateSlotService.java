@@ -42,12 +42,10 @@ public class CandidateSlotService {
    * Updated in DB the CandidateSlot object.
    *
    * @param candidateSlot - Updated slot data.
-   * @param id - The id of the slot that we are going to update.
    *
    * @return CandidateSlot - An object that was successfully updated in the database.
    */
-  public CandidateSlot update(CandidateSlot candidateSlot, Long id) {
-    candidateSlot.setId(id);
+  public CandidateSlot update(CandidateSlot candidateSlot) {
     return create(candidateSlot);
   }
 

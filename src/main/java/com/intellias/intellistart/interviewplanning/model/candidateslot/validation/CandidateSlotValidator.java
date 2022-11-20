@@ -44,13 +44,13 @@ public class CandidateSlotValidator {
    * whether the slot exists, whether the slot is not booking.
    *
    * @param candidateSlot - the updated slot that we will validate.
-   * @param id - the number of slot that we must update.
    *
    * @throws SlotException - when parameters are incorrect or updated slot is booked
    *     slot is overlapping.
    */
-  public void validateUpdating(CandidateSlot candidateSlot, Long id) throws SlotException {
-    validateSlotIsBookingAndTheSlotExists(id);
+
+  public void validateUpdating(CandidateSlot candidateSlot) throws SlotException {
+    validateSlotIsBookingAndTheSlotExists(candidateSlot.getId());
     validateCreating(candidateSlot);
   }
 
@@ -82,11 +82,9 @@ public class CandidateSlotValidator {
             candidateSlot.getDate());
 
     if (!candidateSlotList.isEmpty()) {
-      for (CandidateSlot item : candidateSlotList) {
-        if (candidateSlot.getId() != null && candidateSlot.getId().equals(item.getId())) {
-          continue;
-        }
-        if (periodService.areOverlapping(period, item.getPeriod())) {
+       for (CandidateSlot item : candidateSlotList) {
+        if (!(candidateSlot.getId() != null && candidateSlot.getId().equals(item.getId()))
+                && periodService.areOverlapping(period, item.getPeriod())) {
           throw new SlotException(SlotExceptionProfile.SLOT_IS_OVERLAPPING);
         }
       }

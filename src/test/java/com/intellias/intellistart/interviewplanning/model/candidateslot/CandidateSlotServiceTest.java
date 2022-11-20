@@ -70,18 +70,17 @@ public class CandidateSlotServiceTest {
 
   static Arguments[] updateTestArgs(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot1, 1L),
-        Arguments.arguments(candidateSlot2, 4L)
+        Arguments.arguments(candidateSlot1),
+        Arguments.arguments(candidateSlot2)
     };
   }
   @ParameterizedTest
   @MethodSource("updateTestArgs")
-  void updateTest(CandidateSlot expected, Long id) {
+  void updateTest(CandidateSlot expected) {
     Mockito.when(candidateSlotRepository.save(expected)).thenReturn(expected);
 
-    CandidateSlot actual = cut.update(expected, id);
+    CandidateSlot actual = cut.update(expected);
     Assertions.assertEquals(actual, expected);
-    Assertions.assertEquals(id, expected.getId());
   }
 
   static Arguments[] getAllSlotsOfCandidateArgs(){
