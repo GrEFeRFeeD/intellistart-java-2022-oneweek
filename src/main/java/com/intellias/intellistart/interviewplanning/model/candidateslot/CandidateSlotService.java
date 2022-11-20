@@ -2,7 +2,6 @@ package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
 import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +15,15 @@ public class CandidateSlotService {
 
   private final CandidateSlotRepository candidateSlotRepository;
   private final PeriodService periodService;
-  private final UserService userService;
 
   /**
    * Constructor.
    */
   @Autowired
   public CandidateSlotService(CandidateSlotRepository candidateSlotRepository,
-      PeriodService periodService,
-      UserService userService) {
+      PeriodService periodService) {
     this.candidateSlotRepository = candidateSlotRepository;
     this.periodService = periodService;
-    this.userService = userService;
   }
 
   /**
@@ -45,12 +41,10 @@ public class CandidateSlotService {
    * Updated in DB the CandidateSlot object.
    *
    * @param candidateSlot - Updated slot data.
-   * @param id - The id of the slot that we are going to update.
    *
    * @return CandidateSlot - An object that was successfully updated in the database.
    */
-  public CandidateSlot update(CandidateSlot candidateSlot, Long id) {
-    candidateSlot.setId(id);
+  public CandidateSlot update(CandidateSlot candidateSlot) {
     return create(candidateSlot);
   }
 

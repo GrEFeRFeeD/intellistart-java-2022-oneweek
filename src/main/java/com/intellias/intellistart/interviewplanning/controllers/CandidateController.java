@@ -83,9 +83,10 @@ public class CandidateController {
       SlotIsOverlappingException {
     CandidateSlot candidateSlot = getCandidateSlotFromDto(request, authentication);
     candidateSlot.setId(id);
-    candidateSlotValidator.validateUpdating(candidateSlot, id);
 
-    candidateSlot = candidateSlotService.update(candidateSlot, id);
+    candidateSlotValidator.validateUpdating(candidateSlot);
+
+    candidateSlot = candidateSlotService.update(candidateSlot);
 
     return ResponseEntity.ok(new CandidateSlotDto(candidateSlot));
   }
