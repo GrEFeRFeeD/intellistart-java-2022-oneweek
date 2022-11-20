@@ -4,7 +4,7 @@ services:
   application:
     build: .
     ports:
-      - "8080:8080"
+      - ${APPLICATION_PORT}:${APPLICATION_PORT}
     volumes:
       - ./:/app
     env_file:
@@ -12,7 +12,7 @@ services:
 
   postgresql:
     ports:
-      - "5432:5432"
+      - ${DATABASE_PORT}:${DATABASE_PORT}
     image: postgres:15.0
     volumes:
       - postgresql-data:/var/lib/postgres

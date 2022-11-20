@@ -1,5 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
+import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.FacebookClientIdDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtRequest;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
@@ -10,9 +12,10 @@ import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil;
 import com.intellias.intellistart.interviewplanning.utils.FacebookUtil.FacebookScopes;
-import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
+import com.intellias.intellistart.interviewplanning.utils.JwtUtil;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,7 +37,7 @@ import org.springframework.web.client.RestClientException;
 public class JwtAuthenticationController {
 
   private final AuthenticationManager authenticationManager;
-  private final JwtTokenUtil jwtTokenUtil;
+  private final JwtUtil jwtUtil;
   private final JwtUserDetailsService userDetailsService;
   private final FacebookUtil facebookUtil;
   private final UserService userService;
@@ -44,10 +47,10 @@ public class JwtAuthenticationController {
    */
   @Autowired
   public JwtAuthenticationController(AuthenticationManager authenticationManager,
-      JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService,
+      JwtUtil jwtUtil, JwtUserDetailsService userDetailsService,
       FacebookUtil facebookUtil, UserService userService) {
     this.authenticationManager = authenticationManager;
-    this.jwtTokenUtil = jwtTokenUtil;
+    this.jwtUtil = jwtUtil;
     this.userDetailsService = userDetailsService;
     this.facebookUtil = facebookUtil;
     this.userService = userService;
@@ -80,7 +83,7 @@ public class JwtAuthenticationController {
     final JwtUserDetails userDetails = (JwtUserDetails) userDetailsService
         .loadUserByEmailAndName(email, name);
 
-    JwtResponse jwtResponse = new JwtResponse(jwtTokenUtil.generateToken(userDetails));
+    JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(userDetails));
 
     return ResponseEntity.ok(jwtResponse);
   }
@@ -102,8 +105,29 @@ public class JwtAuthenticationController {
    * @return User - user object with current info.
    */
   @GetMapping("/me")
-  public User getMyself(Authentication authentication) {
+  public ResponseEntity<?> getMyself(Authentication authentication) {
+
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
-    return userService.getUserByEmail(jwtUserDetails.getEmail());
+
+    User user = userService.getUserByEmail(jwtUserDetails.getEmail());
+    if (user == null) {
+      return ResponseEntity.ok(new CandidateDto(jwtUserDetails.getEmail()));
+    }
+
+    return ResponseEntity.ok(user);
+  }
+
+  /**
+   * GET request for getting application facebook client id.
+   *
+   * @param facebookClientId auto-injected from environmental variables facebook client id.
+   * @return DTO with simple string.
+   */
+  @GetMapping("/oauth2/facebook/client-id")
+  public FacebookClientIdDto getFacebookClientId(
+      @Value("${spring.security.oauth2.client.registration.facebook.clientId}")
+      String facebookClientId) {
+
+    return new FacebookClientIdDto(facebookClientId);
   }
 }
