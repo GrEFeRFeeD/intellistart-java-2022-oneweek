@@ -210,7 +210,7 @@ public class CandidateSlotValidatorTest {
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotExc1Args")
   void validateUpdateCandidateSlotSlotNotFoundExceptionTest(CandidateSlot candidateSlot,
-      Class<Exception> actual) {
+      Class<Exception> actual) throws SlotException {
     Mockito.when(candidateSlotService.findById(candidateSlot.getId())).thenThrow(SlotException.class);
 
     Assertions.assertThrows(actual,
@@ -219,8 +219,8 @@ public class CandidateSlotValidatorTest {
 
   static Arguments[] validateUpdateCandidateSlotExc2Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot9, SlotIsBookedException.class),
-        Arguments.arguments(candidateSlot10, SlotIsBookedException.class)
+        Arguments.arguments(candidateSlot9, SlotException.class),
+        Arguments.arguments(candidateSlot10, SlotException.class)
     };
   }
   @ParameterizedTest
