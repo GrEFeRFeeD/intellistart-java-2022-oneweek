@@ -255,4 +255,21 @@ public class CoordinatorController {
     booking.setCandidateSlot(newDataBooking.getCandidateSlot());
     booking.setPeriod(newDataBooking.getPeriod());
   }
+
+  /**
+   * DELETE request for deleting booking by id.
+   *
+   * @param bookingId - id of booking to delete
+   * @return DTO of deleted booking
+   * @throws BookingException - throw if booking by given id wasn't found
+   */
+  @DeleteMapping("/bookings/{id}")
+  public ResponseEntity<BookingDto> deleteBooking(@PathVariable("id") Long bookingId)
+      throws BookingException {
+
+    Booking bookingToDelete = bookingService.findById(bookingId);
+    bookingService.deleteBooking(bookingToDelete);
+
+    return ResponseEntity.ok(new BookingDto(bookingToDelete));
+  }
 }
