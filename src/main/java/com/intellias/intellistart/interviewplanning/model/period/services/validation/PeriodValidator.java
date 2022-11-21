@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.period.services.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.DurationValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.ExtremeValuesValidator;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.chain.PeriodChainValidator;
@@ -35,12 +36,12 @@ public class PeriodValidator {
    * @param from LocalTime, lower time boundary
    * @param to LocalTime, upper time boundary
    *
-   * @throws InvalidBoundariesException when validation is incorrect
+   * @throws SlotException  when validation is incorrect
    */
-  public void validate(LocalTime from, LocalTime to) {
+  public void validate(LocalTime from, LocalTime to) throws SlotException {
     for (PeriodChainValidator validator : validators) {
       if (!validator.isCorrect(from, to)) {
-        throw new InvalidBoundariesException();
+        throw new SlotException(SlotExceptionProfile.INVALID_BOUNDARIES);
       }
     }
   }

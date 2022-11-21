@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.period;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
 import com.intellias.intellistart.interviewplanning.model.period.services.validation.PeriodValidator;
 import java.time.LocalTime;
@@ -36,18 +37,18 @@ public class PeriodService {
   /**
   * Alias for {@link #obtainPeriod(LocalTime, LocalTime)} with time conversion.
   *
-  * @throws InvalidBoundariesException when parameters are invalid:
+  * @throws SlotException  when parameters are invalid:
   *     can't be read as time
   *     wrong business logic
   */
-  public Period obtainPeriod(String fromString, String toString) {
+  public Period obtainPeriod(String fromString, String toString) throws SlotException {
     LocalTime from;
     LocalTime to;
     try {
       from = timeService.convert(fromString);
       to = timeService.convert(toString);
     } catch (IllegalArgumentException iae) {
-      throw new InvalidBoundariesException();
+      throw new SlotException(SlotExceptionProfile.INVALID_BOUNDARIES);
     }
     return obtainPeriod(from, to);
   }
@@ -58,9 +59,9 @@ public class PeriodService {
    * @param from - LocalTime lower time boundary
    * @param to - LocalTime upper time boundary
    *
-   * @throws InvalidBoundariesException when wrong business logic.
+   * @throws SlotException when wrong business logic.
    */
-  private Period obtainPeriod(LocalTime from, LocalTime to) {
+  private Period obtainPeriod(LocalTime from, LocalTime to) throws SlotException {
     periodValidator.validate(from, to);
 
     Optional<Period> periodOptional = periodRepository.findPeriodByFromAndTo(from, to);

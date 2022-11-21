@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.exceptions.handlers;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.handlers.dto.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -10,17 +10,16 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
- * Handler for security exceptions.
- * Handles authentication and authorization exceptions.
+ * Handler for slot's exceptions.
  */
 @ControllerAdvice
-public class SecurityExceptionHandler extends ResponseEntityExceptionHandler {
+public class SlotExceptionHandler extends ResponseEntityExceptionHandler {
 
   /**
    * Method for handling SecurityException.
    */
-  @ExceptionHandler(value = SecurityException.class)
-  public ResponseEntity<Object> handleSecurityException(SecurityException exception,
+  @ExceptionHandler(value = SlotException.class)
+  public ResponseEntity<Object> handleSlotException(SlotException exception,
       WebRequest webRequest) {
 
     var exceptionBody = new ExceptionResponse(exception.getName(), exception.getMessage());
