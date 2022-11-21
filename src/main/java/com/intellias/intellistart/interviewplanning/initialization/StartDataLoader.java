@@ -30,6 +30,9 @@ public class StartDataLoader implements ApplicationRunner {
 
     User firstCoordinator = new User(null, email, Role.COORDINATOR);
     firstCoordinator = userRepository.save(firstCoordinator);
-    System.out.println("Added first user: " + firstCoordinator);
+
+
+    // Add needed repositories to this class and save any information you want
+    // First coordinator will be with email azofer77@gmail.com
   }
 }

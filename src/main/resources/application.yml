@@ -1,8 +1,8 @@
 jwt:
-  secret: ${JWT_SECRET}
-  validity: ${JWT_VALIDITY}
+  secret: oneweek
+  validity: 86400
 
-first-coordinator-email: ${FIRST_COORDINATOR_EMAIL}
+first-coordinator-email: azofer77@gmail.com
 
 spring:
   security:
@@ -12,20 +12,20 @@ spring:
           facebook:
             clientId: ${FACEBOOK_CLIENT_ID}
             clientSecret: ${FACEBOOK_SECRET}
-            redirectUri: ${FACEBOOK_REDIRECT_URI}
+            redirectUri: https://localhost:8080/
 
-  jpa:
-    show-sql: true
-    generate-ddl: true
-    hibernate:
-      ddl-auto: ${HIBERNATE_DDL_AUTO}
-    database: postgresql
-
-  datasource:
-    platform: postgres
-    url: "jdbc:postgresql://postgresql:${DATABASE_PORT}/${POSTGRES_DB}"
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-    initialization-mode: always
-    continue-on-error: true
+#  jpa:
+#    show-sql: true
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: ${HIBERNATE_DDL_AUTO}
+#    database: postgresql
+#
+#  datasource:
+#    platform: postgres
+#    url: "jdbc:postgresql://postgresql:${DATABASE_PORT}/${POSTGRES_DB}"
+#    username: ${POSTGRES_USER}
+#    password: ${POSTGRES_PASSWORD}
+#    driver-class-name: org.postgresql.Driver
+#    initialization-mode: always
+#    continue-on-error: true
