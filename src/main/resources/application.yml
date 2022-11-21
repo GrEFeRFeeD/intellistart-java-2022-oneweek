@@ -12,6 +12,7 @@ spring:
           facebook:
             clientId: ${FACEBOOK_CLIENT_ID}
             clientSecret: ${FACEBOOK_SECRET}
+            redirectUri: ${FACEBOOK_REDIRECT_URI}
 
   jpa:
     show-sql: true

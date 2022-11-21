@@ -267,6 +267,7 @@ The example of such file represented in `example.env` file. The needed variables
 - `FIRST_COORDINATOR_EMAIL` - facebook account attached email of first coordinator that will be automatically added to DB  
 - `FACEBOOK_CLIENT_ID` - application client id provided by facebook
 - `FACEBOOK_SECRET` - application secret provided by facebook
+- `FACEBOOK_REDIRECT_URI` - URI to which you will be redirected after oauth2. Configures by facebook application
 - `HIBERNATE_DDL_AUTO` - hibernate DDL launch mode:
   - `validate`: validates the schema, makes no changes to the database.
   - `update`: updates the schema.

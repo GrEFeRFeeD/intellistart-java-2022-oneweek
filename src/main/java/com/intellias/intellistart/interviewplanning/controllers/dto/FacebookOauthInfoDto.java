@@ -12,7 +12,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class FacebookClientIdDto {
+public class FacebookOauthInfoDto {
 
-  private String facebookClientId;
+  private String clientId;
+  private String redirectUri;
+  private String tokenRequestUrl;
+
+  public FacebookOauthInfoDto(String clientId, String redirectUri) {
+    this.clientId = clientId;
+    this.redirectUri = redirectUri;
+  }
 }

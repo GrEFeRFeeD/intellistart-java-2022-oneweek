@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateDto;
-import com.intellias.intellistart.interviewplanning.controllers.dto.FacebookClientIdDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.FacebookOauthInfoDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtRequest;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtResponse;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
@@ -123,11 +123,16 @@ public class JwtAuthenticationController {
    * @param facebookClientId auto-injected from environmental variables facebook client id.
    * @return DTO with simple string.
    */
-  @GetMapping("/oauth2/facebook/client-id")
-  public FacebookClientIdDto getFacebookClientId(
+  @GetMapping("/oauth2/facebook/v15.0")
+  public FacebookOauthInfoDto getFacebookClientId(
       @Value("${spring.security.oauth2.client.registration.facebook.clientId}")
-      String facebookClientId) {
+      String facebookClientId,
+      @Value("${spring.security.oauth2.client.registration.facebook.redirectUri}")
+      String redirectUri) {
 
-    return new FacebookClientIdDto(facebookClientId);
+    String requestUrl = String.format(FacebookUtil.userFacebookTokenUrlV15,
+        facebookClientId, redirectUri);
+
+    return new FacebookOauthInfoDto(facebookClientId, redirectUri, requestUrl);
   }
 }
