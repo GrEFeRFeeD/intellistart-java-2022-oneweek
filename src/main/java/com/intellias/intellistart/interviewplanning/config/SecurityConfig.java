@@ -69,7 +69,7 @@ public class SecurityConfig {
 
     http.csrf().disable()
     
-        .authorizeRequests().antMatchers("/authenticate, "/oauth2/facebook/client-id",
+        .authorizeRequests().antMatchers("/authenticate", "/oauth2/facebook/client-id",
             "/weeks/current", "/weeks/next").permitAll()
         .antMatchers("/candidates/**").hasRole("CANDIDATE")
         .antMatchers("/interviewers/**").hasAnyRole("INTERVIEWER", "COORDINATOR")
