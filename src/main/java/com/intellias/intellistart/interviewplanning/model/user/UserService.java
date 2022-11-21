@@ -1,6 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
+import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
 import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
@@ -31,8 +34,9 @@ public class UserService {
    *
    * @return Optional User by id.
    */
-  public Optional<User> getUserById(Long id) {
-    return userRepository.findById(id);
+  public User getUserById(Long id) {
+    return userRepository.findById(id)
+        .orElseThrow(InvalidInterviewerException::new);
   }
 
   /**

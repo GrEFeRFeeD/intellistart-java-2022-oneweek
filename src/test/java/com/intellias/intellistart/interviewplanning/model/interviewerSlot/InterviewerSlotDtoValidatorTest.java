@@ -66,6 +66,11 @@ public class InterviewerSlotDtoValidatorTest {
   );
 
   @Test
+  void validationForCoordinatorTest(){
+    assertThrows(CannotEditThisWeekException.class, () -> cut.validationForCoordinator(dto1, 1L));
+  }
+
+  @Test
   void isCorrectDayTest() {
     assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("friday"));
     assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("february"));
@@ -105,7 +110,6 @@ public class InterviewerSlotDtoValidatorTest {
   }
 
   static User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);
-
   static User u2 = new User(null, "interviewer2@gmail.com", Role.COORDINATOR);
   static User u3 = new User(null, "interviewer3@gmail.com", Role.COORDINATOR);
 
@@ -117,6 +121,10 @@ static Period p1 = new Period(null, LocalTime.of(12, 0), LocalTime.of(18, 0),
   static Period p2 = new Period(null, LocalTime.of(11, 0), LocalTime.of(17, 30),
       new HashSet<>(), new HashSet<>(), new HashSet<>());
 
+  static InterviewerSlotDto dto1 = new InterviewerSlotDto(1L, null, 40L,
+      "TUE", "12:00", "18:00");
+  static InterviewerSlotDto dto1b = new InterviewerSlotDto(1L, null, 400L,
+      "TUEyy", "12:00", "18:00");
   static InterviewerSlotDto dto2 = new InterviewerSlotDto(1L, null, 100L,
       "TUE", "12:00", "18:00");
   static InterviewerSlotDto dto3 = new InterviewerSlotDto(1L, null, 103L,

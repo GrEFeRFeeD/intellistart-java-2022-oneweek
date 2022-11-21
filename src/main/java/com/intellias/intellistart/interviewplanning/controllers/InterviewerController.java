@@ -139,10 +139,10 @@ public class InterviewerController {
   public ResponseEntity<BookingLimitDto> createBookingLimit(
       @RequestBody BookingLimitDto bookingLimitDto,
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
+      throws InvalidInterviewerException, InvalidBookingLimitException,
+      NotInterviewerException {
 
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
+    User user = userService.getUserById(interviewerId);
 
     bookingLimitDto.setUserId(interviewerId);
 
@@ -165,8 +165,7 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws InvalidInterviewerException, NotInterviewerException {
 
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
+    User user = userService.getUserById(interviewerId);
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(user);
 
@@ -186,8 +185,7 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws InvalidInterviewerException, NotInterviewerException {
 
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
+    User user = userService.getUserById(interviewerId);
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(user);
 

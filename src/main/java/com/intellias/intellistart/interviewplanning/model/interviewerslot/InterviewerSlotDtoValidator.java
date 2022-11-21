@@ -55,8 +55,8 @@ public class InterviewerSlotDtoValidator {
   }
 
   /**
-   * Validate interviewerSlotDTO for User, DayOfWeek, Period. If interviewerSlotDTO is correct:
-   * save InterviewerSlot in database. If not - throws one of the exceptions.
+   * Validate interviewerSlotDTO for User, DayOfWeek, Period. If interviewerSlotDTO is correct: save
+   * InterviewerSlot in database. If not - throws one of the exceptions.
    *
    * @param interviewerSlotDto from Controller's request
    * @throws InvalidDayOfWeekException   - when invalid day of week
@@ -81,36 +81,36 @@ public class InterviewerSlotDtoValidator {
     User user = validateAndGetUser(userId, authentication);
     interviewerSlotDto.setInterviewerId(userId);
 
-
     InterviewerSlot interviewerSlot = new InterviewerSlot(null, week,
         dayOfWeek, period, null, user);
 
     if (interviewerSlotDto.getInterviewerSlotId() != null) {
       interviewerSlot.setId(interviewerSlotDto.getInterviewerSlotId());
+      interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     }
     validateIfPeriodIsOverlapping(interviewerSlot);
 
-    interviewerSlot.getWeek().addInterviewerSlot(interviewerSlot);
     interviewerSlot = interviewerSlotService.create(interviewerSlot);
     interviewerSlotDto.setInterviewerSlotId(interviewerSlot.getId());
 
   }
 
   /**
-   * Get slotId from request, check if it exists and if it belongs to current user.
-   * Go to interviewerSlotValidateDtoAndCreate.
+   * Get slotId from request, check if it exists and if it belongs to current user. Check who wants
+   * to update slot. If it is interviewer - go to interviewerSlotValidateDtoAndCreate. If
+   * coordinator - proceed its own validation
    *
    * @param interviewerSlotDto - from request
-   * @param authentication - from springSecurity
-   * @param userId - from request
-   * @param slotId - from request
-   * @throws InvalidDayOfWeekException - when invalid day of week
+   * @param authentication     - from springSecurity
+   * @param userId             - from request
+   * @param slotId             - from request
+   * @throws InvalidDayOfWeekException   - when invalid day of week
    * @throws InvalidInterviewerException - when invalid interviewer id, role not Interviewer
-   * @throws InvalidBoundariesException - when not in range 10:00 - 22:00, or less than 90 min
-   * @throws SlotIsOverlappingException - when overlap some slot
+   * @throws InvalidBoundariesException  - when not in range 10:00 - 22:00, or less than 90 min
+   * @throws SlotIsOverlappingException  - when overlap some slot
    * @throws CannotEditThisWeekException - when editing week is current or next on SAT or SUN
-   * @throws SlotIsNotFoundException - when slot is not found by slotId
-   * @throws SlotIsBookedException - when slot has at least one or more bookings
+   * @throws SlotIsNotFoundException     - when slot is not found by slotId
+   * @throws SlotIsBookedException       - when slot has at least one or more bookings
    */
   public void validateAndUpdate(InterviewerSlotDto interviewerSlotDto,
       Authentication authentication, Long userId, Long slotId)
@@ -120,44 +120,68 @@ public class InterviewerSlotDtoValidator {
 
     InterviewerSlot interviewerSlot = interviewerSlotService.findById(slotId);
 
-    if(isCoordinator(authentication)) {
-      Week currentWeek = weekService.getCurrentWeek();
-      if (interviewerSlotDto.getWeek() < currentWeek.getId()) {
-        throw new CannotEditThisWeekException();
-      }
-
-      LocalDate dateFromDto = weekService.convertToLocalDate(interviewerSlotDto.getWeek(),
-          DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek()));
-      if(LocalDate.now().isAfter(dateFromDto)) {
-        throw new CannotEditThisWeekException();
-      }
-
-      if(interviewerSlot.getBookings() != null) {
-        throw new SlotIsBookedException();
-      }
-
-      validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
-
-    }
-
     if (!(interviewerSlot.getUser().getId().equals(userId))) {
       throw new SecurityException(SecurityExceptionProfile.ACCESS_DENIED);
     }
 
-    if (interviewerSlot.getBookings() != null) {
+    if (interviewerSlot.getBookings() != null && !interviewerSlot.getBookings().isEmpty()) {
       throw new SlotIsBookedException();
     }
 
-    interviewerSlotDto.setInterviewerSlotId(slotId);
+    if (isCoordinator(authentication)) {
+      validationForCoordinator(interviewerSlotDto, userId);
+    } else {
+      interviewerSlotDto.setInterviewerSlotId(slotId);
 
-    validateAndCreate(interviewerSlotDto,
-        authentication, userId);
+      validateAndCreate(interviewerSlotDto,
+          authentication, userId);
+    }
   }
 
-  public boolean isCoordinator(Authentication authentication){
+  /**
+   * Special validation for Coordinator. Check if the date of slot is in the future, check
+   * overlapping and existing bookings. If all is okey - update slot in database.
+   *
+   * @param interviewerSlotDto - from request
+   * @param userId             - from path (url)
+   * @throws SlotIsOverlappingException - when overlap some slot
+   * @throws InvalidDayOfWeekException  - when invalid day of week
+   */
+  public void validationForCoordinator(InterviewerSlotDto interviewerSlotDto, Long userId)
+      throws SlotIsOverlappingException, InvalidDayOfWeekException {
+
+    LocalDate dateFromDto = weekService.convertToLocalDate(interviewerSlotDto.getWeek(),
+        DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek()));
+    if (LocalDate.now().isAfter(dateFromDto)) {
+      throw new CannotEditThisWeekException();
+    }
+
+    validateIfCorrectDay(interviewerSlotDto.getDayOfWeek());
+    Week week = weekService.getWeekByWeekNum(interviewerSlotDto.getWeek());
+    Period period = periodService.obtainPeriod(interviewerSlotDto.getFrom(),
+        interviewerSlotDto.getTo());
+    DayOfWeek dayOfWeek = DayOfWeek.valueOf(interviewerSlotDto.getDayOfWeek());
+    InterviewerSlot interviewerSlotNew = new InterviewerSlot(null, week,
+        dayOfWeek, period, null, userService.getUserById(userId));
+
+    validateIfPeriodIsOverlapping(interviewerSlotNew);
+    interviewerSlotNew.setId(interviewerSlotDto.getInterviewerSlotId());
+
+    interviewerSlotNew = interviewerSlotService.create(interviewerSlotNew);
+    interviewerSlotDto.setInterviewerSlotId(interviewerSlotNew.getId());
+    interviewerSlotDto.setInterviewerId(interviewerSlotNew.getUser().getId());
+  }
+
+  /**
+   * Check if provided user is Coordinator.
+   *
+   * @param authentication - from request
+   * @return boolean
+   */
+  public boolean isCoordinator(Authentication authentication) {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     String email = jwtUserDetails.getEmail();
-    User user= userService.getUserByEmail(email);
+    User user = userService.getUserByEmail(email);
     return user.getRole().equals(Role.COORDINATOR);
   }
 
@@ -175,8 +199,7 @@ public class InterviewerSlotDtoValidator {
       throws InvalidInterviewerException, SecurityException {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     String email = jwtUserDetails.getEmail();
-    User userById = userService.getUserById(userId)
-        .orElseThrow(InvalidInterviewerException::new);
+    User userById = userService.getUserById(userId);
     if (email.equals(userById.getEmail())) {
       validateIfInterviewerRoleInterviewer(userById);
       return userById;
