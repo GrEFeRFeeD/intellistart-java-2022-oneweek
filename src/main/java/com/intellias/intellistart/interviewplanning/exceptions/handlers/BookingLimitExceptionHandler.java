@@ -1,6 +1,6 @@
 package com.intellias.intellistart.interviewplanning.exceptions.handlers;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.handlers.dto.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +10,18 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
- * Handler for security exceptions.
- * Handles authentication and authorization exceptions.
+ * Handler for booking limit's exceptions.
  */
 @ControllerAdvice
-public class SecurityExceptionHandler extends ResponseEntityExceptionHandler {
+public class BookingLimitExceptionHandler extends ResponseEntityExceptionHandler {
+
 
   /**
-   * Method for handling SecurityException.
+   * Method for handling BookingLimitException.
    */
-  @ExceptionHandler(value = SecurityException.class)
-  public ResponseEntity<Object> handleSecurityException(SecurityException exception,
-      WebRequest webRequest) {
+  @ExceptionHandler(value = BookingLimitException.class)
+  public ResponseEntity<Object> handleBookingLimitException(
+      BookingLimitException exception, WebRequest webRequest) {
 
     var exceptionBody = new ExceptionResponse(exception.getName(), exception.getMessage());
 

@@ -1,9 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +76,7 @@ public class UserServiceTest {
   @ParameterizedTest
   @MethodSource("grantRoleByEmailTestArgs")
   void grantRoleByEmailTest(String email, Role role, User expected)
-      throws UserAlreadyHasRoleException {
+      throws UserException {
     Mockito.when(userRepository.findByEmail(email)).thenReturn(null);
     Mockito.when(userRepository.save(expected)).thenReturn(expected);
 
@@ -98,7 +95,7 @@ public class UserServiceTest {
   void grantRoleByEmailTestException(String email, Role role, User user) {
     Mockito.when(userRepository.findByEmail(email)).thenReturn(user);
 
-    Class<UserAlreadyHasRoleException> actual = UserAlreadyHasRoleException.class;
+    Class<UserException> actual = UserException.class;
     Assertions.assertThrows(actual, () -> cut.grantRoleByEmail(email, role));
   }
 
@@ -127,7 +124,7 @@ public class UserServiceTest {
   @ParameterizedTest
   @MethodSource("deleteInterviewerTestTestArgs")
   void deleteInterviewerTest(Long id, User expected)
-      throws UserNotFoundException, UserHasAnotherRoleException {
+      throws UserException {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(expected));
     Mockito.doNothing().when(interviewerSlotService).deleteSlotsByUser(expected);
 
@@ -146,7 +143,7 @@ public class UserServiceTest {
   void deleteInterviewerUserNotFoundTest(Long id) {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-    Class<UserNotFoundException> actual = UserNotFoundException.class;
+    Class<UserException> actual = UserException.class;
     Assertions.assertThrows(actual, () -> cut.deleteInterviewer(id));
   }
 
@@ -161,7 +158,7 @@ public class UserServiceTest {
   void deleteInterviewerUserAlreadyHasRoleTest(Long id, User user) {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
-    Class<UserHasAnotherRoleException> actual = UserHasAnotherRoleException.class;
+    Class<UserException> actual = UserException.class;
     Assertions.assertThrows(actual, () -> cut.deleteInterviewer(id));
   }
 
@@ -174,7 +171,7 @@ public class UserServiceTest {
   @ParameterizedTest
   @MethodSource("deleteCoordinatorTestArgs")
   void deleteCoordinatorTest(Long id, String email, User expected)
-      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
+      throws UserException {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(expected));
     Mockito.when(userRepository.findByEmail(email)).thenReturn(user5);
     Mockito.doNothing().when(interviewerSlotService).deleteSlotsByUser(expected);
@@ -194,7 +191,7 @@ public class UserServiceTest {
   void deleteCoordinatorUserNotFoundTest(Long id, String email) {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-    Class<UserNotFoundException> actual = UserNotFoundException.class;
+    Class<UserException> actual = UserException.class;
     Assertions.assertThrows(actual, () -> cut.deleteCoordinator(id, email));
   }
 
@@ -210,7 +207,7 @@ public class UserServiceTest {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
     Mockito.when(userRepository.findByEmail(email)).thenReturn(user);
 
-    Class<SelfRevokingException> actual = SelfRevokingException.class;
+    Class<UserException> actual = UserException.class;
     Assertions.assertThrows(actual, () -> cut.deleteCoordinator(id, email));
   }
 
@@ -226,7 +223,7 @@ public class UserServiceTest {
     Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
     Mockito.when(userRepository.findByEmail(email)).thenReturn(user5);
 
-    Class<UserHasAnotherRoleException> actual = UserHasAnotherRoleException.class;
+    Class<UserException> actual = UserException.class;
     Assertions.assertThrows(actual, () -> cut.deleteCoordinator(id, email));
   }
 }

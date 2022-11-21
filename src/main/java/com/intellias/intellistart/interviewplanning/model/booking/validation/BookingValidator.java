@@ -1,9 +1,9 @@
 package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDescriptionException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidSubjectException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException.BookingExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -46,26 +46,27 @@ public class BookingValidator {
    * @param updatingBooking Booking with old parameters
    * @param newDataBooking Booking with new parameters
    *
-   * @throws InvalidBoundariesException       if duration of new Period is invalid
-   * @throws SlotsAreNotIntersectingException if periods of InterviewSlot, CandidateSlot do not
+   * @throws SlotException        if duration of new Period is invalid
+   * @throws BookingException     if periods of InterviewSlot, CandidateSlot do not
    *                                          intersect with new Period or new Period is overlapping
    *                                          with existing Periods of InterviewerSlot and
    *                                          CandidateSlot
    */
-  public void validateUpdating(Booking updatingBooking, Booking newDataBooking) {
+  public void validateUpdating(Booking updatingBooking, Booking newDataBooking)
+      throws SlotException, BookingException {
     Period newPeriod = newDataBooking.getPeriod();
 
     int periodDuration = timeService.calculateDurationMinutes(
         newPeriod.getFrom(), newPeriod.getTo());
     if (periodDuration != BOOKING_PERIOD_DURATION_MINUTES) {
-      throw new InvalidBoundariesException();
+      throw new SlotException(SlotExceptionProfile.INVALID_BOUNDARIES);
     }
 
     if (newDataBooking.getSubject().length() > SUBJECT_MAX_SIZE) {
-      throw new InvalidSubjectException();
+      throw new BookingException(BookingExceptionProfile.INVALID_SUBJECT);
     }
     if (newDataBooking.getDescription().length() > DESCRIPTION_MAX_SIZE) {
-      throw new InvalidDescriptionException();
+      throw new BookingException(BookingExceptionProfile.INVALID_DESCRIPTION);
     }
 
     InterviewerSlot newInterviewerSlot = newDataBooking.getInterviewerSlot();
@@ -75,12 +76,12 @@ public class BookingValidator {
         newInterviewerSlot.getWeek().getId(), newInterviewerSlot.getDayOfWeek());
 
     if (!interviewerSlotDate.equals(newCandidateSlot.getDate())) {
-      throw new SlotsAreNotIntersectingException();
+      throw new BookingException(BookingExceptionProfile.SLOTS_NOT_INTERSECTING);
     }
 
     if (!periodService.isFirstInsideSecond(newPeriod, newInterviewerSlot.getPeriod())
         || !periodService.isFirstInsideSecond(newPeriod, newCandidateSlot.getPeriod())) {
-      throw new SlotsAreNotIntersectingException();
+      throw new BookingException(BookingExceptionProfile.SLOTS_NOT_INTERSECTING);
     }
 
     Collection<Booking> interviewSlotBookings = newInterviewerSlot.getBookings();
@@ -94,12 +95,13 @@ public class BookingValidator {
   }
 
   private void validatePeriodNotOverlappingWithOtherBookingPeriods(
-      Booking updatingBooking, Period period, Collection<Booking> bookings) {
+      Booking updatingBooking, Period period, Collection<Booking> bookings)
+      throws BookingException {
 
     for (Booking booking : bookings) {
       if (periodService.areOverlapping(booking.getPeriod(), period)
           && !booking.equals(updatingBooking)) {
-        throw new SlotsAreNotIntersectingException();
+        throw new BookingException(BookingExceptionProfile.SLOTS_NOT_INTERSECTING);
       }
     }
   }
@@ -107,7 +109,7 @@ public class BookingValidator {
   /**
    * Alias for {@link #validateUpdating(Booking, Booking)}.
    */
-  public void validateCreating(Booking newBooking) {
+  public void validateCreating(Booking newBooking) throws SlotException, BookingException {
     validateUpdating(newBooking, newBooking);
   }
 }
