@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class BookingDto {
 
+  private Long bookingId;
   private Long interviewerSlotId;
   private Long candidateSlotId;
   private String from;
@@ -26,6 +27,7 @@ public class BookingDto {
    * Constructor.
    */
   public BookingDto(Booking booking) {
+    this.bookingId = booking.getId();
     this.candidateSlotId = booking.getCandidateSlot().getId();
     this.interviewerSlotId = booking.getInterviewerSlot().getId();
 

@@ -1,12 +1,13 @@
 package com.intellias.intellistart.interviewplanning.initialization;
 
+import com.intellias.intellistart.interviewplanning.model.booking.Booking;
+import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotRepository;
-import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
@@ -34,25 +35,27 @@ public class StartDataLoader implements ApplicationRunner {
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final CandidateSlotRepository candidateSlotRepository;
   private final UserService userService;
-  private final InterviewerSlotService interviewerSlotService;
+  private final BookingService bookingService;
   private final PeriodService periodService;
   private final WeekService weekService;
+  private final BookingLimitService bookingLimitService;
 
   @Value("${first-coordinator-email}")
   private String email;
 
   @Autowired
-  public StartDataLoader(UserRepository userRepository, InterviewerSlotRepository interviewerSlotRepository, CandidateSlotRepository candidateSlotRepository, UserService userService,
-      InterviewerSlotService interviewerSlotService, PeriodService periodService,
-      WeekService weekService) {
+  public StartDataLoader(UserRepository userRepository, InterviewerSlotRepository interviewerSlotRepository,
+                         CandidateSlotRepository candidateSlotRepository, UserService userService,
+                         BookingService bookingService, PeriodService periodService,
+                         WeekService weekService, BookingLimitService bookingLimitService) {
     this.userRepository = userRepository;
     this.interviewerSlotRepository = interviewerSlotRepository;
     this.candidateSlotRepository = candidateSlotRepository;
     this.userService = userService;
-    this.interviewerSlotService = interviewerSlotService;
+    this.bookingService = bookingService;
     this.periodService = periodService;
-
     this.weekService = weekService;
+    this.bookingLimitService = bookingLimitService;
   }
 
   @Override
@@ -62,24 +65,39 @@ public class StartDataLoader implements ApplicationRunner {
     firstCoordinator = userRepository.save(firstCoordinator);
 
     User firstInterviewer = userService.grantRoleByEmail("testing@gmail.com", Role.INTERVIEWER);
-    User secondInterviewer = userService.grantRoleByEmail("second@gmail.com", Role.INTERVIEWER);
 
-    DayOfWeek dayOfWeek = DayOfWeek.TUE;
     Week next = weekService.getNextWeek();
-    LocalDate date = weekService.convertToLocalDate(next.getId(), dayOfWeek);
+
+    DayOfWeek dayOfWeek1 = DayOfWeek.TUE;
+    LocalDate date1 = weekService.convertToLocalDate(next.getId(), dayOfWeek1);
+    DayOfWeek dayOfWeek2 = DayOfWeek.THU;
+    LocalDate date2 = weekService.convertToLocalDate(next.getId(), dayOfWeek2);
 
     Period periodInterviewer1 = periodService.obtainPeriod("12:00", "18:00");
     Period periodCandidate1 = periodService.obtainPeriod("12:00", "21:30");
+    Period bookingPeriod1 = periodService.obtainPeriod("16:00", "17:30");
 
-    InterviewerSlot interviewerSlot1 = new InterviewerSlot(null, next, dayOfWeek, periodInterviewer1, new HashSet<>(), firstInterviewer);
-    InterviewerSlot interviewerSlot1Saved = interviewerSlotRepository.save(interviewerSlot1);
+    InterviewerSlot interviewerSlot1 = new InterviewerSlot(null, next, dayOfWeek1, periodInterviewer1, new HashSet<>(), firstInterviewer);
+    interviewerSlot1 = interviewerSlotRepository.save(interviewerSlot1);
 
-    CandidateSlot candidateSlot1 = new CandidateSlot(null, date, periodCandidate1, new HashSet<>(),
+    InterviewerSlot interviewerSlot2 = new InterviewerSlot(null, next, dayOfWeek2, periodInterviewer1, new HashSet<>(), firstInterviewer);
+    interviewerSlot2 = interviewerSlotRepository.save(interviewerSlot1);
+
+    CandidateSlot candidateSlot1 = new CandidateSlot(null, date1, periodCandidate1, new HashSet<>(),
             "candidate1@gmail.com", "Maks");
-    CandidateSlot candidateSlot1Saved = candidateSlotRepository.save(candidateSlot1);
+    candidateSlot1 = candidateSlotRepository.save(candidateSlot1);
+
+    CandidateSlot candidateSlot2 = new CandidateSlot(null, date2, periodCandidate1, new HashSet<>(),
+            "candidate2@gmail.com", "Margarita");
+    candidateSlot2 = candidateSlotRepository.save(candidateSlot2);
 
 
+//    Booking booking1 = new Booking(null, "interview", "Spider-man",
+//            interviewerSlot2, candidateSlot2, bookingPeriod1);
+//
+//    booking1 = bookingService.save(booking1);
 
+    bookingLimitService.createBookingLimit(firstInterviewer, 1);
 
     System.out.println("data is loaded");
   }
