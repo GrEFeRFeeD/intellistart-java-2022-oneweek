@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.security;
 
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;
-import com.intellias.intellistart.interviewplanning.utils.JwtTokenUtil;
+import com.intellias.intellistart.interviewplanning.utils.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -28,7 +28,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   @Autowired
   private JwtUserDetailsService jwtUserDetailsService;
   @Autowired
-  private JwtTokenUtil jwtTokenUtil;
+  private JwtUtil jwtUtil;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -48,8 +48,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
       jwtToken = requestTokenHeader.substring(7);
       try {
-        email = jwtTokenUtil.getEmailFromToken(jwtToken);
-        name = jwtTokenUtil.getNameFromToken(jwtToken);
+        email = jwtUtil.getEmailFromToken(jwtToken);
+        name = jwtUtil.getNameFromToken(jwtToken);
       } catch (IllegalArgumentException e) {
         System.out.println("Unable to get JWT Token");
       } catch (UnsupportedJwtException e) {
@@ -70,7 +70,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
           this.jwtUserDetailsService.loadUserByEmailAndName(email, name);
 
       // If token is valid configure Spring Security to manually set authentication.
-      if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+      if (jwtUtil.validateToken(jwtToken, userDetails)) {
 
         var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
             userDetails, null, userDetails.getAuthorities());

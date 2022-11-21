@@ -68,8 +68,8 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.csrf().disable()
-
-        .authorizeRequests().antMatchers("/authenticate",
+    
+        .authorizeRequests().antMatchers("/authenticate", "/oauth2/facebook/v15.0",
             "/weeks/current", "/weeks/next").permitAll()
         .antMatchers("/candidates/**").hasRole("CANDIDATE")
         .antMatchers("/interviewers/**").hasAnyRole("INTERVIEWER", "COORDINATOR")

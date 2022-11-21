@@ -1,5 +1,8 @@
 jwt:
   secret: oneweek
+  validity: 86400
+
+first-coordinator-email: be@oneweek.ua
 
 spring:
   security:
@@ -9,6 +12,7 @@ spring:
           facebook:
             clientId: 123456
             clientSecret: qwerty
+            redirectUri: uriuri
 
   datasource:
     driverClassName: org.h2.Driver

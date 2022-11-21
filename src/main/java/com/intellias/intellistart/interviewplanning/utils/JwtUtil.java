@@ -10,16 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 /**
  * Util class for work with JWT.
  */
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtUtil implements Serializable {
 
-  public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+  @Value("${jwt.validity}")
+  private Long jwtValidity;
 
   @Value("${jwt.secret}")
   private String secret;
@@ -99,7 +99,7 @@ public class JwtTokenUtil implements Serializable {
         .setClaims(claims)
         .setSubject(jwtUserDetails.getEmail())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+        .setExpiration(new Date(System.currentTimeMillis() + jwtValidity * 1000))
         .signWith(SignatureAlgorithm.HS512, secret).compact();
   }
 
