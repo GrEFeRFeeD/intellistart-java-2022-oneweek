@@ -2,9 +2,8 @@ package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
@@ -21,12 +20,7 @@ import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -148,7 +142,7 @@ class BookingValidatorTest {
             newDataBooking.getPeriod().getFrom(), newDataBooking.getPeriod().getTo()))
         .thenReturn(120);
 
-    assertThrows(InvalidBoundariesException.class,
+    assertThrows(SlotException.class,
         () -> cut.validateUpdating(updatingBooking, newDataBooking));
   }
 
@@ -197,7 +191,7 @@ class BookingValidatorTest {
           .thenReturn(true);
     }
 
-    assertThrows(SlotsAreNotIntersectingException.class,
+    assertThrows(BookingException.class,
         () -> cut.validateUpdating(updatingBooking, newDataBooking));
   }
 
@@ -218,7 +212,7 @@ class BookingValidatorTest {
   @ParameterizedTest
   @MethodSource("provideInvalidTextArguments")
   void failWhenUpdateInvalidTestArguments(Booking updatingBooking, Booking newBookingData){
-    assertThrows(InvalidBoundariesException.class,
+    assertThrows(SlotException.class,
         () -> cut.validateUpdating(updatingBooking, newBookingData));
   }
 
@@ -245,8 +239,7 @@ class BookingValidatorTest {
 
   @ParameterizedTest
   @MethodSource("provideCorrectArgumentsUpdating")
-  void notFailWhenCorrectUpdating(Booking updatingBooking, Booking newDataBooking)
-      throws NotInterviewerException {
+  void notFailWhenCorrectUpdating(Booking updatingBooking, Booking newDataBooking) {
 //    Mockito
 //        .when(timeService.calculateDurationMinutes(
 //            newDataBooking.getPeriod().getFrom(), newDataBooking.getPeriod().getTo()))

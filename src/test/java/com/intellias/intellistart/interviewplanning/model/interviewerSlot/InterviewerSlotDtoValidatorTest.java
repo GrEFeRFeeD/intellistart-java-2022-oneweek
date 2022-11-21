@@ -5,10 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
@@ -65,41 +63,41 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void isCorrectDayTest() {
-    assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("friday"));
-    assertThrows(InvalidDayOfWeekException.class, () -> cut.validateIfCorrectDay("february"));
+    assertThrows(SlotException.class, () -> cut.validateIfCorrectDay("friday"));
+    assertThrows(SlotException.class, () -> cut.validateIfCorrectDay("february"));
     assertDoesNotThrow(() -> cut.validateIfCorrectDay("TUE"));
   }
 
   @Test
   void isInterviewerRoleINTERVIEWERTest() {
-    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
-    assertThrows(InvalidInterviewerException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
+    assertThrows(UserException.class, () -> cut.validateIfInterviewerRoleInterviewer(u3));
+    assertThrows(UserException.class, () -> cut.validateIfInterviewerRoleInterviewer(u2));
     assertDoesNotThrow(() -> cut.validateIfInterviewerRoleInterviewer(u1));
   }
 
   @Test
   void canEditThisWeekTest() {
     when(weekService.getCurrentWeek()).thenReturn(new Week(43L,new HashSet<>()));
-    assertThrows(CannotEditThisWeekException.class, () -> cut.validateIfCanEditThisWeek(w2));
+    assertThrows(SlotException.class, () -> cut.validateIfCanEditThisWeek(w2));
     assertDoesNotThrow(() -> cut.validateIfCanEditThisWeek(w1));
   }
 
   @Test
   void isSlotOverlapTest() {
     List<InterviewerSlot> list = new ArrayList<>();
-//    when(interviewerSlotRepository
-//        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
-//            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
-//    assertDoesNotThrow(() -> cut.validateIfPeriodIsOverlapping(is3));
+    when(interviewerSlotRepository
+        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
+            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
+    assertDoesNotThrow(() -> cut.validateIfPeriodIsOverlapping(is3));
   }
   @Test
   void isSlotOverlapTestThrow() {
     List<InterviewerSlot> list = new ArrayList<>();
     list.add(is3);
-//    when(interviewerSlotRepository
-//        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
-//            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
-//    assertThrows(SlotIsOverlappingException.class, () -> cut.validateIfPeriodIsOverlapping(is3));
+    when(interviewerSlotRepository
+        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
+            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
+    assertThrows(SlotException.class, () -> cut.validateIfPeriodIsOverlapping(is3));
   }
 
   static User u1 = new User(1L, "interviewer@gmail.com", Role.INTERVIEWER);

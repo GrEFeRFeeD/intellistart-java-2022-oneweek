@@ -1,28 +1,30 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardMapDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InterviewerSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotsAreNotIntersectingException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
+import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
+import java.time.LocalDate;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -45,6 +47,8 @@ public class CoordinatorController {
   private final CandidateSlotService candidateSlotService;
   private final PeriodService periodService;
   private final UserService userService;
+  private final WeekService weekService;
+  private final BookingLimitService bookingLimitService;
 
   /**
    * Constructor.
@@ -52,27 +56,29 @@ public class CoordinatorController {
   @Autowired
   public CoordinatorController(BookingService bookingService, BookingValidator bookingValidator,
       InterviewerSlotService interviewerSlotService, CandidateSlotService candidateSlotService,
-      PeriodService periodService, UserService userService) {
+      PeriodService periodService, UserService userService,
+      WeekService weekService, BookingLimitService bookingLimitService) {
+
     this.bookingService = bookingService;
     this.bookingValidator = bookingValidator;
     this.interviewerSlotService = interviewerSlotService;
     this.candidateSlotService = candidateSlotService;
     this.periodService = periodService;
     this.userService = userService;
+    this.weekService = weekService;
+    this.bookingLimitService = bookingLimitService;
   }
 
   /**
    * POST request to grant a INTERVIEWER role by email.
    *
    * @param request - Request body of POST mapping.
-   *
    * @return ResponseEntity - Response of the granted User.
-   *
-   * @throws UserAlreadyHasRoleException - when user already has role.
+   * @throws UserException - when user already has role.
    */
   @PostMapping("/users/interviewers")
   public ResponseEntity<User> grantInterviewerByEmail(@RequestBody EmailDto request)
-      throws UserAlreadyHasRoleException {
+      throws UserException {
     return ResponseEntity.ok(userService.grantRoleByEmail(request.getEmail(), Role.INTERVIEWER));
   }
 
@@ -80,14 +86,12 @@ public class CoordinatorController {
    * POST request to grant a COORDINATOR role by email.
    *
    * @param request - Request body of POST mapping.
-   *
    * @return ResponseEntity - Response of the granted User.
-   *
-   * @throws UserAlreadyHasRoleException - - when user already has role.
+   * @throws UserException - - when user already has role.
    */
   @PostMapping("/users/coordinators")
   public ResponseEntity<User> grantCoordinatorByEmail(@RequestBody EmailDto request)
-      throws UserAlreadyHasRoleException {
+      throws UserException {
     return ResponseEntity.ok(userService.grantRoleByEmail(request.getEmail(), Role.COORDINATOR));
   }
 
@@ -119,15 +123,12 @@ public class CoordinatorController {
    * DELETE request for deleting interviewer.
    *
    * @param id - the interviewer's id to delete.
-   *
    * @return ResponseEntity - the deleted user.
-   *
-   * @throws UserNotFoundException - when the user not found by given id.
-   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
+   * @throws UserException - when the user not found by given id or has not interviewer role.
    */
   @DeleteMapping("/users/interviewers/{id}")
   public ResponseEntity<User> deleteInterviewerById(@PathVariable("id") Long id)
-      throws UserNotFoundException, UserHasAnotherRoleException {
+      throws UserException {
     return ResponseEntity.ok(userService.deleteInterviewer(id));
   }
 
@@ -135,20 +136,44 @@ public class CoordinatorController {
    * DELETE request for deleting interviewer.
    *
    * @param id - the interviewer's id to delete.
-   *
    * @return ResponseEntity - the deleted user.
-   *
-   * @throws UserNotFoundException - when the user not found by given id.
-   * @throws SelfRevokingException - when the coordinator removes himself.
+   * @throws UserException - when the user not found by given id or the coordinator removes himself
    */
   @DeleteMapping("/users/coordinators/{id}")
   public ResponseEntity<User> deleteCoordinatorById(@PathVariable("id") Long id,
       Authentication authentication)
-      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
+      throws UserException {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
     String currentEmailCoordinator = jwtUserDetails.getEmail();
     return ResponseEntity.ok(userService.deleteCoordinator(id, currentEmailCoordinator));
+  }
+
+  /**
+   * Returns {@link DashboardMapDto} object with week num and map of
+   * LocalDate with DashboardDto which contains all candidate, interviewer
+   * slots and booking for the certain date.
+   *
+   * @param weekId number of week to get all slots from
+   * @return all candidate, interviewer slots and bookings for certain week
+   */
+  @GetMapping("/weeks/{weekId}/dashboard")
+  public ResponseEntity<DashboardMapDto> getDashboard(@PathVariable("weekId") Long weekId) {
+
+    Week week = weekService.getWeekByWeekNum(weekId);
+    DashboardMapDto dashboard = new DashboardMapDto(weekId, weekService);
+
+    Set<InterviewerSlot> interviewerSlots = interviewerSlotService.getSlotsByWeek(week);
+    dashboard.addInterviewerSlots(interviewerSlots);
+
+    for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+
+      LocalDate date = weekService.convertToLocalDate(weekId, dayOfWeek);
+      Set<CandidateSlot> candidateSlots = candidateSlotService.getCandidateSlotsByDate(date);
+      dashboard.addCandidateSlots(candidateSlots);
+    }
+
+    return ResponseEntity.ok(dashboard);
   }
 
   /**
@@ -158,16 +183,15 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the saved updated object converted to a DTO.
    *
-   * @throws InvalidBoundariesException if Period boundaries are Invalid
-   * @throws CandidateSlotNotFoundException if CandidateSlot is not found
-   * @throws InterviewerSlotNotFoundException if InterviewerSlot is not found
-   * @throws SlotsAreNotIntersectingException if CandidateSlot, InterviewerSlot
+   * @throws SlotException  if Period boundaries are Invalid or
+   *     Candidate/Interviewer Slot is not found
+   * @throws BookingException if CandidateSlot, InterviewerSlot
    *     do not intersect with Period
    */
   @PostMapping("bookings/{id}")
   public ResponseEntity<BookingDto> updateBooking(
       @RequestBody BookingDto bookingDto,
-      @PathVariable Long id) throws SlotIsNotFoundException, NotInterviewerException {
+      @PathVariable Long id) throws SlotException, BookingException {
 
     Booking updatingBooking = bookingService.findById(id);
     Booking newDataBooking = getFromDto(bookingDto);
@@ -186,15 +210,14 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the saved created object converted to a DTO.
    *
-   * @throws InvalidBoundariesException if Period boundaries are Invalid
-   * @throws CandidateSlotNotFoundException if CandidateSlot is not found
-   * @throws InterviewerSlotNotFoundException if InterviewerSlot is not found
-   * @throws SlotsAreNotIntersectingException if CandidateSlot, InterviewerSlot
+   * @throws SlotException  if Period boundaries are Invalid or Candidate/Interviewer
+   *     Slot is not found
+   * @throws BookingException if CandidateSlot, InterviewerSlot
    *     do not intersect with Period
    */
   @PostMapping("bookings")
   public ResponseEntity<BookingDto> createBooking(
-      @RequestBody BookingDto bookingDto) throws SlotIsNotFoundException, NotInterviewerException {
+      @RequestBody BookingDto bookingDto) throws SlotException, BookingException {
 
     Booking newBooking = getFromDto(bookingDto);
 
@@ -204,7 +227,7 @@ public class CoordinatorController {
     return ResponseEntity.ok(new BookingDto(savedBooking));
   }
 
-  Booking getFromDto(BookingDto bookingDto) throws SlotIsNotFoundException {
+  Booking getFromDto(BookingDto bookingDto) throws SlotException {
     Booking booking = new Booking();
 
     booking.setSubject(bookingDto.getSubject());

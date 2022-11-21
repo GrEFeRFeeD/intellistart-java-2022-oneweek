@@ -85,6 +85,7 @@ public class Period {
     }
     Period period = (Period) o;
     return Objects.equals(id, period.id);
+
   }
 
   @Override

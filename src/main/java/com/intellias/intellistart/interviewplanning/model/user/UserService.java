@@ -1,9 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.user;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SelfRevokingException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserAlreadyHasRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserHasAnotherRoleException;
-import com.intellias.intellistart.interviewplanning.exceptions.UserNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException.UserExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
 import java.util.Optional;
@@ -54,12 +52,12 @@ public class UserService {
    *
    * @return User - user to whom we granted the role.
    *
-   * @throws UserAlreadyHasRoleException - when user already has role.
+   * @throws UserException - when user already has role.
    */
-  public User grantRoleByEmail(String email, Role roleOfUser) throws UserAlreadyHasRoleException {
+  public User grantRoleByEmail(String email, Role roleOfUser) throws UserException {
     User user = getUserByEmail(email);
     if (user != null) {
-      throw new UserAlreadyHasRoleException();
+      throw new UserException(UserExceptionProfile.USER_ALREADY_HAS_ROLE);
     }
 
     user = new User();
@@ -89,14 +87,15 @@ public class UserService {
    *
    * @return User - the deleted user.
    *
-   * @throws UserNotFoundException - when the user not found by given id.
-   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
+   * @throws UserException -
+  when the user has not interviewer role or not found by given id.
    */
-  public User deleteInterviewer(Long id) throws UserNotFoundException, UserHasAnotherRoleException {
-    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+  public User deleteInterviewer(Long id) throws UserException {
+    User user = userRepository.findById(id).orElseThrow(() ->
+            new UserException(UserExceptionProfile.USER_NOT_FOUND));
 
     if (user.getRole() != Role.INTERVIEWER) {
-      throw new UserHasAnotherRoleException();
+      throw new UserException(UserExceptionProfile.NOT_INTERVIEWER);
     }
 
     interviewerSlotService.deleteSlotsByUser(user);
@@ -114,22 +113,22 @@ public class UserService {
    *
    * @return User - the deleted user.
    *
-   * @throws UserNotFoundException - when the user not found by given id.
-   * @throws SelfRevokingException - when the coordinator removes himself.
-   * @throws UserHasAnotherRoleException - when the user has not interviewer role;
+   * @throws UserException -
+  when the coordinator removes himself, not found by given id or the user has not interviewer role.
    */
   public User deleteCoordinator(Long id, String currentEmailCoordinator)
-      throws UserNotFoundException, SelfRevokingException, UserHasAnotherRoleException {
+      throws UserException {
 
-    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    User user = userRepository.findById(id).orElseThrow(() ->
+            new UserException(UserExceptionProfile.USER_NOT_FOUND));
     User currentUser = userRepository.findByEmail(currentEmailCoordinator);
 
     if (user.getRole() != Role.COORDINATOR) {
-      throw new UserHasAnotherRoleException();
+      throw new UserException(UserExceptionProfile.NOT_COORDINATOR);
     }
 
     if (user.getId() == currentUser.getId()) {
-      throw new SelfRevokingException();
+      throw new UserException(UserExceptionProfile.SELF_REVOKING);
     }
 
     userRepository.delete(user);

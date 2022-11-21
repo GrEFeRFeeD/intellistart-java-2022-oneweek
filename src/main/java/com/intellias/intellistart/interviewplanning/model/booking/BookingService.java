@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.booking;
 
-import com.intellias.intellistart.interviewplanning.exceptions.BookingNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingException.BookingExceptionProfile;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,22 @@ public class BookingService {
   }
 
   /**
+   * Finds all Booking objects in DB and returns Set of them.
+   *
+   * @return Set&lt;Booking&gt; set with all Booking objects from the DB.
+   */
+  public Set<Booking> findAll() {
+    return (Set<Booking>) bookingRepository.findAll();
+  }
+
+  /**
    * Find Booking by id from repository.
    *
-   * @throws BookingNotFoundException if no booking with given id
+   * @throws BookingException if no booking with given id
    */
-  public Booking findById(Long id) {
-    return bookingRepository.findById(id).orElseThrow(BookingNotFoundException::new);
+  public Booking findById(Long id) throws BookingException {
+    return bookingRepository.findById(id).orElseThrow(() -> new BookingException(
+        BookingExceptionProfile.BOOKING_NOT_FOUND));
   }
 
   /**
@@ -36,7 +47,6 @@ public class BookingService {
   public Booking save(Booking booking) {
     return bookingRepository.save(booking);
   }
-
 
   /**
    * Delete the given bookings from DB.

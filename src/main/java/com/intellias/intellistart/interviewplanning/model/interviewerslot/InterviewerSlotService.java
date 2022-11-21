@@ -1,14 +1,15 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 /**
  * Service for InterviewSlot entity.
@@ -34,12 +35,12 @@ public class InterviewerSlotService {
   /**
    * Find instance of InterviewerSlot by id in database.
    *
-   * @throws SlotIsNotFoundException if no instance with given id
+   * @throws SlotException if no instance with given id
    */
-  public InterviewerSlot findById(Long id) throws SlotIsNotFoundException {
+  public InterviewerSlot findById(Long id) throws SlotException {
     return interviewerSlotRepository
         .findById(id)
-        .orElseThrow(SlotIsNotFoundException::new);
+        .orElseThrow(() -> new SlotException(SlotExceptionProfile.INTERVIEWER_SLOT_NOT_FOUND));
   }
 
   /**
@@ -69,6 +70,16 @@ public class InterviewerSlotService {
     }
 
     interviewerSlotRepository.deleteAll(interviewerSlots);
+  }
+
+  /**
+   * Get slots of user by {@link Week}.
+   *
+   * @param week object to get slots with
+   * @return {@link List} of {@link InterviewerSlot}
+   */
+  public Set<InterviewerSlot> getSlotsByWeek(Week week) {
+    return interviewerSlotRepository.findByWeek(week);
   }
 
   /**
