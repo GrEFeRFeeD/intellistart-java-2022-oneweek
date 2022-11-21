@@ -41,7 +41,6 @@ class CoordinatorControllerTest {
   private static InterviewerSlot interviewerSlot;
   private static Period bookingPeriod;
   private static WeekService weekService;
-  private static BookingLimitService bookingLimitService;
 
   @BeforeAll
   static void initialize(){
@@ -52,7 +51,7 @@ class CoordinatorControllerTest {
     periodService = Mockito.mock(PeriodService.class);
     userService = Mockito.mock(UserService.class);
     weekService = Mockito.mock(WeekService.class);
-    bookingLimitService = Mockito.mock(BookingLimitService.class);
+
 
     cut = new CoordinatorController(
         bookingService,
@@ -61,8 +60,7 @@ class CoordinatorControllerTest {
         candidateSlotService,
         periodService,
         userService,
-        weekService,
-        bookingLimitService);
+        weekService);
 
     slotPeriod = new Period();
     slotPeriod.setFrom(LocalTime.of(18, 0));
