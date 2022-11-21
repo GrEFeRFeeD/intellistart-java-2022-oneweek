@@ -1,8 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -18,18 +18,15 @@ public class CandidateSlotService {
 
   private final CandidateSlotRepository candidateSlotRepository;
   private final PeriodService periodService;
-  private final UserService userService;
 
   /**
    * Constructor.
    */
   @Autowired
   public CandidateSlotService(CandidateSlotRepository candidateSlotRepository,
-      PeriodService periodService,
-      UserService userService) {
+      PeriodService periodService) {
     this.candidateSlotRepository = candidateSlotRepository;
     this.periodService = periodService;
-    this.userService = userService;
   }
 
   /**
@@ -47,12 +44,10 @@ public class CandidateSlotService {
    * Updated in DB the CandidateSlot object.
    *
    * @param candidateSlot - Updated slot data.
-   * @param id - The id of the slot that we are going to update.
    *
    * @return CandidateSlot - An object that was successfully updated in the database.
    */
-  public CandidateSlot update(CandidateSlot candidateSlot, Long id) {
-    candidateSlot.setId(id);
+  public CandidateSlot update(CandidateSlot candidateSlot) {
     return create(candidateSlot);
   }
 
@@ -82,12 +77,12 @@ public class CandidateSlotService {
    *
    * @param id - The slot number to search for in the database.
    *
-   * @throws CandidateSlotNotFoundException if slot with given id is not present
+   * @throws SlotException if slot with given id is not present
    */
-  public CandidateSlot findById(Long id) {
+  public CandidateSlot findById(Long id) throws SlotException {
     return candidateSlotRepository
         .findById(id)
-        .orElseThrow(CandidateSlotNotFoundException::new);
+        .orElseThrow(() -> new SlotException(SlotExceptionProfile.CANDIDATE_SLOT_NOT_FOUND));
   }
 
   /**
@@ -100,7 +95,7 @@ public class CandidateSlotService {
    * @return CandidateSlot - created object by parameters.
    */
   public CandidateSlot createCandidateSlot(LocalDate date, String from, String to, String email,
-      String name) {
+      String name) throws SlotException {
     CandidateSlot candidateSlot = new CandidateSlot();
 
     candidateSlot.setDate(date);

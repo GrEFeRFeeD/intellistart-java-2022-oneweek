@@ -2,15 +2,9 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingLimitDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.exceptions.CannotEditThisWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLimitException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidDayOfWeekException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimit;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
@@ -72,20 +66,23 @@ public class InterviewerController {
    * @param interviewerSlotDto - DTO from request
    * @param interviewerId      - user Id from request
    * @return interviewerSlotDto - and/or HTTP status
-   * @throws InvalidDayOfWeekException   - invalid day of week
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws SlotIsOverlappingException  - slot is overlapping exception
-   * @throws InvalidBoundariesException  - invalid boundaries exception
-   * @throws CannotEditThisWeekException - can not edit this week
+   *
+   * @throws SlotException when:
+   *     <ul>
+   *     <li>cannot edit this week
+   *     <li>invalid boundaries of time period
+   *     <li>when slot is not found by slotId
+   *     <li>slot is overlapping
+   *     </ul>
+   *
+   * @throws UserException invalid user (interviewer) exception
    */
   @PostMapping("/interviewers/{interviewerId}/slots")
   public ResponseEntity<InterviewerSlotDto> createInterviewerSlot(
       @RequestBody InterviewerSlotDto interviewerSlotDto,
       @PathVariable("interviewerId") Long interviewerId,
       Authentication authentication
-  )
-      throws InvalidDayOfWeekException, InvalidBoundariesException, InvalidInterviewerException,
-      SlotIsOverlappingException, CannotEditThisWeekException {
+  ) throws SlotException, UserException {
 
     interviewerSlotDtoValidator
         .validateAndCreate(interviewerSlotDto, authentication, interviewerId);
@@ -99,13 +96,17 @@ public class InterviewerController {
    * @param interviewerSlotDto - DTO from request
    * @param interviewerId      - user Id from request
    * @param slotId             - slot Id from request
+   *
    * @return interviewerSlotDto - and/or HTTP status
-   * @throws InvalidDayOfWeekException   - invalid day of week
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws SlotIsOverlappingException  - slot is overlapping exception
-   * @throws InvalidBoundariesException  - invalid boundaries exception
-   * @throws CannotEditThisWeekException - can not edit this week
-   * @throws SlotIsBookedException - when slot has at least one booking
+   *
+   * @throws UserException when:
+   *     <ul>
+   *     <li>cannot edit this week
+   *     <li>invalid boundaries of time period
+   *     <li>when slot is not found by slotId
+   *     </ul>
+   *
+   * @throws SlotException - when slot has at least one booking or slot overlaps
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public ResponseEntity<InterviewerSlotDto> updateInterviewerSlot(
@@ -113,14 +114,10 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId,
       @PathVariable("slotId") Long slotId,
       Authentication authentication
-  )
-      throws InvalidDayOfWeekException, InvalidBoundariesException,
-      InvalidInterviewerException, SlotIsOverlappingException,
-      CannotEditThisWeekException, SlotIsNotFoundException, SlotIsBookedException {
+  ) throws SlotException, UserException {
 
-    interviewerSlotDtoValidator
-        .validateAndUpdate(interviewerSlotDto, authentication, interviewerId,
-            slotId);
+    interviewerSlotDtoValidator.validateAndUpdate(interviewerSlotDto,
+        authentication, interviewerId, slotId);
 
     return new ResponseEntity<>(interviewerSlotDto, HttpStatus.OK);
   }
@@ -131,18 +128,18 @@ public class InterviewerController {
    * @param bookingLimitDto - DTO for BookingLimit
    * @param interviewerId   - user id from request
    * @return BookingLimitDto and HTTP status
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws InvalidBookingLimitException - invalid bookingLimit exception
-   * @throws NotInterviewerException - not interviewer id
+   * @throws UserException - invalid user (interviewer) exception or not interviewer id
+   * @throws BookingLimitException - invalid bookingLimit exception
    */
   @PostMapping("/interviewers/{interviewerId}/booking-limits")
   public ResponseEntity<BookingLimitDto> createBookingLimit(
       @RequestBody BookingLimitDto bookingLimitDto,
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException, InvalidBookingLimitException, NotInterviewerException {
+      throws UserException, BookingLimitException {
 
     User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
+        .orElseThrow(() ->
+                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
 
     bookingLimitDto.setUserId(interviewerId);
 
@@ -157,16 +154,16 @@ public class InterviewerController {
    *
    * @param interviewerId - user Id from request
    * @return BookingLimitDto and HTTP status
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws NotInterviewerException - not interviewer id
+   * @throws UserException - invalid user (interviewer) exception or ot interviewer id
    */
   @GetMapping("/interviewers/{interviewerId}/booking-limits/current-week")
   public ResponseEntity<BookingLimitDto> getBookingLimitForCurrentWeek(
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException, NotInterviewerException {
+      throws UserException {
 
     User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
+        .orElseThrow(() ->
+                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(user);
 
@@ -178,16 +175,16 @@ public class InterviewerController {
    *
    * @param interviewerId user Id from request
    * @return BookingLimitDto and HTTP status
-   * @throws InvalidInterviewerException - invalid user (interviewer) exception
-   * @throws NotInterviewerException - not interviewer id
+   * @throws UserException - invalid user (interviewer) exception or ot interviewer id
    */
   @GetMapping("/interviewers/{interviewerId}/booking-limits/next-week")
   public ResponseEntity<BookingLimitDto> getBookingLimitForNextWeek(
       @PathVariable("interviewerId") Long interviewerId)
-      throws InvalidInterviewerException, NotInterviewerException {
+      throws UserException {
 
     User user = userService.getUserById(interviewerId)
-        .orElseThrow(InvalidInterviewerException::new);
+        .orElseThrow(() ->
+                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(user);
 

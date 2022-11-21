@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
@@ -33,12 +34,12 @@ public class InterviewerSlotService {
   /**
    * Find instance of InterviewerSlot by id in database.
    *
-   * @throws SlotIsNotFoundException if no instance with given id
+   * @throws SlotException if no instance with given id
    */
-  public InterviewerSlot findById(Long id) throws SlotIsNotFoundException {
+  public InterviewerSlot findById(Long id) throws SlotException {
     return interviewerSlotRepository
         .findById(id)
-        .orElseThrow(SlotIsNotFoundException::new);
+        .orElseThrow(() -> new SlotException(SlotExceptionProfile.INTERVIEWER_SLOT_NOT_FOUND));
   }
 
   /**

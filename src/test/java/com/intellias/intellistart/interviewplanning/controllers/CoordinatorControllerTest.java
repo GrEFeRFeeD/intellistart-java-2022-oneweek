@@ -3,7 +3,7 @@ package com.intellias.intellistart.interviewplanning.controllers;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsNotFoundException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
@@ -91,7 +91,8 @@ class CoordinatorControllerTest {
   }
   @ParameterizedTest
   @MethodSource("provideCorrectParameters")
-  void okayWhenOkay(BookingDto bookingDto, Booking expected) throws SlotIsNotFoundException {
+  void okayWhenOkay(BookingDto bookingDto, Booking expected)
+      throws SlotException {
     Mockito
         .when(candidateSlotService.findById(bookingDto.getCandidateSlotId()))
         .thenReturn(candidateSlot);

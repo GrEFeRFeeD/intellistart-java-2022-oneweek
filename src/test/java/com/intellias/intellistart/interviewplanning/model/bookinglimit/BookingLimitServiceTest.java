@@ -7,8 +7,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLimitException;
-import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
@@ -91,7 +91,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("getBookingLimitTestArgs")
   void getBookingLimitByInterviewerTest(User user, Week week, BookingLimit expected)
-      throws NotInterviewerException {
+      throws UserException {
     given(bookingLimitRepository.findById(expected.getId())).willReturn(Optional.of(expected));
 
     BookingLimit actual = cut.getBookingLimitByInterviewer(user,week);
@@ -110,7 +110,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("getBookingLimitIfNotExistTestArgs")
   void getBookingLimitByInterviewerIfNotExistTest(User user, Week week,
-      BookingLimit expected) throws NotInterviewerException {
+      BookingLimit expected) throws UserException {
     given(bookingLimitRepository.findById(expected.getId())).willReturn(Optional.empty());
     given(bookingLimitRepository.save(expected)).willReturn(expected);
 
@@ -130,7 +130,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("getBookingLimitNotInterviewerExceptionTestArgs")
   void getBookingLimitByInterviewerNotInterviewerExceptionTest(User user, Week week) {
-    assertThrows(NotInterviewerException.class,
+    assertThrows(UserException.class,
         () -> cut.getBookingLimitByInterviewer(user,week));
   }
 
@@ -144,7 +144,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("createBookingLimitNotInterviewerExceptionTestArgs")
   void createBookingLimitNotInterviewerExceptionTest(User user, Integer bookingLimit){
-    assertThrows(NotInterviewerException.class,
+    assertThrows(UserException.class,
         () -> cut.createBookingLimit(user,bookingLimit));
   }
 
@@ -158,7 +158,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("createBookingLimitExceptionTestArgs")
   void createBookingLimitInvalidBookingLimitExceptionTest(User user, Integer bookingLimit){
-    assertThrows(InvalidBookingLimitException.class,
+    assertThrows(BookingLimitException.class,
         () -> cut.createBookingLimit(user,bookingLimit));
   }
 
@@ -172,7 +172,7 @@ class BookingLimitServiceTest {
   @ParameterizedTest
   @MethodSource("createBookingLimitTestArgs")
   void createBookingLimitTest(User user, Integer bookingLimit, BookingLimit expected)
-      throws InvalidBookingLimitException, NotInterviewerException {
+      throws BookingLimitException, UserException {
     given(weekService.getNextWeek()).willReturn(expected.getWeek());
     given(bookingLimitRepository.save(expected)).willReturn(expected);
 
