@@ -1,6 +1,5 @@
 package com.intellias.intellistart.interviewplanning.model.interviewerslot;
 
-
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException;
 import com.intellias.intellistart.interviewplanning.exceptions.SecurityException.SecurityExceptionProfile;

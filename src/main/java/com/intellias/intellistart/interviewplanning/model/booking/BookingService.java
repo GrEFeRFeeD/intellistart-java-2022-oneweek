@@ -23,6 +23,15 @@ public class BookingService {
   }
 
   /**
+   * Finds all Booking objects in DB and returns Set of them.
+   *
+   * @return Set&lt;Booking&gt; set with all Booking objects from the DB.
+   */
+  public Set<Booking> findAll() {
+    return (Set<Booking>) bookingRepository.findAll();
+  }
+
+  /**
    * Find Booking by id from repository.
    *
    * @throws BookingException if no booking with given id
@@ -38,7 +47,6 @@ public class BookingService {
   public Booking save(Booking booking) {
     return bookingRepository.save(booking);
   }
-
 
   /**
    * Delete the given bookings from DB.

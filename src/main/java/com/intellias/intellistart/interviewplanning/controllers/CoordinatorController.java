@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardMapDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
@@ -9,13 +10,21 @@ import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
+import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserService;
+import com.intellias.intellistart.interviewplanning.model.week.Week;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
+import java.time.LocalDate;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,6 +47,8 @@ public class CoordinatorController {
   private final CandidateSlotService candidateSlotService;
   private final PeriodService periodService;
   private final UserService userService;
+  private final WeekService weekService;
+  private final BookingLimitService bookingLimitService;
 
   /**
    * Constructor.
@@ -45,22 +56,24 @@ public class CoordinatorController {
   @Autowired
   public CoordinatorController(BookingService bookingService, BookingValidator bookingValidator,
       InterviewerSlotService interviewerSlotService, CandidateSlotService candidateSlotService,
-      PeriodService periodService, UserService userService) {
+      PeriodService periodService, UserService userService,
+      WeekService weekService, BookingLimitService bookingLimitService) {
+      
     this.bookingService = bookingService;
     this.bookingValidator = bookingValidator;
     this.interviewerSlotService = interviewerSlotService;
     this.candidateSlotService = candidateSlotService;
     this.periodService = periodService;
     this.userService = userService;
+    this.weekService = weekService;
+    this.bookingLimitService = bookingLimitService;
   }
 
   /**
    * POST request to grant a INTERVIEWER role by email.
    *
    * @param request - Request body of POST mapping.
-   *
    * @return ResponseEntity - Response of the granted User.
-   *
    * @throws UserException - when user already has role.
    */
   @PostMapping("/users/interviewers")
@@ -73,9 +86,7 @@ public class CoordinatorController {
    * POST request to grant a COORDINATOR role by email.
    *
    * @param request - Request body of POST mapping.
-   *
    * @return ResponseEntity - Response of the granted User.
-   *
    * @throws UserException - - when user already has role.
    */
   @PostMapping("/users/coordinators")
@@ -112,11 +123,8 @@ public class CoordinatorController {
    * DELETE request for deleting interviewer.
    *
    * @param id - the interviewer's id to delete.
-   *
    * @return ResponseEntity - the deleted user.
-   *
-   * @throws UserException -
-  when the user not found by given id or has not interviewer role.
+   * @throws UserException - when the user not found by given id or has not interviewer role.
    */
   @DeleteMapping("/users/interviewers/{id}")
   public ResponseEntity<User> deleteInterviewerById(@PathVariable("id") Long id)
@@ -128,11 +136,8 @@ public class CoordinatorController {
    * DELETE request for deleting interviewer.
    *
    * @param id - the interviewer's id to delete.
-   *
    * @return ResponseEntity - the deleted user.
-   *
-   * @throws UserException -
-  when the user not found by given id or the coordinator removes himself
+   * @throws UserException - when the user not found by given id or the coordinator removes himself
    */
   @DeleteMapping("/users/coordinators/{id}")
   public ResponseEntity<User> deleteCoordinatorById(@PathVariable("id") Long id,
@@ -144,6 +149,33 @@ public class CoordinatorController {
     return ResponseEntity.ok(userService.deleteCoordinator(id, currentEmailCoordinator));
   }
 
+  /**
+   * Returns {@link DashboardMapDto} object with week num and map of
+   * LocalDate with DashboardDto which contains all candidate, interviewer
+   * slots and booking for the certain date.
+   *
+   * @param weekId number of week to get all slots from
+   * @return all candidate, interviewer slots and bookings for certain week
+   */
+  @GetMapping("/weeks/{weekId}/dashboard")
+  public ResponseEntity<DashboardMapDto> getDashboard(@PathVariable("weekId") Long weekId) {
+
+    Week week = weekService.getWeekByWeekNum(weekId);
+    DashboardMapDto dashboard = new DashboardMapDto(weekId, weekService);
+
+    Set<InterviewerSlot> interviewerSlots = interviewerSlotService.getSlotsByWeek(week);
+    dashboard.addInterviewerSlots(interviewerSlots);
+
+    for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+
+      LocalDate date = weekService.convertToLocalDate(weekId, dayOfWeek);
+      Set<CandidateSlot> candidateSlots = candidateSlotService.getCandidateSlotsByDate(date);
+      dashboard.addCandidateSlots(candidateSlots);
+    }
+  
+    return ResponseEntity.ok(dashboard);
+  }
+  
   /**
    * POST request method for updating booking by id.
    *

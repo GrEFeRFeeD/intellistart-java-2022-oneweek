@@ -5,6 +5,8 @@ import com.intellias.intellistart.interviewplanning.exceptions.SlotException.Slo
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -102,5 +104,9 @@ public class CandidateSlotService {
     candidateSlot.setName(name);
     
     return candidateSlot;
+  }
+
+  public Set<CandidateSlot> getCandidateSlotsByDate(LocalDate date) {
+    return candidateSlotRepository.findByDate(date);
   }
 }
