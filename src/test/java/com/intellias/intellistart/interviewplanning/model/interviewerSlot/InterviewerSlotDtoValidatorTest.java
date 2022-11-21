@@ -10,7 +10,6 @@ import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotDtoValidator;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodRepository;
@@ -58,7 +57,7 @@ public class InterviewerSlotDtoValidatorTest {
   static WeekService weekService = new WeekService(weekRepository);
 
   InterviewerSlotDtoValidator cut = new InterviewerSlotDtoValidator(
-      periodService, userService, interviewerSlotService,  weekService
+      periodService, userService, interviewerSlotService, weekService
   );
 
   @Test
@@ -85,18 +84,18 @@ public class InterviewerSlotDtoValidatorTest {
   @Test
   void isSlotOverlapTest() {
     List<InterviewerSlot> list = new ArrayList<>();
-    when(interviewerSlotRepository
-        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
-            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
+    when(interviewerSlotService
+        .getInterviewerSlotsByUserAndWeekAndDayOfWeek(u1,
+            w1, DayOfWeek.TUE)).thenReturn(list);
     assertDoesNotThrow(() -> cut.validateIfPeriodIsOverlapping(is3));
   }
   @Test
   void isSlotOverlapTestThrow() {
     List<InterviewerSlot> list = new ArrayList<>();
     list.add(is3);
-    when(interviewerSlotRepository
-        .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(u1.getId(),
-            w1.getId(), DayOfWeek.TUE)).thenReturn(list);
+    when(interviewerSlotService
+        .getInterviewerSlotsByUserAndWeekAndDayOfWeek(u1,
+            w1, DayOfWeek.TUE)).thenReturn(list);
     assertThrows(SlotException.class, () -> cut.validateIfPeriodIsOverlapping(is3));
   }
 

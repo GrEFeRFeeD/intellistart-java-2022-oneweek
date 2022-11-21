@@ -15,7 +15,9 @@ public class BookingLimitException extends Exception {
   public enum BookingLimitExceptionProfile {
 
     INVALID_BOOKING_LIMIT("invalid_booking_limit",
-        "Value of booking limit is not correct.", HttpStatus.BAD_REQUEST);
+        "Value of booking limit is not correct.", HttpStatus.BAD_REQUEST),
+    BOOKING_LIMIT_IS_EXCEEDED("booking_limit_is_exceeded",
+        "Interviewer isn't allowed to have more bookings", HttpStatus.BAD_REQUEST);
 
     private final String exceptionName;
     private final String exceptionMessage;

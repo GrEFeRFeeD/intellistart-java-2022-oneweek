@@ -2,15 +2,16 @@ package com.intellias.intellistart.interviewplanning.model.booking.validation;
 
 import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingException.BookingExceptionProfile;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException.BookingLimitExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.interviewerslot.IntervBooiewerSlotService;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.period.services.TimeService;
@@ -57,14 +58,16 @@ public class BookingValidator {
    * @param updatingBooking Booking with old parameters
    * @param newDataBooking Booking with new parameters
    *
-   * @throws SlotException        if duration of new Period is invalid
-   * @throws BookingException     if periods of InterviewSlot, CandidateSlot do not
-   *                                          intersect with new Period or new Period is overlapping
-   *                                          with existing Periods of InterviewerSlot and
-   *                                          CandidateSlot
+   * @throws UserException          if new booking's interviewer has invalid role
+   * @throws SlotException          if duration of new Period is invalid
+   * @throws BookingLimitException  if interviewer's booking limit is exceeded
+   * @throws BookingException       if periods of InterviewSlot, CandidateSlot do not
+   *                                intersect with new Period or new Period is overlapping
+   *                                with existing Periods of InterviewerSlot and
+   *                                CandidateSlot
    */
   public void validateUpdating(Booking updatingBooking, Booking newDataBooking)
-      throws SlotException, BookingException {
+      throws SlotException, BookingException, UserException, BookingLimitException {
     Period newPeriod = newDataBooking.getPeriod();
 
     int periodDuration = timeService.calculateDurationMinutes(
@@ -119,7 +122,7 @@ public class BookingValidator {
           .getBookingLimitForCurrentWeek(newInterviewer).getBookingLimit();
 
       if (bookingsNumber >= bookingLimit) {
-        throw new BookingException(BookingExceptionProfile.BOOKING_LIMIT_IS_EXCEEDED);
+        throw new BookingLimitException(BookingLimitExceptionProfile.BOOKING_LIMIT_IS_EXCEEDED);
       }
     }
   }
@@ -139,7 +142,8 @@ public class BookingValidator {
   /**
    * Alias for {@link #validateUpdating(Booking, Booking)}.
    */
-  public void validateCreating(Booking newBooking) throws SlotException, BookingException {
+  public void validateCreating(Booking newBooking)
+      throws SlotException, BookingException, BookingLimitException, UserException {
     validateUpdating(newBooking, newBooking);
   }
 }

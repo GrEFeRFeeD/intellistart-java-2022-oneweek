@@ -5,12 +5,12 @@ import com.intellias.intellistart.interviewplanning.controllers.dto.DashboardMap
 import com.intellias.intellistart.interviewplanning.controllers.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.UsersDto;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
 import com.intellias.intellistart.interviewplanning.model.booking.validation.BookingValidator;
-import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
@@ -48,7 +48,6 @@ public class CoordinatorController {
   private final PeriodService periodService;
   private final UserService userService;
   private final WeekService weekService;
-  private final BookingLimitService bookingLimitService;
 
   /**
    * Constructor.
@@ -57,7 +56,7 @@ public class CoordinatorController {
   public CoordinatorController(BookingService bookingService, BookingValidator bookingValidator,
       InterviewerSlotService interviewerSlotService, CandidateSlotService candidateSlotService,
       PeriodService periodService, UserService userService,
-      WeekService weekService, BookingLimitService bookingLimitService) {
+      WeekService weekService) {
 
     this.bookingService = bookingService;
     this.bookingValidator = bookingValidator;
@@ -66,7 +65,6 @@ public class CoordinatorController {
     this.periodService = periodService;
     this.userService = userService;
     this.weekService = weekService;
-    this.bookingLimitService = bookingLimitService;
   }
 
   /**
@@ -183,15 +181,17 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the saved updated object converted to a DTO.
    *
-   * @throws SlotException  if Period boundaries are Invalid or
-   *     Candidate/Interviewer Slot is not found
-   * @throws BookingException if CandidateSlot, InterviewerSlot
-   *     do not intersect with Period
+   * @throws SlotException          if Period boundaries are Invalid or
+   *                                Candidate/Interviewer Slot is not found
+   * @throws BookingLimitException  if interviewer's booking limit is exceeded
+   * @throws BookingException       if CandidateSlot, InterviewerSlot
+   *                                do not intersect with Period
    */
   @PostMapping("bookings/{id}")
   public ResponseEntity<BookingDto> updateBooking(
       @RequestBody BookingDto bookingDto,
-      @PathVariable Long id) throws SlotException, BookingException {
+      @PathVariable Long id)
+      throws SlotException, BookingException, BookingLimitException, UserException {
 
     Booking updatingBooking = bookingService.findById(id);
     Booking newDataBooking = getFromDto(bookingDto);
@@ -210,14 +210,16 @@ public class CoordinatorController {
    *
    * @return ResponseEntity - Response of the saved created object converted to a DTO.
    *
-   * @throws SlotException  if Period boundaries are Invalid or Candidate/Interviewer
-   *     Slot is not found
-   * @throws BookingException if CandidateSlot, InterviewerSlot
-   *     do not intersect with Period
+   * @throws SlotException          if Period boundaries are Invalid
+   *                                or Candidate/Interviewer Slot is not found
+   * @throws BookingLimitException  if interviewer's booking limit is exceeded
+   * @throws BookingException       if CandidateSlot, InterviewerSlot
+   *                                do not intersect with Period
    */
   @PostMapping("bookings")
   public ResponseEntity<BookingDto> createBooking(
-      @RequestBody BookingDto bookingDto) throws SlotException, BookingException {
+      @RequestBody BookingDto bookingDto)
+      throws SlotException, BookingException, BookingLimitException, UserException {
 
     Booking newBooking = getFromDto(bookingDto);
 
