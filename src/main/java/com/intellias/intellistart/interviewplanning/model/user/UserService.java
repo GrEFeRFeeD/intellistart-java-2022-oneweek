@@ -29,8 +29,9 @@ public class UserService {
    *
    * @return Optional User by id.
    */
-  public Optional<User> getUserById(Long id) {
-    return userRepository.findById(id);
+  public User getUserById(Long id) throws UserException {
+    return userRepository.findById(id).orElseThrow(() ->
+        new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
   }
 
   /**

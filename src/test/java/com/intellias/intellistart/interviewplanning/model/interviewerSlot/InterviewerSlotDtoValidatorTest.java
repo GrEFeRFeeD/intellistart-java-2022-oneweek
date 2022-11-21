@@ -65,7 +65,7 @@ public class InterviewerSlotDtoValidatorTest {
 
   @Test
   void validationForCoordinatorTest(){
-    assertThrows(CannotEditThisWeekException.class, () -> cut.validationForCoordinator(dto1, 1L));
+    assertThrows(SlotException.class, () -> cut.validationForCoordinator(dto1, 1L, 1L));
   }
 
   @Test
