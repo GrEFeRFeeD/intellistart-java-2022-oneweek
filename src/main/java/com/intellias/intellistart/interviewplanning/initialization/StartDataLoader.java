@@ -48,7 +48,11 @@ public class StartDataLoader implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
 
     User firstCoordinator = new User(null, email, Role.COORDINATOR);
+    User firstInterviewer = new User(null, "interviewer1@gmail.com", Role.INTERVIEWER);
+    User secondInterviewer = new User(null, "interviewer2@gmail.com", Role.INTERVIEWER);
     firstCoordinator = userRepository.save(firstCoordinator);
+    firstInterviewer = userRepository.save(firstInterviewer);
+    secondInterviewer = userRepository.save(secondInterviewer);
 
     Period period = new Period();
     period.setFrom(LocalTime.of(10,30));
