@@ -68,11 +68,13 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.csrf().disable()
-
-        .authorizeRequests().antMatchers("/authenticate", "/oauth2/facebook/client-id").permitAll()
+    
+        .authorizeRequests().antMatchers("/authenticate, "/oauth2/facebook/client-id",
+            "/weeks/current", "/weeks/next").permitAll()
         .antMatchers("/candidates/**").hasRole("CANDIDATE")
         .antMatchers("/interviewers/**").hasAnyRole("INTERVIEWER", "COORDINATOR")
-        .antMatchers("/bookings", "/bookings/**", "/users", "/users/**").hasRole("COORDINATOR")
+        .antMatchers("/bookings", "/bookings/**", "/users", "/users/**",
+            "/weeks/{weekNum}/dashboard").hasRole("COORDINATOR")
         .anyRequest().authenticated().and()
 
         // Add custom handling for unauthenticated and access denied errors

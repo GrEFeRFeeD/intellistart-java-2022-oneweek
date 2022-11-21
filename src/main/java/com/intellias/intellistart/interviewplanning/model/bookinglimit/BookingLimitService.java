@@ -1,7 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model.bookinglimit;
 
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBookingLimitException;
-import com.intellias.intellistart.interviewplanning.exceptions.NotInterviewerException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
+import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException.BookingLimitExceptionProfile;
+import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.week.Week;
@@ -34,12 +35,12 @@ public class BookingLimitService {
   }
 
   public BookingLimit getBookingLimitForNextWeek(User user)
-      throws NotInterviewerException {
+      throws UserException {
     return getBookingLimitByInterviewer(user, weekService.getNextWeek());
   }
 
   public BookingLimit getBookingLimitForCurrentWeek(User user)
-      throws NotInterviewerException {
+      throws UserException {
     return getBookingLimitByInterviewer(user, weekService.getCurrentWeek());
   }
 
@@ -50,13 +51,13 @@ public class BookingLimitService {
    * @param user - interviewer
    * @param week - certain week
    * @return BookingLimit
-   * @throws NotInterviewerException - not interviewer id
+   * @throws UserException - not interviewer id
    */
   public BookingLimit getBookingLimitByInterviewer(User user, Week week)
-      throws NotInterviewerException {
+      throws UserException {
 
     if (user.getRole() != Role.INTERVIEWER) {
-      throw new NotInterviewerException();
+      throw new UserException(UserException.UserExceptionProfile.NOT_INTERVIEWER);
     }
 
     Long weekNum = week.getId();
@@ -84,18 +85,18 @@ public class BookingLimitService {
    * @param user - interviewer
    * @param bookingLimit - booking limit
    * @return BookingLimit
-   * @throws InvalidBookingLimitException - invalid bookingLimit exception
-   * @throws NotInterviewerException - not interviewer id
+   * @throws BookingLimitException - invalid bookingLimit exception
+   * @throws UserException - not interviewer id
    */
   public BookingLimit createBookingLimit(User user, Integer bookingLimit)
-      throws InvalidBookingLimitException, NotInterviewerException {
+      throws BookingLimitException, UserException {
 
     if (user.getRole() != Role.INTERVIEWER) {
-      throw new NotInterviewerException();
+      throw new UserException(UserException.UserExceptionProfile.NOT_INTERVIEWER);
     }
 
     if (bookingLimit <= 0) {
-      throw new InvalidBookingLimitException();
+      throw new BookingLimitException(BookingLimitExceptionProfile.INVALID_BOOKING_LIMIT);
     }
 
     Week nextWeek = weekService.getNextWeek();

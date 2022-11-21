@@ -1,10 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot;
 
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
 import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
-import com.intellias.intellistart.interviewplanning.model.user.Role;
-import com.intellias.intellistart.interviewplanning.model.user.User;
-import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -126,7 +124,7 @@ public class CandidateSlotServiceTest {
   }
   @ParameterizedTest
   @MethodSource("getCandidateSlotByIdArgs")
-  void getCandidateSlotByIdTest(CandidateSlot expected, Long id) {
+  void getCandidateSlotByIdTest(CandidateSlot expected, Long id) throws SlotException {
 //    Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
     Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.of(expected));
 
@@ -146,7 +144,7 @@ public class CandidateSlotServiceTest {
   @ParameterizedTest
   @MethodSource("createCandidateSlotArgs")
   void createCandidateSlotTest(LocalDate date, String from, String to, String email, String name,
-      CandidateSlot expected, Period period) {
+      CandidateSlot expected, Period period) throws SlotException {
       
     Mockito.when(periodService.obtainPeriod(from, to)).thenReturn(period);
 

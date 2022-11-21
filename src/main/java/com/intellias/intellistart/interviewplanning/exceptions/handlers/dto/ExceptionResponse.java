@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.exceptions;
+package com.intellias.intellistart.interviewplanning.exceptions.handlers.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

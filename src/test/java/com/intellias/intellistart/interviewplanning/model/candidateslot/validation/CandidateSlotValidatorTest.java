@@ -1,9 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.model.booking.Booking;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
@@ -134,7 +131,7 @@ public class CandidateSlotValidatorTest {
   @ParameterizedTest
   @MethodSource("validateCreateCandidateSlotArgs")
   void validateCreateCandidateSlotTest(CandidateSlot candidateSlot)
-      throws SlotIsOverlappingException, InvalidBoundariesException {
+      throws SlotException {
     Mockito.when(candidateSlotService.getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
         candidateSlot.getDate())).thenReturn(List.of());
 
@@ -146,8 +143,8 @@ public class CandidateSlotValidatorTest {
 
   static Arguments[] validateCreateCandidateSlotExc1Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot1, InvalidBoundariesException.class),
-        Arguments.arguments(candidateSlot2, InvalidBoundariesException.class)
+        Arguments.arguments(candidateSlot1, SlotException.class),
+        Arguments.arguments(candidateSlot2, SlotException.class)
     };
   }
   @ParameterizedTest
@@ -160,9 +157,9 @@ public class CandidateSlotValidatorTest {
 
   static Arguments[] validateCreateCandidateSlotExc2Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot3, SlotIsOverlappingException.class,
+        Arguments.arguments(candidateSlot3, SlotException.class,
             List.of(candidateSlot5, candidateSlot6)),
-        Arguments.arguments(candidateSlot4, SlotIsOverlappingException.class,
+        Arguments.arguments(candidateSlot4, SlotException.class,
             List.of(candidateSlot6, candidateSlot5))
     };
   }
@@ -191,8 +188,7 @@ public class CandidateSlotValidatorTest {
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotArgs")
   void validateUpdateCandidateSlotTest(CandidateSlot candidateSlot)
-      throws CandidateSlotNotFoundException, SlotIsOverlappingException, SlotIsBookedException,
-      InvalidBoundariesException {
+      throws SlotException {
     Mockito.when(candidateSlotService.getCandidateSlotsByEmailAndDate(candidateSlot.getEmail(),
         candidateSlot.getDate())).thenReturn(List.of());
     Mockito.when(candidateSlotService.findById(candidateSlot.getId()))
@@ -207,15 +203,15 @@ public class CandidateSlotValidatorTest {
 
   static Arguments[] validateUpdateCandidateSlotExc1Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot5, CandidateSlotNotFoundException.class),
-        Arguments.arguments(candidateSlot6, CandidateSlotNotFoundException.class)
+        Arguments.arguments(candidateSlot5, SlotException.class),
+        Arguments.arguments(candidateSlot6, SlotException.class)
     };
   }
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotExc1Args")
   void validateUpdateCandidateSlotSlotNotFoundExceptionTest(CandidateSlot candidateSlot,
-      Class<Exception> actual) {
-    Mockito.when(candidateSlotService.findById(candidateSlot.getId())).thenThrow(CandidateSlotNotFoundException.class);
+      Class<Exception> actual) throws SlotException {
+    Mockito.when(candidateSlotService.findById(candidateSlot.getId())).thenThrow(SlotException.class);
 
     Assertions.assertThrows(actual,
         ()-> cut.validateUpdating(candidateSlot));
@@ -223,14 +219,14 @@ public class CandidateSlotValidatorTest {
 
   static Arguments[] validateUpdateCandidateSlotExc2Args(){
     return new Arguments[]{
-        Arguments.arguments(candidateSlot9, SlotIsBookedException.class),
-        Arguments.arguments(candidateSlot10, SlotIsBookedException.class)
+        Arguments.arguments(candidateSlot9, SlotException.class),
+        Arguments.arguments(candidateSlot10, SlotException.class)
     };
   }
   @ParameterizedTest
   @MethodSource("validateUpdateCandidateSlotExc2Args")
   void validateUpdateCandidateSlotSlotIsBookedExceptionTest(CandidateSlot candidateSlot,
-      Class<Exception> actual) {
+      Class<Exception> actual) throws SlotException {
     Mockito.when(candidateSlotService.findById(candidateSlot.getId()))
         .thenReturn(candidateSlot);
 

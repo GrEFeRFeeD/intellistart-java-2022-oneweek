@@ -1,9 +1,7 @@
 package com.intellias.intellistart.interviewplanning.model.candidateslot.validation;
 
-import com.intellias.intellistart.interviewplanning.exceptions.CandidateSlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.exceptions.InvalidBoundariesException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsBookedException;
-import com.intellias.intellistart.interviewplanning.exceptions.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
+import com.intellias.intellistart.interviewplanning.exceptions.SlotException.SlotExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotService;
 import com.intellias.intellistart.interviewplanning.model.period.Period;
@@ -34,11 +32,9 @@ public class CandidateSlotValidator {
    *
    * @param candidateSlot - the slot that we will validate.
    *
-   * @throws InvalidBoundariesException - when parameters are incorrect.
-   * @throws SlotIsOverlappingException - when the slot is overlapping.
+   * @throws SlotException - when parameters are incorrect or slot is overlapping.
    */
-  public void validateCreating(CandidateSlot candidateSlot)
-      throws InvalidBoundariesException, SlotIsOverlappingException {
+  public void validateCreating(CandidateSlot candidateSlot) throws SlotException {
     validateSlotInFuture(candidateSlot);
     validateOverlapping(candidateSlot);
   }
@@ -49,14 +45,11 @@ public class CandidateSlotValidator {
    *
    * @param candidateSlot - the updated slot that we will validate.
    *
-   * @throws InvalidBoundariesException - when parameters are incorrect.
-   * @throws CandidateSlotNotFoundException - when the slot not found in DB by given id.
-   * @throws SlotIsBookedException - when updated slot is booked.
-   * @throws SlotIsOverlappingException - when the slot is overlapping.
+   * @throws SlotException - when parameters are incorrect or updated slot is booked
+   *     slot is overlapping.
    */
-  public void validateUpdating(CandidateSlot candidateSlot)
-      throws InvalidBoundariesException, CandidateSlotNotFoundException, SlotIsBookedException,
-      SlotIsOverlappingException {
+
+  public void validateUpdating(CandidateSlot candidateSlot) throws SlotException {
     validateSlotIsBookingAndTheSlotExists(candidateSlot.getId());
     validateCreating(candidateSlot);
   }
@@ -66,11 +59,11 @@ public class CandidateSlotValidator {
    *
    * @param candidateSlot - the slot that we will validate.
    *
-   * @throws InvalidBoundariesException - when parameters are incorrect.
+   * @throws SlotException - when parameters are incorrect.
    */
-  private void validateSlotInFuture(CandidateSlot candidateSlot) throws InvalidBoundariesException {
+  private void validateSlotInFuture(CandidateSlot candidateSlot) throws SlotException {
     if (LocalDate.now().isAfter(candidateSlot.getDate())) {
-      throw new InvalidBoundariesException();
+      throw new SlotException(SlotExceptionProfile.INVALID_BOUNDARIES);
     }
   }
 
@@ -79,9 +72,9 @@ public class CandidateSlotValidator {
    *
    * @param candidateSlot - the slot that we validate.
    *
-   * @throws SlotIsOverlappingException - when the slot is overlapping.
+   * @throws SlotException - when the slot is overlapping.
    */
-  private void validateOverlapping(CandidateSlot candidateSlot) throws SlotIsOverlappingException {
+  private void validateOverlapping(CandidateSlot candidateSlot) throws SlotException {
     Period period = candidateSlot.getPeriod();
 
     List<CandidateSlot> candidateSlotList =
@@ -92,7 +85,7 @@ public class CandidateSlotValidator {
       for (CandidateSlot item : candidateSlotList) {
         if (!(candidateSlot.getId() != null && candidateSlot.getId().equals(item.getId()))
                 && periodService.areOverlapping(period, item.getPeriod())) {
-          throw new SlotIsOverlappingException();
+          throw new SlotException(SlotExceptionProfile.SLOT_IS_OVERLAPPING);
         }
       }
     }
@@ -104,15 +97,14 @@ public class CandidateSlotValidator {
    *
    * @param id - - the number of slot that we must check.
    *
-   * @throws CandidateSlotNotFoundException - when id not found in DB.
-   * @throws SlotIsBookedException - when slot is booked.
+   * @throws SlotException - when id not found in DB or slot is booked.
    */
   private void validateSlotIsBookingAndTheSlotExists(Long id)
-      throws CandidateSlotNotFoundException, SlotIsBookedException {
+      throws SlotException {
     CandidateSlot candidateSlot = candidateSlotService.findById(id);
 
     if (!candidateSlot.getBookings().isEmpty()) {
-      throw new SlotIsBookedException();
+      throw new SlotException(SlotExceptionProfile.SLOT_IS_BOOKED);
     }
   }
 }
