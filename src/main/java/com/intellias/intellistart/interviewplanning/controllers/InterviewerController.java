@@ -137,9 +137,7 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws UserException, BookingLimitException {
 
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(() ->
-                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
+    User user = userService.getUserById(interviewerId);
 
     bookingLimitDto.setUserId(interviewerId);
 
@@ -161,9 +159,7 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws UserException {
 
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(() ->
-                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
+    User user = userService.getUserById(interviewerId);
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForCurrentWeek(user);
 
@@ -182,9 +178,7 @@ public class InterviewerController {
       @PathVariable("interviewerId") Long interviewerId)
       throws UserException {
 
-    User user = userService.getUserById(interviewerId)
-        .orElseThrow(() ->
-                new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
+    User user = userService.getUserById(interviewerId);
 
     BookingLimit bookingLimit = bookingLimitService.getBookingLimitForNextWeek(user);
 

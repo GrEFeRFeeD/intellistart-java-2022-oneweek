@@ -35,7 +35,10 @@ public class SlotException extends Exception {
         "Slot you are trying to occur is booked.", HttpStatus.BAD_REQUEST),
 
     SLOT_IS_OVERLAPPING("slot_is_overlapping",
-        "Slot overlaps already existed one.", HttpStatus.BAD_REQUEST);
+        "Slot overlaps already existed one.", HttpStatus.BAD_REQUEST),
+
+    SLOT_IS_IN_THE_PAST("slot_is_in_the_past",
+        "New date for this slot is in the past.", HttpStatus.BAD_REQUEST);
 
     private final String exceptionName;
     private final String exceptionMessage;
