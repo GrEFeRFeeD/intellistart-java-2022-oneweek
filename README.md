@@ -4,6 +4,7 @@
 * [Project information](#project-information)
   * [Used technologies](#used-technologies)
 * [API](#api)
+  * [Exceptions](#exceptions)
   * [Authentication & authorization](#authentication--authorization)
   * [Implemented API](#implemented-api)
   * [API to implement in future](#api-to-implement-in-future)
@@ -32,6 +33,149 @@ Application supports next basic functionality:
 
 ## API
 This section describes all implemented and planned to implement endpoints.
+
+### Exceptions
+
+All exceptions in API have next structure:
+<pre>
+{
+    "errorCode": "snake_case_meaningful_string",
+    "errorMessage": "English user friendly message"
+}
+</pre>
+
+You can face next exceptions during using the API:
+<table>
+  <thead align="center">
+    <tr>
+      <td>Http Response Status</td>
+      <td>Error Code</td>
+      <td>Error Message</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center" rowspan="15">400<br>(Business validation)</td>
+      <td align="center">invalid_booking_limit</td>
+      <td>Value of booking limit is not correct.</td>
+    </tr>
+    <tr>
+      <td align="center">booking_limit_is_exceeded</td>
+      <td>Interviewer isn't allowed to have more bookings.</td>
+    </tr>
+    <tr>
+      <td align="center">self_revoking</td>
+      <td>The user cannot change or delete himself.</td>
+    </tr>
+    <tr>
+      <td align="center">user_already_has_role</td>
+      <td>This user already has another role.</td>
+    </tr>
+    <tr>
+      <td align="center">not_interviewer</td>
+      <td>Provided user is not interviewer.</td>
+    </tr>
+    <tr>
+      <td align="center">not_coordinator</td>
+      <td>Provided user is not coordinator.</td>
+    </tr>
+    <tr>
+      <td align="center">invalid_subject</td>
+      <td>Provided subject is invalid.</td>
+    </tr>
+    <tr>
+      <td align="center">invalid_description</td>
+      <td>Provided description is invalid.</td>
+    </tr>
+    <tr>
+      <td align="center">slots_not_intersecting</td>
+      <td>Provided slots have not free joint time period.</td>
+    </tr>
+    <tr>
+      <td align="center">cannot_edit_this_week</td>
+      <td>This week can't be edited.</td>
+    </tr>
+    <tr>
+      <td align="center">invalid_boundaries</td>
+      <td>Time boundaries of slot or booking are invalid.</td>
+    </tr>
+    <tr>
+      <td align="center">invalid_day_of_week</td>
+      <td>Cannot arrange booking on this day.</td>
+    </tr>
+    <tr>
+      <td align="center">slot_is_booked</td>
+      <td>Slot you are trying to occur is booked.</td>
+    </tr>
+    <tr>
+      <td align="center">slot_is_overlapping</td>
+      <td>Slot overlaps already existed one.</td>
+    </tr>
+    <tr>
+      <td align="center">slot_is_in_the_past</td>
+      <td>New date for this slot is in the past.</td>
+    </tr>
+    <tr>
+      <td align="center" rowspan="8">401<br>(Authentication)</td>
+      <td align="center">not_authenticated</td>
+      <td>You are not authenticated to perform this action.</td>
+    </tr>
+    <tr>
+      <td align="center">bad_facebook_token</td>
+      <td>Invalid OAuth access token - cannot parse access token.</td>
+    </tr>
+    <tr>
+      <td align="center">bad_token</td>
+      <td>Token does not start with 'Bearer'.</td>
+    </tr>
+    <tr>
+      <td align="center">expired_token</td>
+      <td>Token has expired.</td>
+    </tr>
+    <tr>
+      <td align="center">bad_token_signature</td>
+      <td>Given JWT signature does not match locally computed signature.</td>
+    </tr>
+    <tr>
+      <td align="center">malformed_token</td>
+      <td>Unable to read JWT JSON value.</td>
+    </tr>
+    <tr>
+      <td align="center">unsupported_token</td>
+      <td>JWT in a particular format/configuration that does not match the format expected by the application.</td>
+    </tr>
+    <tr>
+      <td align="center">bad_credentials</td>
+      <td>Incorrect credentials.</td>
+    </tr>
+    <tr>
+      <td align="center">403<br>(Access denied)</td>
+      <td align="center">not_authenticated</td>
+      <td>You are not authenticated to perform this action.</td>
+    </tr>
+    <tr>
+      <td align="center" rowspan="5">404<br>(Wrong identifier)</td>
+      <td align="center">booking_not_found</td>
+      <td>Booking by given id was not found.</td>
+    </tr>
+    <tr>
+      <td align="center">candidate_slot_not_found</td>
+      <td>Candidate slot by given id was not found.</td>
+    </tr>
+    <tr>
+      <td align="center">interviewer_slot_not_found</td>
+      <td>Interviewer slot by given id was not found.</td>
+    </tr>
+    <tr>
+      <td align="center">user_not_found</td>
+      <td>User not found.</td>
+    </tr>
+    <tr>
+      <td align="center">interviewer_not_found</td>
+      <td>Invalid interviewer's id in the path.</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Authentication & authorization
 
