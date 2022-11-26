@@ -45,10 +45,12 @@ All exceptions in API have next structure:
 </pre>
 
 You can face next exceptions during using the API:
+
 <table>
   <thead align="center">
     <tr>
       <td>Http Response Status</td>
+      <td>Group (use case)</td>
       <td>Error Code</td>
       <td>Error Message</td>
     </tr>
@@ -56,30 +58,7 @@ You can face next exceptions during using the API:
   <tbody>
     <tr>
       <td align="center" rowspan="15">400<br>(Business validation)</td>
-      <td align="center">invalid_booking_limit</td>
-      <td>Value of booking limit is not correct.</td>
-    </tr>
-    <tr>
-      <td align="center">booking_limit_is_exceeded</td>
-      <td>Interviewer isn't allowed to have more bookings.</td>
-    </tr>
-    <tr>
-      <td align="center">self_revoking</td>
-      <td>The user cannot change or delete himself.</td>
-    </tr>
-    <tr>
-      <td align="center">user_already_has_role</td>
-      <td>This user already has another role.</td>
-    </tr>
-    <tr>
-      <td align="center">not_interviewer</td>
-      <td>Provided user is not interviewer.</td>
-    </tr>
-    <tr>
-      <td align="center">not_coordinator</td>
-      <td>Provided user is not coordinator.</td>
-    </tr>
-    <tr>
+      <td align="center" rowspan="2">Booking</td>
       <td align="center">invalid_subject</td>
       <td>Provided subject is invalid.</td>
     </tr>
@@ -88,6 +67,16 @@ You can face next exceptions during using the API:
       <td>Provided description is invalid.</td>
     </tr>
     <tr>
+      <td align="center" rowspan="2">Booking Limit</td>
+      <td align="center">invalid_booking_limit</td>
+      <td>Value of booking limit is not correct.</td>
+    </tr>
+    <tr>
+      <td align="center">booking_limit_is_exceeded</td>
+      <td>Interviewer isn't allowed to have more bookings.</td>
+    </tr>
+    <tr>
+      <td align="center" rowspan="7">Slots Interaction</td>
       <td align="center">slots_not_intersecting</td>
       <td>Provided slots have not free joint time period.</td>
     </tr>
@@ -116,7 +105,25 @@ You can face next exceptions during using the API:
       <td>New date for this slot is in the past.</td>
     </tr>
     <tr>
+      <td align="center" rowspan="4">User Interaction</td>
+      <td align="center">self_revoking</td>
+      <td>The user cannot change or delete himself.</td>
+    </tr>
+    <tr>
+      <td align="center">user_already_has_role</td>
+      <td>This user already has another role.</td>
+    </tr>
+    <tr>
+      <td align="center">not_interviewer</td>
+      <td>Provided user is not interviewer.</td>
+    </tr>
+    <tr>
+      <td align="center">not_coordinator</td>
+      <td>Provided user is not coordinator.</td>
+    </tr>
+    <tr>
       <td align="center" rowspan="8">401<br>(Authentication)</td>
+      <td align="center" rowspan="8">Auth</td>
       <td align="center">not_authenticated</td>
       <td>You are not authenticated to perform this action.</td>
     </tr>
@@ -150,15 +157,18 @@ You can face next exceptions during using the API:
     </tr>
     <tr>
       <td align="center">403<br>(Access denied)</td>
+      <td align="center">Auth</td>
       <td align="center">not_authenticated</td>
       <td>You are not authenticated to perform this action.</td>
     </tr>
     <tr>
       <td align="center" rowspan="5">404<br>(Wrong identifier)</td>
+      <td align="center">Booking</td>
       <td align="center">booking_not_found</td>
       <td>Booking by given id was not found.</td>
     </tr>
     <tr>
+      <td align="center" rowspan="3">Slots Interaction</td>
       <td align="center">candidate_slot_not_found</td>
       <td>Candidate slot by given id was not found.</td>
     </tr>
@@ -171,6 +181,7 @@ You can face next exceptions during using the API:
       <td>User not found.</td>
     </tr>
     <tr>
+      <td align="center">User Interaction</td>
       <td align="center">interviewer_not_found</td>
       <td>Invalid interviewer's id in the path.</td>
     </tr>
@@ -178,6 +189,28 @@ You can face next exceptions during using the API:
 </table>
 
 ### Authentication & authorization
+
+This section describes all interactions with API authentication.
+API uses JWT to authenticate any request and Facebook Token to create JWT.
+
+#### Getting the Facebook Token
+
+To get the Facebook Token you need to know the client id of API.
+In order to get it, you can perform:
+
+`GET /oauth2/facebook/v15.0`
+
+As a response, you will get:
+
+<pre>
+{
+    "clientId": "CLIENT_ID",
+    "redirectUri": "REDIRECT_URI",
+    "tokenRequestUrl": "https://www.facebook.com/v15.0/dialog/oauth?client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&response_type=token"
+}
+</pre>
+
+Follow the link presented in `tokenRequestUrl`, pass the Facebook authentication, and you will be redirected to `redirectUri` with your facebook token as `access_token` URL param.  
 
 #### Getting the JWT
 
@@ -187,7 +220,12 @@ To perform any authenticated or authorized request you should provide your Faceb
 
 With requiered data parameter `{"facebookToken": "EAAHC..."}`.
 
-As the response you will get JSON Web Token as `{"token": "eyJhb..."}`.
+As the response you will get JSON Web Token as
+<pre>
+{
+  "token": "eyJhb..."
+}
+</pre>
 
 The possible exceptions are:
 - 401 - bad_facebook_token_exception
@@ -328,7 +366,7 @@ Request: `POST /interviewers/{interviewerId}/slots/{slotId}`
 
 URL parametres:
 - `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
-- `slotId` - id of slot to edit (can be obtained by [getting slots](#getting-slots) endpoint)
+- `slotId` - id of slot to edit (can be obtained by [getting slots](#getting-slots-1) endpoint)
 
 Data parametres:
 - `week` - number of week (can be obtained by [/weeks/\*\*](#guest) endpoints)
