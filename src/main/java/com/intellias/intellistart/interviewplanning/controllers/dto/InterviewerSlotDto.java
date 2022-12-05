@@ -26,6 +26,10 @@ public class InterviewerSlotDto {
   @NonNull
   private String to;
 
+  /**
+   * Constructor.
+   * Constructs the InterviewerSlotDto from InterviewerSlot object.
+   */
   public InterviewerSlotDto(InterviewerSlot interviewerSlot) {
     this.interviewerId = interviewerSlot.getUser().getId();
     this.interviewerSlotId = interviewerSlot.getId();
