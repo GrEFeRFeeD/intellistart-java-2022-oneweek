@@ -10,6 +10,9 @@
 * [Setting-up the project](#setting-up-the-project)
   * [Getting the project](#getting-the-project) 
   * [Configuring docker](#configuring-docker)
+* [Additional materials](#additional-materials)
+  * [Postman collection](#postman-collection)
+  * [Performance testing](#performance-testing)
 
 ## Project information
 Interview planning application is a RESTful service designed for better communication between interviewers and candidates through coordinators.
@@ -758,6 +761,7 @@ Possible [exception](#exceptions) groups:
 
 ## Setting-up the project
 This section describes all needed steps to launch the application.
+You can set up the project as it is via [docker](#configuring-docker) or via [your IDE](#running-via-ide).
 
 ### Getting the project
 First of all, you need to get the project. You can do this by two ways:
@@ -807,3 +811,61 @@ Once the `api.env` is created with proper variables you can launch docker with a
 
 `docker-compose --env-file api.env up`
 
+### Running via IDE
+
+Open the [gained from repository](#getting-the-project) project with your IDE.
+
+After you open the project, set up the 11 JDK do the `maven clean` operation.
+
+You can launch the application with [all needed environmental variables](#configuring-environmental-variables) by configuring them in your IDE.
+In this case you need to set up the PostgreSQL database with appropriate __POSTGRES_USER__, __POSTGRES_PASSWORD__, __DATABASE_PORT__ and __POSTGRES_DB__ values. 
+
+As an option you can launch the application without the inner DBMS. In order to do that, replace your __/src/main/resources/application.yml__ configuration file with:
+<pre>
+server:
+  port: ${APPLICATION_PORT}
+
+jwt:
+  secret: ${JWT_SECRET}
+  validity: ${JWT_VALIDITY}
+
+first-coordinator-email: ${FIRST_COORDINATOR_EMAIL}
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: ${FACEBOOK_CLIENT_ID}
+            clientSecret: ${FACEBOOK_SECRET}
+            redirectUri: ${FACEBOOK_REDIRECT_URI}
+
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO}
+</pre>
+
+In such case you still must satisfy next environmental variables:
+- APPLICATION_PORT
+- JWT_SECRET
+- JWT_VALIDITY
+- FIRST_COORDINATOR_EMAIL
+- FACEBOOK_CLIENT_ID
+- FACEBOOK_SECRET
+- FACEBOOK_REDIRECT_URI
+
+Execute the __com.intellias.intellistart.interviewplanning.InterviewPlanningApplication__ class in order to run the project.
+
+## Additional materials
+This section describes all additional information about the project that does not match the topics below and materials putted to __/docs__ directory of the repository.
+
+### Postman collection
+The project has [Postman collection]() to demonstrate the work of implemented endpoints.
+
+### Performance testing
+The project has passed performance testing with JMeter.
+
+The performance profile could be found by the [link]().
