@@ -667,6 +667,13 @@ Response:
     "description": "Interview for Java Developer position"
 }
 </pre>
+
+Possible [exception](#exceptions) groups:
+- Slots Interaction
+- Booking
+- Booking Limit
+- User Interaction
+
 ##### Deleting Booking
 Request: `DELETE /bookings/{booking-id}`
 
@@ -685,7 +692,69 @@ Response:
 }
 </pre>
 
-##### Granting, getting, revoking
+Possible [exception](#exceptions) groups:
+- Booking
+
+##### Getting users by role
+Requests:
+- `GET /users/interviewers` - getting list of all interviewers in the system
+- `GET /users/coordinators` - getting list of all coordinators in the system
+
+Response:
+<pre>
+{
+    "users": [
+        {
+            "email": "azofer77@gmail.com",
+            "role": "INTERVIEWER",
+            "id": 2
+        }
+    ]
+}
+</pre>
+
+##### Granting role by email
+Requests:
+- `POST /users/interviewers` - granting interviewer role by email
+- `POST /users/coordinators` - granting coordinator role by email
+
+Data parameters:
+- `email` - attached to facebook email of user to grant the appropriate role
+
+Response:
+<pre>
+{
+    "email": "example@gmail.com",
+    "role": "INTERVIEWER",
+    "id": 3
+}
+</pre>
+
+Possible [exception](#exceptions) groups:
+- User Interaction
+
+##### Revoking role by email
+
+While operating revoke functionality notice, that coordinator can not revoke himself. 
+
+Requests:
+- `DELETE /users/interviewers/{id}` - to revoke interviewer role by id
+- `DELETE /users/coordinators/{id}` - to revoke coordinator role by id
+
+URL parameters:
+- `id` - id of user to delete
+
+Response:
+<pre>
+{
+    "email": "example@gmail.com",
+    "role": "INTERVIEWER",
+    "id": 3
+}
+</pre>
+
+Possible [exception](#exceptions) groups:
+- User Interaction
 
 ## Setting-up the project
 This section describes all needed steps to launch the application.
