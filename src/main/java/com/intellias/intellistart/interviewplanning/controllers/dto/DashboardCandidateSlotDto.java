@@ -19,6 +19,7 @@ import lombok.Setter;
 @Setter
 public class DashboardCandidateSlotDto {
 
+  private Long candidateSlotId;
   private String from;
   private String to;
   private String candidateEmail;
@@ -32,6 +33,7 @@ public class DashboardCandidateSlotDto {
    * @param candidateSlot object to initialize from
    */
   public DashboardCandidateSlotDto(CandidateSlot candidateSlot) {
+    this.candidateSlotId = candidateSlot.getId();
     this.from = candidateSlot.getPeriod().getFrom().toString();
     this.to = candidateSlot.getPeriod().getTo().toString();
     this.candidateEmail = candidateSlot.getEmail();

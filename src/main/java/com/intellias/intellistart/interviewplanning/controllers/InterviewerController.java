@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.controllers;
 
 import com.intellias.intellistart.interviewplanning.controllers.dto.BookingLimitDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controllers.dto.InterviewerSlotsDto;
 import com.intellias.intellistart.interviewplanning.exceptions.BookingLimitException;
 import com.intellias.intellistart.interviewplanning.exceptions.SlotException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException;
@@ -15,6 +16,7 @@ import com.intellias.intellistart.interviewplanning.model.user.UserService;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -192,7 +194,7 @@ public class InterviewerController {
    * @return {@link List} of {@link InterviewerSlot}
    */
   @GetMapping("/interviewers/current/slots")
-  public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForCurrentWeek(
+  public ResponseEntity<InterviewerSlotsDto> getInterviewerSlotsForCurrentWeek(
       Authentication authentication) {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
 
@@ -201,7 +203,11 @@ public class InterviewerController {
 
     List<InterviewerSlot> slots = interviewerSlotService.getSlotsByWeek(email, currentWeekId);
 
-    return new ResponseEntity<>(slots, HttpStatus.OK);
+    InterviewerSlotsDto response = new InterviewerSlotsDto(slots.stream()
+            .map(InterviewerSlotDto::new)
+            .collect(Collectors.toList()));
+
+    return ResponseEntity.ok(response);
   }
 
   /**
@@ -211,7 +217,7 @@ public class InterviewerController {
    * @return {@link List} of {@link InterviewerSlot}
    */
   @GetMapping("/interviewers/next/slots")
-  public ResponseEntity<List<InterviewerSlot>> getInterviewerSlotsForNextWeek(
+  public ResponseEntity<InterviewerSlotsDto> getInterviewerSlotsForNextWeek(
       Authentication authentication) {
     JwtUserDetails jwtUserDetails = (JwtUserDetails) authentication.getPrincipal();
 
@@ -220,6 +226,10 @@ public class InterviewerController {
 
     List<InterviewerSlot> slots = interviewerSlotService.getSlotsByWeek(email, nextWeekId);
 
-    return new ResponseEntity<>(slots, HttpStatus.OK);
+    InterviewerSlotsDto response = new InterviewerSlotsDto(slots.stream()
+        .map(InterviewerSlotDto::new)
+        .collect(Collectors.toList()));
+
+    return ResponseEntity.ok(response);
   }
 }
