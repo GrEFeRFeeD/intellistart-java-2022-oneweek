@@ -1,3 +1,6 @@
+server:
+  port: ${APPLICATION_PORT}
+
 jwt:
   secret: ${JWT_SECRET}
   validity: ${JWT_VALIDITY}

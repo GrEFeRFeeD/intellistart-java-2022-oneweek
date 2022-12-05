@@ -18,6 +18,7 @@ services:
       - postgresql-data:/var/lib/postgres
     env_file:
       - api.env
+    command: -p ${DATABASE_PORT}
 
 volumes:
   postgresql-data:
