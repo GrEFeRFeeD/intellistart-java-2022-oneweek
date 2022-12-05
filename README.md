@@ -7,7 +7,6 @@
   * [Exceptions](#exceptions)
   * [Authentication & authorization](#authentication--authorization)
   * [Implemented API](#implemented-api)
-  * [API to implement in future](#api-to-implement-in-future)
 * [Setting-up the project](#setting-up-the-project)
   * [Getting the project](#getting-the-project) 
   * [Configuring docker](#configuring-docker)
@@ -26,6 +25,7 @@ Application supports next basic functionality:
   - Boot
   - Data
     - Hibernate
+    - PostgreSQL
   - Security
     - OAuth2
   - Web
@@ -235,7 +235,7 @@ Gained JWT should be put in request header as a parameter `Authorization` with v
 
 #### Edge cases
 
-You can face next exceptions while using JWT within yout request:
+You can face next exceptions while using JWT within your request:
 - 401 - not_authenticated_exception 
 - 401 - bad_token_exception
 - 401 - expired_token_exception
@@ -249,17 +249,26 @@ There are four groups of users:
 - Guests - users without authentication
 - Candidates - users that have passed authentication but have not Interviewer or Coordinator role
 - Interviewers - users that have passed authentication and have Interviewer role
-- Сoordinator - users that have passed authentication and have Coordinator role
+- Coordinator - users that have passed authentication and have Coordinator role
 
 #### User obtention endpoint
-Interviewers and Coordinators can perform next endoint to obtain their user information:
+Interviewers and Coordinators can perform next endpoint to obtain their user information:
 
 Request: `GET /me`
 
-Response: `{"email": "example@google.com", "role": "INTERVIEWER", "id": 123}`
+Response:
+<pre>
+{
+  "email": "example@google.com",
+  "role": "INTERVIEWER",
+  "id": 123
+}
+</pre>
+
+The `id` field is present only for users with `INTERVIEWER` or `COORDINATOR` roles.
 
 ### Implemented API
-This section describes all already implemented business logic endoints. Section is devided by users.
+This section describes all already implemented business logic endpoints. Section is divided by users.
 
 #### Guest
 Guests can only get current and next week of num or [authenticate](#authentication--authorization)
@@ -267,12 +276,22 @@ Guests can only get current and next week of num or [authenticate](#authenticati
 ##### Get current number of week:
 Request: `GET /weeks/current`
 
-Response: `{"weekNum": 44}`
+Response: 
+<pre>
+{
+  "weekNum": 44
+}
+</pre>
 
 ##### Get next number of week:
 Request: `GET /weeks/next`
 
-Response: `{"weekNum": 45}`
+Response:
+<pre>
+{
+  "weekNum": 45
+}
+</pre>
 
 #### Candidate
 Candidate can create or update own slots following next requirements:
@@ -284,16 +303,22 @@ Candidate can create or update own slots following next requirements:
 ##### Creating Slot
 Request: `POST /candidates/current/slots`
 
-Data parametres:
+Data parameters:
 - `date` - date of candidate slot
 - `from` - start time of slot in format HH:mm
 - `to` - end time of slot in format HH:mm
 
-Response: {"date": "22.01.2022", "from": "9:00", "to": "17:00""}
+Response:
+<pre>
+{
+    "date": "2022-12-06",
+    "from": "09:00",
+    "to": "17:00"
+}
+</pre>
 
-Exceptions:
-- slot_is_overlaping_exception
-- invalid_boundaries_exception
+Possible [exception](#exceptions) groups:
+- Slots Interaction
 
 ##### Updating Slot
 Request: `POST /candidates/current/slots/{slotId}`
@@ -306,34 +331,49 @@ Data parametres:
 - `from` - start time of slot in format HH:mm
 - `to` - end time of slot in format HH:mm
 
-Response: {"date": "22.01.2022", "from": "9:00", "to": "17:00""}
+Response:
+<pre>
+{
+    "date": "2022-12-06",
+    "from": "09:00",
+    "to": "17:00"
+}
+</pre>
 
-Exceptions:
-- slot_is_overlaping_exception
-- invalid_boundaries_exception
-- slot_not_found_exception
-- slot_is_booked_exception
-- slot_is_overlaping_exception
-- invalid_boundaries_exception
+Possible [exception](#exceptions) groups:
+- Slots Interaction
 
 ##### Getting Slots
 Request: `GET /candidates/current/slots`
 
-Response: `{"candidateSlotDtoList": [{"date": "22.01.2022", "from": "9:00", "to": "17:00""}, {"date": "23.01.2022", "from": "13:00", "to": "20:00""}]}`
-
-### API to implement in future
-This section describes all business logic endoints that will be implemented soon. Section is devided by users.
+Response:
+<pre>
+{
+  "candidateSlotDtoList": [
+    {
+      "date": "22.01.2022",
+      "from": "9:00",
+      "to": "17:00""
+    },
+    {
+      "date": "23.01.2022",
+      "from": "13:00", 
+      "to": "20:00""
+    }
+  ]
+}
+</pre>
 
 #### Interviewer
 Interviewer can create or update own slots following next requirements:
 - Creation until end of Friday (00:00) of current week
 - Slot means day of week + time diapason
 - Slot boundaries are rounded to 30 minutes
-- Slot duration must be greather or equal 1.5 hours
+- Slot duration must be greater or equal 1.5 hours
 - Slot start time cannot be less than 8:00
 - Slot end time cannot be greater than 22:00
 
-Also Interviewers can set booking limit for next week (maximum amount of booking that Coordinators will able to create for that certain Interviewer and it's certain week):
+Also, Interviewers can set booking limit for next week (maximum amount of booking that Coordinators will be able to create for that certain Interviewer, and it's certain week):
 - If maximum number of bookings is not set for certain week, the previous week limit is actual
 - If limit was never set, any number of bookings can be assigned to interviewer
 
@@ -342,7 +382,7 @@ Getting of own slots is available only for current and next week.
 ##### Creating Slot
 Request: `POST /interviewers/{interviewerId}/slots`
 
-URL parametres:
+URL parameters:
 - `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
 
 Data parametres:
@@ -351,15 +391,21 @@ Data parametres:
 - `from` - start time of slot in format HH:mm
 - `to` - end time of slot in format HH:mm
 
-Response: `{"week": 49, "dayOfWeek": "TUE", "from":"18:00", "to":"21:30"}`
+Response:
+<pre>
+{
+    "interviewerId": 1,
+    "interviewerSlotId": 1,
+    "week": 50,
+    "dayOfWeek": "TUE",
+    "from": "16:00",
+    "to": "19:00"
+}
+</pre>
 
-Exceptions:
-- interviewer_not_found_exception
-- slot_is_overlaping_exception
-- invalid_boundaries_exception
-- invalid_day_of_week_exception
-- slot_not_found_exception
-- cannot_edit_this_week_exception
+Possible [exception](#exceptions) groups:
+- Slots Interaction
+- User Interaction
 
 ##### Updating Slot
 Request: `POST /interviewers/{interviewerId}/slots/{slotId}`
@@ -374,46 +420,272 @@ Data parametres:
 - `from` - start time of slot in format HH:mm
 - `to` - end time of slot in format HH:mm
 
-Response: `{"id": 123, "week": 49, "dayOfWeek": "TUE", "from":"18:00", "to":"21:30"}`
+Response:
+<pre>
+{
+    "interviewerId": 1,
+    "interviewerSlotId": 1,
+    "week": 50,
+    "dayOfWeek": "TUE",
+    "from": "16:00",
+    "to": "19:00"
+}
+</pre>
 
-Exceptions:
-- interviewer_not_found_exception
-- slot_is_overlaping_exception
-- invalid_boundaries_exception
-- invalid_day_of_week_exception
-- slot_not_found_exception
-- cannot_edit_this_week_exception
+Possible [exception](#exceptions) groups:
+- Slots Interaction
+- User Interaction
 
 ##### Getting Slots
 Requests:
 - `GET /interviewers/{interviewerId}/slots/current` (for getting current week slots) 
 - `GET /interviewers/{interviewerId}/slots/next` (for getting next week slots)
 
-URL parametres:
+URL parameters:
 - `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
 
-Response - {"interviewerSlots": [{"id": 123, "week": 49, "dayOfWeek": "TUE", "from":"18:00", "to":"21:30"}, {"id": 123, "week": 50, "dayOfWeek": "MON", "from":"10:00", "to":"21:30"}]}
+Response:
+<pre>
+{
+    "interviewerSlotDtoList": [
+        {
+            "interviewerId": 1,
+            "interviewerSlotId": 1,
+            "week": 50,
+            "dayOfWeek": "TUE",
+            "from": "16:00",
+            "to": "16:00"
+        },
+        {
+            "interviewerId": 1,
+            "interviewerSlotId": 2,
+            "week": 50,
+            "dayOfWeek": "WED",
+            "from": "16:00",
+            "to": "16:00"
+        }
+    ]
+}
+</pre>
 
 ##### Setting Booking Limit
 Request: `POST /interviewers/{interviewerId}/bookingLimit`
 
-URL parametres:
+URL parameters:
 - `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
 
-Data perametres:
+Data parameters:
 - `bookingLimit` - limit of bookings per next week
 
-Response: `{"userId": 10, "weekNum": 45, "bookingLimit": 123}`
+Response:
+<pre>
+{
+    "userId": 1,
+    "weekNum": 50,
+    "bookingLimit": 127
+}
+</pre>
 
-Exceptions:
-- incorrect_id_exception
-- incorrect_booking_limit_exception
+Possible [exception](#exceptions) groups:
+- User Interaction
+- Booking Limit
+
+##### Getting Booking Limit
+Requests:
+- `GET /interviewers/1/booking-limits/current-week` (for getting current booking limit for current week)
+- `GET /interviewers/1/booking-limits/next-week` (for getting current booking limit for next week)
+
+URL parameters:
+- `interviewerId` - id of current Interviewer (can be obtained by [/me](#user-obtention-endpoint) endpoint).
+
+Response:
+<pre>
+{
+    "userId": 1,
+    "weekNum": 49,
+    "bookingLimit": 1000
+}
+</pre>
 
 #### Coordinator
-DashBoard
-Booking create
-Booking update
-Booking delete
+Coordinator can see all the candidates and interviewers slots, update any Interviewer's time slot, create or update bookings, providing:
+- interviewer slot ID
+- candidate slot ID
+- start and end time (must be 1.5 hours inside both slots)
+- subject (0-255 chars) and description (up to 4000 chars)
+
+Also, Coordinator can grant or revoke Interviewer or Coordinator roles by email.
+First Coordinator email in the system is defined by [environment variable](#configuring-environmental-variables). 
+
+##### Getting Dashboard
+Request: `GET /weeks/{weekNum}/dashboard`
+
+URL parameters:
+- `weekNum` - number of week to form dashboard from (can be obtained by [/weeks/\*\*](#guest) endpoints)
+
+Response:
+<pre>
+{
+    "weekNum": 50,
+    "dashboard": {
+        "2022-12-15": {
+            "interviewerSlots": [],
+            "candidateSlots": [],
+            "bookings": {}
+        },
+        "2022-12-14": {
+            "interviewerSlots": [
+                {
+                    "interviewerSlotId": 2,
+                    "from": "16:00",
+                    "to": "19:00",
+                    "interviewerId": 2,
+                    "bookings": []
+                }
+            ],
+            "candidateSlots": [],
+            "bookings": {}
+        },
+        "2022-12-13": {
+            "interviewerSlots": [],
+            "candidateSlots": [
+                {
+                    "candidateSlotId": 1,
+                    "from": "10:00",
+                    "to": "14:00",
+                    "candidateEmail": "bielobrov.8864899@stud.op.edu.ua",
+                    "candidateName": "Артур Белобров",
+                    "bookings": []
+                }
+            ],
+            "bookings": {}
+        },
+        "2022-12-12": {
+            "interviewerSlots": [
+                {
+                    "interviewerSlotId": 1,
+                    "from": "15:00",
+                    "to": "19:00",
+                    "interviewerId": 2,
+                    "bookings": [
+                        1
+                    ]
+                }
+            ],
+            "candidateSlots": [
+                {
+                    "candidateSlotId": 2,
+                    "from": "09:00",
+                    "to": "17:00",
+                    "candidateEmail": "bielobrov.8864899@stud.op.edu.ua",
+                    "candidateName": "Артур Белобров",
+                    "bookings": [
+                        1
+                    ]
+                }
+            ],
+            "bookings": {
+                "1": {
+                    "bookingId": 1,
+                    "subject": "Monday interview",
+                    "description": "Interview for Java Developer position",
+                    "interviewerSlotId": 1,
+                    "candidateSlotId": 2,
+                    "from": "15:00",
+                    "to": "16:30"
+                }
+            }
+        },
+        "2022-12-18": {
+            "interviewerSlots": [],
+            "candidateSlots": [],
+            "bookings": {}
+        },
+        "2022-12-17": {
+            "interviewerSlots": [],
+            "candidateSlots": [],
+            "bookings": {}
+        },
+        "2022-12-16": {
+            "interviewerSlots": [],
+            "candidateSlots": [],
+            "bookings": {}
+        }
+    }
+}
+</pre>
+
+##### Creating Booking
+Request: `POST /bookings`
+
+Data parameters:
+- `interviewerSlotId` - id of interviewer slot with free time for needed time period
+- `candidateSlotId` - id of candidate slot with free time for needed time period
+- `from`, `to` - booking boundaries (time period) in format HH:MM (1:30 hours)
+- `subject` - subject of booking (0 - 255 chars)
+- `description` - description of booking (up to 4000 chars)
+
+Response:
+<pre>
+{
+    "interviewerSlotId": 1,
+    "candidateSlotId": 2,
+    "from": "15:00",
+    "to": "16:30",
+    "subject": "Monday interview",
+    "description": "Interview for Java Developer position"
+}
+</pre>
+
+Possible [exception](#exceptions) groups:
+- Slots Interaction
+- Booking
+- Booking Limit
+- User Interaction
+
+##### Updating Booking
+Request: `POST /bookings/{booking-id}`
+
+URL parameters:
+- `booking-id` - id of booking to update
+
+Data parameters:
+- `interviewerSlotId` - id of interviewer slot with free time for needed time period
+- `candidateSlotId` - id of candidate slot with free time for needed time period
+- `from`, `to` - booking boundaries (time period) in format HH:MM (1:30 hours)
+- `subject` - subject of booking (0 - 255 chars)
+- `description` - description of booking (up to 4000 chars)
+
+Response:
+<pre>
+{
+    "interviewerSlotId": 1,
+    "candidateSlotId": 2,
+    "from": "15:00",
+    "to": "16:30",
+    "subject": "Monday interview",
+    "description": "Interview for Java Developer position"
+}
+</pre>
+##### Deleting Booking
+Request: `DELETE /bookings/{booking-id}`
+
+URL parameters:
+- `booking-id` - id of booking to delete
+
+Response:
+<pre>
+{
+    "interviewerSlotId": 1,
+    "candidateSlotId": 2,
+    "from": "15:00",
+    "to": "16:30",
+    "subject": "Monday interview",
+    "description": "Interview for Java Developer position"
+}
+</pre>
+
+##### Granting, getting, revoking
 
 ## Setting-up the project
 This section describes all needed steps to launch the application.
