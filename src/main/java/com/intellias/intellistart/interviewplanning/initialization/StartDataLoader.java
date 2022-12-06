@@ -29,7 +29,10 @@ public class StartDataLoader implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
 
     User firstCoordinator = new User(null, email, Role.COORDINATOR);
+    User interv = new User(null, "sashynia2003zhenia@gmail.com", Role.INTERVIEWER);
+    interv = userRepository.save(interv);
     firstCoordinator = userRepository.save(firstCoordinator);
     System.out.println("Added first user: " + firstCoordinator);
+    System.out.println("Added 2 user: " + interv);
   }
 }
