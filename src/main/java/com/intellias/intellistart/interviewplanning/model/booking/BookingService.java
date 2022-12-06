@@ -45,9 +45,7 @@ public class BookingService {
    * Alias for method in {@link BookingRepository}.
    */
   public Booking save(Booking booking) {
-    System.out.println(booking.getId());
     Booking bookingSaved = bookingRepository.save(booking);
-    System.out.println(bookingSaved.getId());
     return bookingSaved;
   }
 

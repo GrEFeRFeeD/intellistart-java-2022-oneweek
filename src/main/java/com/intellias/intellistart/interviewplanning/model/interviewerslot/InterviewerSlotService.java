@@ -104,4 +104,16 @@ public class InterviewerSlotService {
     return interviewerSlotRepository
         .getInterviewerSlotsByUserIdAndWeekIdAndDayOfWeek(userId, weekId, dayOfWeek);
   }
+
+  /**
+   * Alias for {@link InterviewerSlotRepository} method.
+   */
+  public List<InterviewerSlot> getInterviewerSlotsByUserAndWeek(
+      User user, Week week) {
+    Long userId = user.getId();
+    Long weekId = week.getId();
+
+    return interviewerSlotRepository
+        .getInterviewerSlotsByUserIdAndWeekId(userId, weekId);
+  }
 }
