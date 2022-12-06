@@ -9,6 +9,12 @@ services:
       - ./:/app
     env_file:
       - api.env
+  redis:
+    image: redis
+    container_name: redis
+    hostname: "redis"
+    ports:
+      - 49155:6379
 
   postgresql:
     ports:
@@ -18,6 +24,7 @@ services:
       - postgresql-data:/var/lib/postgres
     env_file:
       - api.env
+
 
 volumes:
   postgresql-data:

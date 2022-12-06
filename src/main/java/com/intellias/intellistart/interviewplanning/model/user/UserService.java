@@ -6,12 +6,15 @@ import com.intellias.intellistart.interviewplanning.model.interviewerslot.Interv
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
  * Service for User entity.
  */
 @Service
+@CacheConfig(cacheNames = "userCache")
 public class UserService {
 
   private final UserRepository userRepository;
@@ -29,6 +32,7 @@ public class UserService {
    *
    * @return Optional User by id.
    */
+  @Cacheable(value = "id")
   public User getUserById(Long id) throws UserException {
     return userRepository.findById(id).orElseThrow(() ->
         new UserException(UserException.UserExceptionProfile.INVALID_INTERVIEWER));
