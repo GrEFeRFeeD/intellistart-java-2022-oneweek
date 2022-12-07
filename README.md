@@ -791,6 +791,7 @@ The example of such file represented in `example.env` file. The needed variables
 - `APPLICATION_PORT` - port on which application will be run
 - `JWT_SECRET` - defines secret work to assign the JWT
 - `JWT_VALIDITY` - validity of JWT in seconds
+- `JWT_CACHING` - how long JWT will be cached in seconds
 - `FIRST_COORDINATOR_EMAIL` - facebook account attached email of first coordinator that will be automatically added to DB  
 - `FACEBOOK_CLIENT_ID` - application client id provided by facebook
 - `FACEBOOK_SECRET` - application secret provided by facebook
@@ -805,6 +806,8 @@ The example of such file represented in `example.env` file. The needed variables
 - `POSTGRES_USER` - name of default postgresql user
 - `POSTGRES_PASSWORD` - password of default postgresql user
 - `POSTGRES_DB` - postgresql database name
+- `REDIS_HOSTNAME` - hostname of the server to connect redis DB
+- `REDIS_PORT` - port of the given hostname to connect redis DB
 
 #### Launching the application
 Once the `api.env` is created with proper variables you can launch docker with application through running the following command:
@@ -852,10 +855,13 @@ In such case you still must satisfy next environmental variables:
 - APPLICATION_PORT
 - JWT_SECRET
 - JWT_VALIDITY
+- JWT_CACHING
 - FIRST_COORDINATOR_EMAIL
 - FACEBOOK_CLIENT_ID
 - FACEBOOK_SECRET
 - FACEBOOK_REDIRECT_URI
+- REDIS_HOSTNAME
+- REDIS_PORT
 
 Execute the __com.intellias.intellistart.interviewplanning.InterviewPlanningApplication__ class in order to run the project.
 
@@ -863,9 +869,10 @@ Execute the __com.intellias.intellistart.interviewplanning.InterviewPlanningAppl
 This section describes all additional information about the project that does not match the topics below and materials putted to __/docs__ directory of the repository.
 
 ### Postman collection
-The project has [Postman collection]() to demonstrate the work of implemented endpoints.
+The project has [Postman collection](https://github.com/GrEFeRFeeD/intellistart-java-2022-oneweek/tree/main/docs/postman) to demonstrate the work of implemented endpoints. 
 
 ### Performance testing
 The project has passed performance testing with JMeter.
 
-The performance profile could be found by the [link]().
+The performance profile could be found by the [link](https://github.com/GrEFeRFeeD/intellistart-java-2022-oneweek/tree/main/docs/jmeter).
+
