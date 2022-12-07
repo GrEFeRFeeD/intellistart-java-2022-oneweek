@@ -9,12 +9,7 @@ services:
       - ./:/app
     env_file:
       - api.env
-  redis:
-    image: redis
-    container_name: redis
-    hostname: "redis"
-    ports:
-      - 49155:6379
+
 
   postgresql:
     ports:

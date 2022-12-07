@@ -5,6 +5,7 @@ import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,6 +37,7 @@ public class JwtUserDetailsService implements UserDetailsService {
    * @param name name of certain user
    * @return standard loaded UserDetails object
    */
+  @Cacheable(value = "user")
   public UserDetails loadUserByEmailAndName(String email, String name) {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) loadUserByUsername(email);
