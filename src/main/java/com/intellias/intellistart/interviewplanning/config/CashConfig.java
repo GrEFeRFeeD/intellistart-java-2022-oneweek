@@ -32,12 +32,12 @@ public class CashConfig extends CachingConfigurerSupport {
       @Override
       protected Cache createConcurrentMapCache(final String name) {
         return new ConcurrentMapCache(name, CacheBuilder.newBuilder().expireAfterWrite(
-                        jwtValidity, TimeUnit.SECONDS)
-                .maximumSize(100).build().asMap(), false);
+                        15, TimeUnit.SECONDS)
+                .build().asMap(), false);
       }
     };
 
-    cacheManager.setCacheNames(List.of("user", "jwt"));
+    cacheManager.setCacheNames(List.of("user", "jwt", "facebook"));
     return cacheManager;
   }
 

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -135,6 +136,7 @@ public class FacebookUtil {
    * @param token user facebook token
    * @return user email
    */
+  @Cacheable(value = "facebook")
   public Map<FacebookScopes, String> getScope(String token) {
 
     FbTokenInfo fbTokenInfo = getFbTokenInfo(token);

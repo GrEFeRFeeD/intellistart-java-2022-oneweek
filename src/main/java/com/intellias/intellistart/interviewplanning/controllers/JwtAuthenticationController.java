@@ -72,9 +72,6 @@ public class JwtAuthenticationController {
   public ResponseEntity<?> createAuthenticationToken(
       @RequestBody JwtRequest jwtRequest) {
 
-    if(redisConfig.checkIfExist(jwtRequest)){
-
-    }
     Map<FacebookScopes, String> userScopes;
     try {
       userScopes = facebookUtil
