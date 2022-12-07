@@ -37,7 +37,6 @@ public class JwtUserDetailsService implements UserDetailsService {
    * @param name name of certain user
    * @return standard loaded UserDetails object
    */
-  @Cacheable(value = "user")
   public UserDetails loadUserByEmailAndName(String email, String name) {
 
     JwtUserDetails jwtUserDetails = (JwtUserDetails) loadUserByUsername(email);
