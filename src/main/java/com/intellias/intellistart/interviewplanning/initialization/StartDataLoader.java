@@ -29,6 +29,8 @@ public class StartDataLoader implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
 
     User firstCoordinator = new User(null, email, Role.COORDINATOR);
+    User firstInterviewer = new User(null, "sashynia2003zhenia@gmail.com", Role.INTERVIEWER);
+    firstInterviewer = userRepository.save(firstInterviewer);
     firstCoordinator = userRepository.save(firstCoordinator);
 
 
