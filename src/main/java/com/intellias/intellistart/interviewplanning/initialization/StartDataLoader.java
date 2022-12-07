@@ -1,8 +1,15 @@
 package com.intellias.intellistart.interviewplanning.initialization;
 
+import com.intellias.intellistart.interviewplanning.model.booking.BookingService;
+import com.intellias.intellistart.interviewplanning.model.bookinglimit.BookingLimitService;
+import com.intellias.intellistart.interviewplanning.model.candidateslot.CandidateSlotRepository;
+import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotRepository;
+import com.intellias.intellistart.interviewplanning.model.period.PeriodService;
 import com.intellias.intellistart.interviewplanning.model.user.Role;
 import com.intellias.intellistart.interviewplanning.model.user.User;
 import com.intellias.intellistart.interviewplanning.model.user.UserRepository;
+import com.intellias.intellistart.interviewplanning.model.user.UserService;
+import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -20,8 +27,12 @@ public class StartDataLoader implements ApplicationRunner {
   @Value("${first-coordinator-email}")
   private String email;
 
+  /**
+   * Initial data load.
+   */
   @Autowired
-  public StartDataLoader(UserRepository userRepository) {
+  public StartDataLoader(
+      UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
@@ -30,6 +41,7 @@ public class StartDataLoader implements ApplicationRunner {
 
     User firstCoordinator = new User(null, email, Role.COORDINATOR);
     firstCoordinator = userRepository.save(firstCoordinator);
+
     System.out.println("Added first user: " + firstCoordinator);
   }
 }

@@ -68,6 +68,7 @@ public class BookingValidator {
    */
   public void validateUpdating(Booking updatingBooking, Booking newDataBooking)
       throws SlotException, BookingException, UserException, BookingLimitException {
+
     Period newPeriod = newDataBooking.getPeriod();
 
     int periodDuration = timeService.calculateDurationMinutes(
@@ -110,8 +111,8 @@ public class BookingValidator {
     if (!newInterviewerSlot.equals(updatingBooking.getInterviewerSlot())) {
       User newInterviewer = newInterviewerSlot.getUser();
       List<InterviewerSlot> interviewerSlotsNewInterviewer = interviewerSlotService
-          .getInterviewerSlotsByUserAndWeekAndDayOfWeek(
-              newInterviewer, newInterviewerSlot.getWeek(), newInterviewerSlot.getDayOfWeek());
+          .getInterviewerSlotsByUserAndWeek(
+              newInterviewer, newInterviewerSlot.getWeek());
 
       long bookingsNumber = interviewerSlotsNewInterviewer.stream()
           .map(InterviewerSlot::getBookings)
@@ -119,7 +120,8 @@ public class BookingValidator {
           .count();
 
       long bookingLimit = bookingLimitService
-          .getBookingLimitForCurrentWeek(newInterviewer).getBookingLimit();
+          .getBookingLimitByInterviewer(newInterviewer, newInterviewerSlot.getWeek())
+          .getBookingLimit();
 
       if (bookingsNumber >= bookingLimit) {
         throw new BookingLimitException(BookingLimitExceptionProfile.BOOKING_LIMIT_IS_EXCEEDED);
@@ -144,6 +146,6 @@ public class BookingValidator {
    */
   public void validateCreating(Booking newBooking)
       throws SlotException, BookingException, BookingLimitException, UserException {
-    validateUpdating(newBooking, newBooking);
+    validateUpdating(new BookingNullable(), newBooking);
   }
 }
