@@ -876,3 +876,5 @@ The project has passed performance testing with JMeter.
 
 The performance profile could be found by the [link](https://github.com/GrEFeRFeeD/intellistart-java-2022-oneweek/tree/main/docs/jmeter).
 
+To run the tests, put the StartDataLoader in __com.intellias.intellistart.interviewplanning.initialization__ instead of already existed file.
+
