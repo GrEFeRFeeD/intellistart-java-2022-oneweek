@@ -45,7 +45,8 @@ public class BookingService {
    * Alias for method in {@link BookingRepository}.
    */
   public Booking save(Booking booking) {
-    return bookingRepository.save(booking);
+    Booking bookingSaved = bookingRepository.save(booking);
+    return bookingSaved;
   }
 
   /**
