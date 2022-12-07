@@ -9,8 +9,6 @@ import com.intellias.intellistart.interviewplanning.model.week.Week;
 import com.intellias.intellistart.interviewplanning.model.week.WeekService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 /**
@@ -55,10 +53,8 @@ public class BookingLimitService {
    * @return BookingLimit
    * @throws UserException - not interviewer id
    */
-  @Cacheable(value = "user")
   public BookingLimit getBookingLimitByInterviewer(User user, Week week)
       throws UserException {
-    System.out.println("\n\n --  --- cashe no --- --- \n\n");
     if (user.getRole() != Role.INTERVIEWER) {
       throw new UserException(UserException.UserExceptionProfile.NOT_INTERVIEWER);
     }

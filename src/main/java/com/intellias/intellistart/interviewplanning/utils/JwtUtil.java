@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -89,8 +90,8 @@ public class JwtUtil implements Serializable {
    * @param jwtUserDetails user object to get email from
    * @return generated JSON Web Token
    */
+  @Cacheable(value = "jwt")
   public String generateToken(JwtUserDetails jwtUserDetails) {
-
     Map<String, Object> claims = new HashMap<>();
     claims.put("authorities", jwtUserDetails.getAuthorities());
     claims.put("name", jwtUserDetails.getName());
