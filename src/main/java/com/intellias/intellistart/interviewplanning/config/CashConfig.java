@@ -12,6 +12,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 /**
  * Cach configuration.
@@ -38,4 +40,5 @@ public class CashConfig extends CachingConfigurerSupport {
     cacheManager.setCacheNames(List.of("user", "jwt"));
     return cacheManager;
   }
+
 }

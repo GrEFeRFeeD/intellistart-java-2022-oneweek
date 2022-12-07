@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
+import com.intellias.intellistart.interviewplanning.config.RedisConfig;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.FacebookOauthInfoDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtRequest;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+import redis.clients.jedis.Jedis;
 
 /**
  * Controller for authentication and authenticated requests.
@@ -41,6 +43,7 @@ public class JwtAuthenticationController {
   private final JwtUserDetailsService userDetailsService;
   private final FacebookUtil facebookUtil;
   private final UserService userService;
+  private final RedisConfig redisConfig;
 
   /**
    * Constructor.
@@ -48,12 +51,14 @@ public class JwtAuthenticationController {
   @Autowired
   public JwtAuthenticationController(AuthenticationManager authenticationManager,
       JwtUtil jwtUtil, JwtUserDetailsService userDetailsService,
-      FacebookUtil facebookUtil, UserService userService) {
+      FacebookUtil facebookUtil, UserService userService,
+      RedisConfig redisConfig) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     this.userDetailsService = userDetailsService;
     this.facebookUtil = facebookUtil;
     this.userService = userService;
+    this.redisConfig = redisConfig;
   }
 
   /**
@@ -67,6 +72,9 @@ public class JwtAuthenticationController {
   public ResponseEntity<?> createAuthenticationToken(
       @RequestBody JwtRequest jwtRequest) {
 
+    if(redisConfig.checkIfExist(jwtRequest)){
+
+    }
     Map<FacebookScopes, String> userScopes;
     try {
       userScopes = facebookUtil
