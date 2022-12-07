@@ -1,6 +1,7 @@
 jwt:
   secret: oneweek
   validity: 86400
+  caching: 86400
 
 first-coordinator-email: be@oneweek.ua
 
@@ -23,4 +24,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
 
-
+redis:
+  host: localhost
+  port: 1111

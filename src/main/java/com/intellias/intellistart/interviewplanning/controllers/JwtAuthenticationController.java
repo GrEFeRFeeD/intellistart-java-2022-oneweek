@@ -1,6 +1,5 @@
 package com.intellias.intellistart.interviewplanning.controllers;
 
-import com.intellias.intellistart.interviewplanning.config.RedisConfig;
 import com.intellias.intellistart.interviewplanning.controllers.dto.CandidateDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.FacebookOauthInfoDto;
 import com.intellias.intellistart.interviewplanning.controllers.dto.JwtRequest;
@@ -29,7 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPooled;
+import redis.clients.jedis.params.SetParams;
 
 /**
  * Controller for authentication and authenticated requests.
@@ -43,22 +43,24 @@ public class JwtAuthenticationController {
   private final JwtUserDetailsService userDetailsService;
   private final FacebookUtil facebookUtil;
   private final UserService userService;
-  private final RedisConfig redisConfig;
+  private final JedisPooled jedis;
+
+  @Value("${jwt.caching}")
+  private Long jwtValidity;
 
   /**
    * Constructor.
    */
   @Autowired
-  public JwtAuthenticationController(AuthenticationManager authenticationManager,
-      JwtUtil jwtUtil, JwtUserDetailsService userDetailsService,
-      FacebookUtil facebookUtil, UserService userService,
-      RedisConfig redisConfig) {
+  public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
+      JwtUserDetailsService userDetailsService, FacebookUtil facebookUtil, UserService userService,
+      JedisPooled jedis) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     this.userDetailsService = userDetailsService;
     this.facebookUtil = facebookUtil;
     this.userService = userService;
-    this.redisConfig = redisConfig;
+    this.jedis = jedis;
   }
 
   /**
@@ -72,9 +74,12 @@ public class JwtAuthenticationController {
   public ResponseEntity<?> createAuthenticationToken(
       @RequestBody JwtRequest jwtRequest) {
 
-    if(redisConfig.checkIfExist(jwtRequest)){
+    String fbCached = jedis.get(jwtRequest.getFacebookToken());
 
+    if (fbCached != null) {
+      return ResponseEntity.ok(new JwtResponse(fbCached));
     }
+
     Map<FacebookScopes, String> userScopes;
     try {
       userScopes = facebookUtil
@@ -91,9 +96,12 @@ public class JwtAuthenticationController {
     final JwtUserDetails userDetails = (JwtUserDetails) userDetailsService
         .loadUserByEmailAndName(email, name);
 
-    JwtResponse jwtResponse = new JwtResponse(jwtUtil.generateToken(userDetails));
+    String jwt = jwtUtil.generateToken(userDetails);
 
-    return ResponseEntity.ok(jwtResponse);
+    SetParams setParams = new SetParams();
+    jedis.setex(jwtRequest.getFacebookToken(), jwtValidity, jwt);
+
+    return ResponseEntity.ok(new JwtResponse(jwt));
   }
 
   private void authenticate(String username) {

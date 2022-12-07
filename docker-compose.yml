@@ -13,7 +13,7 @@ services:
 
   postgresql:
     ports:
-      - ${DATABASE_PORT}:${DATABASE_PORT}
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     image: postgres:15.0
     volumes:
       - postgresql-data:/var/lib/postgres
@@ -21,6 +21,15 @@ services:
       - api.env
     command: -p ${DATABASE_PORT}
 
+  redis:
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    image: redis:6.2-alpine
+    volumes:
+      - cache:/data
+
+
 
 volumes:
   postgresql-data:
+  cache:
