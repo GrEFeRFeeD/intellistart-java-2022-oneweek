@@ -874,4 +874,4 @@ The project has [Postman collection](https://github.com/GrEFeRFeeD/intellistart-
 ### Performance testing
 The project has passed performance testing with JMeter.
 
-The performance profile could be found by the [link]().
+The performance profile could be found by the [link](https://github.com/GrEFeRFeeD/intellistart-java-2022-oneweek/tree/main/docs/jmeter).
