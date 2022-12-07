@@ -55,7 +55,6 @@ public class BookingLimitService {
    */
   public BookingLimit getBookingLimitByInterviewer(User user, Week week)
       throws UserException {
-
     if (user.getRole() != Role.INTERVIEWER) {
       throw new UserException(UserException.UserExceptionProfile.NOT_INTERVIEWER);
     }

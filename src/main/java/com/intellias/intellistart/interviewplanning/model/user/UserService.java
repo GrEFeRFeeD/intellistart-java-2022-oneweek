@@ -4,7 +4,6 @@ import com.intellias.intellistart.interviewplanning.exceptions.UserException;
 import com.intellias.intellistart.interviewplanning.exceptions.UserException.UserExceptionProfile;
 import com.intellias.intellistart.interviewplanning.model.interviewerslot.InterviewerSlotService;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

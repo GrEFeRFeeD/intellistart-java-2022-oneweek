@@ -20,7 +20,7 @@ public class DashboardCandidateSlotDtoTest {
               Set.of(),
               "email@test.com", "candidate name"
             ),
-            new DashboardCandidateSlotDto(LocalTime.of(10, 0).toString(), LocalTime.of(20, 0).toString(),
+            new DashboardCandidateSlotDto(1L, LocalTime.of(10, 0).toString(), LocalTime.of(20, 0).toString(),
                 "email@test.com", "candidate name", Set.of())
         ),
 
@@ -36,7 +36,7 @@ public class DashboardCandidateSlotDtoTest {
                 ),
                 "candEmail@slot.test", "name name name"
             ),
-            new DashboardCandidateSlotDto(LocalTime.of(21, 30).toString(), LocalTime.of(23, 0).toString(),
+            new DashboardCandidateSlotDto(1L, LocalTime.of(21, 30).toString(), LocalTime.of(23, 0).toString(),
                 "candEmail@slot.test", "name name name", Set.of(1L, 2L, 3L, 4L, 5L))
         )
     };

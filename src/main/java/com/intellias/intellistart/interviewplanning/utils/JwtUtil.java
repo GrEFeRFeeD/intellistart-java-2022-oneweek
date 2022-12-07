@@ -90,7 +90,6 @@ public class JwtUtil implements Serializable {
    * @return generated JSON Web Token
    */
   public String generateToken(JwtUserDetails jwtUserDetails) {
-
     Map<String, Object> claims = new HashMap<>();
     claims.put("authorities", jwtUserDetails.getAuthorities());
     claims.put("name", jwtUserDetails.getName());

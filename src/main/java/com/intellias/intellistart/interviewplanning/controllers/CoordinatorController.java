@@ -155,8 +155,8 @@ public class CoordinatorController {
    * @param weekId number of week to get all slots from
    * @return all candidate, interviewer slots and bookings for certain week
    */
-  @GetMapping("/weeks/{weekId}/dashboard")
-  public ResponseEntity<DashboardMapDto> getDashboard(@PathVariable("weekId") Long weekId) {
+  @GetMapping("/weeks/{weekNum}/dashboard")
+  public ResponseEntity<DashboardMapDto> getDashboard(@PathVariable("weekNum") Long weekId) {
 
     Week week = weekService.getWeekByWeekNum(weekId);
     DashboardMapDto dashboard = new DashboardMapDto(weekId, weekService);
