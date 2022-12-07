@@ -90,7 +90,7 @@ public class JwtUtil implements Serializable {
    * @param jwtUserDetails user object to get email from
    * @return generated JSON Web Token
    */
-  @Cacheable(value = "jwt")
+  //@Cacheable(value = "jwt")
   public String generateToken(JwtUserDetails jwtUserDetails) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("authorities", jwtUserDetails.getAuthorities());
